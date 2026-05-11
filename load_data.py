@@ -103,19 +103,7 @@ Example format:
   {{"prerequisite": "23N405", "dependent": "23N501"}}
 ]"""
 
-    api_key = os.getenv("GEMINI_API_KEY", "your_gemini_api_key_here")
     model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-
-    if not api_key or api_key == "your_gemini_api_key_here":
-        print("[API] Set GEMINI_API_KEY before running the loader.")
-        return []
-
-    print("[API] Calling Gemini to infer prerequisites...")
-
-    endpoint = (
-        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-        f"?key={api_key}"
-    )
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
@@ -124,30 +112,75 @@ Example format:
         },
     }
 
-    request = Request(
-        endpoint,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
+    api_keys = []
+    for env_name in (
+        "GEMINI_API_KEY",
+        "GEMINI_API_KEY1",
+        "GEMINI_API_KEY2",
+        "GEMINI_API_KEY3",
+        "GEMINI_API_KEY4",
+        "GEMINI_API_KEY5",
+        "GEMINI_API_KEY6",
+    ):
+        api_key = os.getenv(env_name)
+        if api_key and api_key != "your_gemini_api_key_here" and api_key not in api_keys:
+            api_keys.append(api_key)
 
-    try:
-        with urlopen(request, timeout=60) as response:
-            raw_response = response.read().decode("utf-8")
-    except HTTPError as error:
-        error_body = error.read().decode("utf-8", errors="replace")
-        print(f"[API] Error: {error.code} — {error_body}")
-        return []
-    except URLError as error:
-        print(f"[API] Error: {error.reason}")
+    if not api_keys:
+        print("[API] Set GEMINI_API_KEY or GEMINI_API_KEY1 through GEMINI_API_KEY6 before running the loader.")
         return []
 
-    try:
-        response_data = json.loads(raw_response)
-        raw = response_data["candidates"][0]["content"]["parts"][0]["text"].strip()
-    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as error:
-        print(f"[API] Unexpected Gemini response: {error}")
-        print(f"[API] Raw response:\n{raw_response}")
+    def is_usage_limit_error(error_body):
+        lowered = error_body.lower()
+        return (
+            "quota" in lowered
+            or "usage limit" in lowered
+            or "rate limit" in lowered
+            or "resource_exhausted" in lowered
+        )
+
+    raw_response = None
+    raw = None
+
+    for index, api_key in enumerate(api_keys, start=1):
+        print(f"[API] Calling Gemini with key {index} of {len(api_keys)} to infer prerequisites...")
+
+        endpoint = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+            f"?key={api_key}"
+        )
+
+        request = Request(
+            endpoint,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+
+        try:
+            with urlopen(request, timeout=60) as response:
+                raw_response = response.read().decode("utf-8")
+        except HTTPError as error:
+            error_body = error.read().decode("utf-8", errors="replace")
+            if error.code in {429, 403} and is_usage_limit_error(error_body) and index < len(api_keys):
+                print(f"[API] Key {index} hit usage limit; trying the next key.")
+                continue
+            print(f"[API] Error: {error.code} — {error_body}")
+            return []
+        except URLError as error:
+            print(f"[API] Error: {error.reason}")
+            return []
+
+        try:
+            response_data = json.loads(raw_response)
+            raw = response_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            break
+        except (KeyError, IndexError, TypeError, json.JSONDecodeError) as error:
+            print(f"[API] Unexpected Gemini response: {error}")
+            print(f"[API] Raw response:\n{raw_response}")
+            return []
+
+    if raw is None:
         return []
 
     # Strip markdown fences if present
