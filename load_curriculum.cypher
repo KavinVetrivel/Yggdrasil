@@ -39,6 +39,44 @@ MATCH (s:Subject)
 MATCH (sem:Semester {number: s.semester})
 MERGE (s)-[:BELONGS_TO]->(sem);
 
+// 7. Prerequisite relationships
+MATCH (a:Subject {code:'23N101'}), (b:Subject {code:'23N201'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N101'}), (b:Subject {code:'23N301'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N101'}), (b:Subject {code:'23N302'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N101'}), (b:Subject {code:'23N401'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N301'}), (b:Subject {code:'23N401'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N201'}), (b:Subject {code:'23N302'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N104'}), (b:Subject {code:'23N204'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N110'}), (b:Subject {code:'23N204'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N204'}), (b:Subject {code:'23N303'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N204'}), (b:Subject {code:'23N212'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N303'}), (b:Subject {code:'23N403'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N303'}), (b:Subject {code:'23N311'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N303'}), (b:Subject {code:'23N701'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N310'}), (b:Subject {code:'23N511'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N402'}), (b:Subject {code:'23N410'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N402'}), (b:Subject {code:'23N701'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N203'}), (b:Subject {code:'23N404'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N203'}), (b:Subject {code:'23N211'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N404'}), (b:Subject {code:'23N602'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N404'}), (b:Subject {code:'23N503'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N504'}), (b:Subject {code:'23N510'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N504'}), (b:Subject {code:'23N601'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N302'}), (b:Subject {code:'23N405'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N301'}), (b:Subject {code:'23N405'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N401'}), (b:Subject {code:'23N405'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N405'}), (b:Subject {code:'23N411'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N405'}), (b:Subject {code:'23N501'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N405'}), (b:Subject {code:'23N502'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N501'}), (b:Subject {code:'23N603'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N501'}), (b:Subject {code:'23N610'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N603'}), (b:Subject {code:'23N604'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N610'}), (b:Subject {code:'23N604'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N302'}), (b:Subject {code:'23N502'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N403'}), (b:Subject {code:'23N502'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N304'}), (b:Subject {code:'23N720'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+MATCH (a:Subject {code:'23N720'}), (b:Subject {code:'23N820'}) MERGE (a)-[:PREREQUISITE_OF]->(b);
+
 // ============================================================
 // VERIFY — run these after loading
 // ============================================================
