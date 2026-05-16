@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curriculum Notebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sans:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f8fafc;
+  --color-background-tertiary:#eef2f7;
+  --color-background-info:#eef6ff;
+  --color-text-primary:#0f172a;
+  --color-text-secondary:#475569;
+  --color-text-tertiary:#64748b;
+  --color-text-success:#0f766e;
+  --color-text-info:#1d4ed8;
+  --color-border-primary:#94a3b8;
+  --color-border-secondary:#cbd5e1;
+  --color-border-tertiary:#e2e8f0;
+  --color-border-info:#60a5fa;
+  --border-radius-md:10px;
+  --border-radius-lg:16px;
+}
+body{font-family:var(--sans);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
+
+.app{display:flex;flex-direction:column;min-height:100vh;max-width:1100px;margin:0 auto;padding:1.5rem}
+
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:1.5rem;flex-wrap:wrap}
+.logo{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.04em;border:0.5px solid var(--color-border-secondary);padding:6px 12px;border-radius:var(--border-radius-md)}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-tertiary)}
+.breadcrumb span{color:var(--color-text-primary);font-weight:500}
+.breadcrumb .sep{opacity:0.4}
+
+.gate{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:2rem;padding:3rem 0}
+.gate-title{font-size:22px;font-weight:500;text-align:center}
+.gate-sub{font-size:14px;color:var(--color-text-secondary);text-align:center;max-width:400px;line-height:1.6}
+
+.sem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;width:100%;max-width:560px}
+.sem-btn{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 8px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;font-family:var(--sans)}
+.sem-btn:hover{border-color:var(--color-border-primary);background:var(--color-background-secondary)}
+.sem-btn.active{border:1.5px solid var(--color-border-info);background:var(--color-background-info)}
+.sem-num{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--color-text-primary);display:block}
+.sem-label{font-size:11px;color:var(--color-text-tertiary);display:block;margin-top:3px}
+.sem-btn.active .sem-num{color:var(--color-text-info)}
+.sem-btn.active .sem-label{color:var(--color-text-info)}
+
+.subj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;width:100%;max-width:760px}
+.subj-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;cursor:pointer;transition:border-color .15s;font-family:var(--sans);text-align:left;display:flex;flex-direction:column;gap:10px}
+.subj-card:hover{border-color:var(--color-border-secondary)}
+.subj-code{font-family:var(--mono);font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px}
+.subj-name{font-size:13px;font-weight:500;color:var(--color-text-primary);line-height:1.4}
+.subj-meta{font-size:11px;color:var(--color-text-tertiary);margin-top:6px}
+.subj-card.has-resources .subj-code::after{content:'● ';color:#1D9E75;font-size:9px;margin-right:2px}
+.subj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.resource-dot{width:7px;height:7px;border-radius:50%;background:transparent;flex-shrink:0;margin-top:4px}
+.subj-card.has-resources .resource-dot{background:#1D9E75;box-shadow:0 0 0 2px rgba(29,158,117,.12)}
+.subj-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+.subj-action-btn{font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--sans);transition:background .1s,border-color .1s}
+.subj-action-btn:hover{background:var(--color-background-primary);border-color:var(--color-border-primary)}
+.subj-click-hint{font-size:10px;color:var(--color-text-tertiary)}
+
+.notebook{display:grid;grid-template-columns:280px 1fr;gap:16px;flex:1;min-height:0}
+
+.sidebar{display:flex;flex-direction:column;gap:12px}
+.sidebar-header{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.sidebar-subject-code{font-family:var(--mono);font-size:11px;color:var(--color-text-tertiary)}
+.sidebar-subject-name{font-size:15px;font-weight:500;margin-top:3px;line-height:1.3}
+.sidebar-sem{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
+.change-btn{font-size:12px;color:var(--color-text-secondary);background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 10px;cursor:pointer;margin-top:10px;font-family:var(--sans);width:100%;text-align:left}
+.change-btn:hover{background:var(--color-background-secondary)}
+
+.units-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;flex:1;overflow-y:auto;max-height:500px}
+.units-panel h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:12px}
+.unit-block{margin-bottom:14px}
+.unit-title{font-size:12px;font-weight:500;color:var(--color-text-primary);padding:6px 8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);cursor:pointer;display:flex;align-items:center;justify-content:space-between;border:0.5px solid var(--color-border-tertiary)}
+.unit-title:hover{border-color:var(--color-border-secondary)}
+.unit-title i{font-size:14px;color:var(--color-text-tertiary);transition:transform .2s}
+.unit-title.open i{transform:rotate(180deg)}
+.topic-list{padding:4px 0 0 8px;display:none}
+.topic-list.visible{display:block}
+.topic-item{font-size:12px;color:var(--color-text-secondary);padding:5px 8px;border-radius:var(--border-radius-md);cursor:pointer;display:flex;align-items:center;gap:6px;border-left:1.5px solid var(--color-border-tertiary);margin-left:4px;margin-bottom:2px;line-height:1.4}
+.topic-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary);border-left-color:var(--color-border-info)}
+.topic-item i{font-size:13px;flex-shrink:0}
+
+.prereq-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.prereq-section h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px}
+.prereq-chain{display:flex;flex-direction:column;gap:4px}
+.prereq-item{font-size:11px;color:var(--color-text-secondary);padding:5px 8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);display:flex;align-items:center;gap:6px}
+.prereq-item i{font-size:12px;color:var(--color-text-tertiary)}
+.helper-text{font-size:12px;color:var(--color-text-tertiary)}
+.mono-label{font-family:var(--mono);font-size:10px;margin-right:4px;color:var(--color-text-tertiary)}
+.arrow-icon{font-size:11px}
+.info-icon{font-size:13px;margin-right:4px}
+.prereq-arrow{font-size:10px;color:var(--color-text-tertiary);padding-left:12px}
+
+.chat-area{display:flex;flex-direction:column;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.chat-header{padding:14px 20px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px}
+.chat-header-text{flex:1}
+.chat-title{font-size:14px;font-weight:500}
+.chat-sub{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.context-badge{font-size:11px;background:var(--color-background-info);color:var(--color-text-info);padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info)}
+
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;min-height:300px;max-height:420px}
+.msg{display:flex;flex-direction:column;gap:4px}
+.msg.user{align-items:flex-end}
+.msg.assistant{align-items:flex-start}
+.msg-bubble{max-width:85%;padding:10px 14px;border-radius:var(--border-radius-lg);font-size:13px;line-height:1.6}
+.msg.user .msg-bubble{background:var(--color-background-info);color:var(--color-text-primary);border-bottom-right-radius:4px}
+.msg.assistant .msg-bubble{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-bottom-left-radius:4px}
+.msg-label{font-size:11px;color:var(--color-text-tertiary)}
+.prereq-context{font-size:11px;color:var(--color-text-secondary);padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:2px solid var(--color-border-info);margin-bottom:4px;line-height:1.5}
+
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:2rem;text-align:center}
+.empty-state i{font-size:28px;color:var(--color-text-tertiary)}
+.empty-state p{font-size:13px;color:var(--color-text-secondary);line-height:1.6;max-width:280px}
+.suggestion-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
+.chip{font-size:12px;padding:6px 12px;border:0.5px solid var(--color-border-secondary);border-radius:20px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);font-family:var(--sans);transition:background .1s}
+.chip:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+
+.chat-input-area{padding:14px 16px;border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:10px;align-items:flex-end}
+.chat-input-area textarea{flex:1;resize:none;font-family:var(--sans);font-size:13px;padding:10px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);outline:none;line-height:1.5;max-height:100px;min-height:40px}
+.chat-input-area textarea:focus{border-color:var(--color-border-primary)}
+.send-btn{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .1s}
+.send-btn:hover{background:var(--color-background-secondary)}
+.send-btn i{font-size:16px;color:var(--color-text-secondary)}
+
+.typing{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);border-bottom-left-radius:4px;max-width:80px}
+.dot{width:5px;height:5px;background:var(--color-text-tertiary);border-radius:50%;animation:bounce .9s infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+.hidden{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.fade-in{animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<h2 class="sr-only">Curriculum Notebook — select your semester and subject to start a learning session</h2>
+
+<div class="app">
+  <div class="top-bar">
+    <div class="logo">curriculum.kg</div>
+    <div class="breadcrumb" id="breadcrumb">
+      <span id="bc-sem" class="hidden"></span>
+      <span class="sep hidden" id="bc-sep1">›</span>
+      <span id="bc-subj" class="hidden"></span>
+    </div>
+  </div>
+
+  <!-- GATE: Semester selection -->
+  <div id="gate-sem" class="gate fade-in">
+    <div>
+      <p class="gate-title">Which semester are you in?</p>
+      <p class="gate-sub">You'll see subjects up to your current semester. Upload resources for those subjects to unlock AI tutoring.</p>
+    </div>
+    <div class="sem-grid" id="sem-grid"></div>
+  </div>
+
+  <!-- GATE: Subject selection -->
+  <div id="gate-subj" class="gate fade-in hidden">
+    <div>
+      <p class="gate-title" id="subj-gate-title">Choose a subject</p>
+      <p class="gate-sub">Subjects with a green dot have resources loaded. You can still ask questions for others — the LLM will use its training knowledge.</p>
+    </div>
+    <div class="subj-grid" id="subj-grid"></div>
+  </div>
+
+  <!-- NOTEBOOK: main interface -->
+  <div id="notebook" class="notebook hidden fade-in">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-subject-code" id="nb-code"></div>
+        <div class="sidebar-subject-name" id="nb-name"></div>
+        <div class="sidebar-sem" id="nb-sem"></div>
+        <button class="change-btn" onclick="resetToSubject()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Change subject</button>
+      </div>
+
+      <div class="units-panel">
+        <h3>Units &amp; topics</h3>
+        <div id="units-container"><p class="helper-text">Loading from graph…</p></div>
+      </div>
+
+      <div class="prereq-section" id="prereq-section">
+        <h3>Prerequisite chain</h3>
+        <div class="prereq-chain" id="prereq-chain"></div>
+      </div>
+    </div>
+
+    <div class="chat-area">
+      <div class="chat-header">
+        <div class="chat-header-text">
+          <div class="chat-title" id="chat-title">Ask anything</div>
+          <div class="chat-sub" id="chat-sub">Responses are grounded in prerequisite concepts first</div>
+        </div>
+        <div class="context-badge" id="context-badge">0 prereqs loaded</div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="empty-state" id="empty-state">
+          <i class="ti ti-messages" aria-hidden="true"></i>
+          <p>Ask a question about this subject. The system will automatically pull prerequisite concepts to explain from the ground up.</p>
+          <div class="suggestion-chips" id="suggestion-chips"></div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea id="chat-input" placeholder="Ask a question about this subject…" rows="1" onkeydown="handleKey(event)"></textarea>
+        <button class="send-btn" onclick="sendMessage()" aria-label="Send message">
+          <i class="ti ti-send" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+
+const state = {
+  semesters: [1, 2, 3, 4, 5, 6, 7, 8],
+  subjectsBySemester: {},
+  currentSemester: null,
+  currentSubject: null,
+  prereqItems: [],
+  topicHints: [],
+  resourceSections: null,
+};
+
+const semGrid = document.getElementById('sem-grid');
+const subjGrid = document.getElementById('subj-grid');
+const unitsContainerEl = () => document.getElementById('units-container');
+const prereqChain = document.getElementById('prereq-chain');
+const routeMode = location.protocol === 'file:' ? 'hash' : 'path';
+const notebookRoutePrefix = '/app';
+
+function getCurrentRoute() {
+  if (routeMode === 'hash') {
+    return location.hash.replace(/^#/, '') || '/';
+  }
+  return `${location.pathname}${location.search}`;
+}
+
+function setCurrentRoute(path, replace = false) {
+  if (routeMode === 'hash') {
+    const hash = `#${path}`;
+    if (replace) {
+      history.replaceState({}, '', `${location.pathname}${location.search}${hash}`);
+      return;
+    }
+    if (location.hash !== hash) {
+      location.hash = path;
+    }
+    return;
+  }
+
+  const nextUrl = `${path}${location.search}`;
+  if (replace) {
+    history.replaceState({}, '', nextUrl);
+    return;
+  }
+  if (`${location.pathname}${location.search}` !== nextUrl) {
+    history.pushState({}, '', nextUrl);
+  }
+}
+
+function buildNotebookPath(semester, subjectCode = '', panel = '') {
+  let path = `${notebookRoutePrefix}/semester/${semester}`;
+  if (subjectCode) {
+    path += `/subject/${encodeURIComponent(subjectCode)}`;
+  }
+  if (panel) {
+    path += `/${panel}`;
+  }
+  return path;
+}
+
+function parseNotebookRoute(path) {
+  const cleanPath = path.replace(/\/+$/, '') || '/';
+  if (cleanPath === '/' || cleanPath === notebookRoutePrefix) {
+    return { view: 'semester-picker' };
+  }
+
+  const semesterMatch = cleanPath.match(/^\/app\/semester\/(\d{1,2})(?:\/subject\/([^/]+))?$/);
+  if (!semesterMatch) {
+    return { view: 'semester-picker' };
+  }
+
+  const semester = Number(semesterMatch[1]);
+  const subjectCode = semesterMatch[2] ? decodeURIComponent(semesterMatch[2]) : '';
+  if (!subjectCode) {
+    return { view: 'semester-subjects', semester };
+  }
+
+  return { view: 'subject-notebook', semester, subjectCode };
+}
+
+function findSubjectInSemester(semester, code) {
+  return (state.subjectsBySemester[semester] || []).find((subject) => subject.code === code) || null;
+}
+
+function clearNotebookState() {
+  hideElement('notebook');
+  hideElement('bc-subj');
+  hideElement('bc-sep1');
+  hideElement('gate-subj');
+  showElement('gate-sem');
+}
+
+function applyRoute(route, replace = true) {
+  if (!route || route.view === 'semester-picker') {
+    clearNotebookState();
+    setCurrentRoute('/', replace);
+    return;
+  }
+
+  if (route.view === 'semester-subjects') {
+    clearNotebookState();
+    selectSem(route.semester, { syncRoute: false });
+    setCurrentRoute(buildNotebookPath(route.semester), replace);
+    return;
+  }
+
+  if (route.view === 'subject-notebook') {
+    clearNotebookState();
+    selectSem(route.semester, { syncRoute: false });
+    const subject = findSubjectInSemester(route.semester, route.subjectCode);
+    if (subject) {
+      openNotebook(subject, { syncRoute: false });
+      setCurrentRoute(buildNotebookPath(route.semester, route.subjectCode), replace);
+      return;
+    }
+  }
+
+  clearNotebookState();
+  setCurrentRoute('/', replace);
+}
+
+function syncRouteFromLocation() {
+  applyRoute(parseNotebookRoute(getCurrentRoute()), true);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+async function fetchJson(path) {
+  const response = await fetch(`${apiBase}${path}`);
+  if (!response.ok) {
+    let message = `Request failed: ${response.status}`;
+    try {
+      const payload = await response.json();
+      message = payload.detail || message;
+    } catch (error) {
+      const text = await response.text();
+      if (text) message = text;
+    }
+    throw new Error(message);
+  }
+  return response.json();
+}
+
+function setStatus(kind, label) {
+  const logo = document.querySelector('.logo');
+  if (logo) {
+    logo.textContent = label;
+  }
+  if (kind === 'bad') {
+    logo?.setAttribute('data-status', 'bad');
+  }
+}
+
+function hideElement(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+function showElement(id) {
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function renderSemesterButtons() {
+  semGrid.innerHTML = '';
+  state.semesters.forEach((semester) => {
+    const button = document.createElement('button');
+    button.className = 'sem-btn';
+    button.innerHTML = `<span class="sem-num">${semester}</span><span class="sem-label">Semester</span>`;
+    button.addEventListener('click', () => selectSem(semester));
+    semGrid.appendChild(button);
+  });
+}
+
+function refreshCurrentSemesterView() {
+  if (state.currentSemester) {
+    showSubjectGate(state.currentSemester);
+  }
+}
+
+function getVisibleSubjects(maxSemester) {
+  return state.subjectsBySemester[maxSemester] || [];
+}
+
+function selectSem(semester, options = {}) {
+  state.currentSemester = semester;
+  document.querySelectorAll('.sem-btn').forEach((button, index) => {
+    button.classList.toggle('active', index + 1 === semester);
+  });
+  const bcSem = document.getElementById('bc-sem');
+  bcSem.textContent = `Sem ${semester}`;
+  bcSem.classList.remove('hidden');
+  setTimeout(() => showSubjectGate(semester), 120);
+  if (options.syncRoute !== false) {
+    setCurrentRoute(buildNotebookPath(semester));
+  }
+}
+
+function showSubjectGate(semester) {
+  hideElement('gate-sem');
+  showElement('gate-subj');
+  document.getElementById('gate-subj').classList.add('fade-in');
+  document.getElementById('subj-gate-title').textContent = `Semester ${semester} subjects`;
+
+  subjGrid.innerHTML = '';
+  const subjects = getVisibleSubjects(semester);
+  subjects.forEach((subject) => {
+    const card = document.createElement('div');
+    card.className = `subj-card${subject.resource_count > 0 ? ' has-resources' : ''}`;
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.innerHTML = `
+      <div class="subj-top">
+        <div>
+          <div class="subj-code">${escapeHtml(subject.code)}</div>
+          <div class="subj-name">${escapeHtml(subject.name)}</div>
+        </div>
+        <span class="resource-dot" aria-hidden="true"></span>
+      </div>
+      <div class="subj-meta">${escapeHtml(subject.category || 'Course')} · ${escapeHtml(subject.credits)} credits${subject.resource_count > 0 ? ' · resources loaded' : ''}</div>
+      <div class="subj-actions">
+        <span class="subj-click-hint">Click card to open notebook</span>
+        <button type="button" class="subj-action-btn">Upload resource</button>
+      </div>
+    `;
+    card.addEventListener('click', () => openNotebook(subject));
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openNotebook(subject);
+      }
+    });
+    const uploadButton = card.querySelector('.subj-action-btn');
+    // Intentional full-page navigation: upload uses a dedicated HTML page, not the notebook SPA.
+    uploadButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      window.location.href = buildNotebookPath(subject.semester, subject.code, 'upload');
+    });
+    subjGrid.appendChild(card);
+  });
+}
+
+function openNotebook(subject, options = {}) {
+  state.currentSubject = subject;
+  document.getElementById('bc-subj').classList.remove('hidden');
+  document.getElementById('bc-sep1').classList.remove('hidden');
+  document.getElementById('nb-code').textContent = subject.code;
+  document.getElementById('nb-name').textContent = subject.name;
+  document.getElementById('nb-sem').textContent = `Semester ${subject.semester}`;
+  document.getElementById('chat-title').textContent = subject.name;
+  document.getElementById('chat-sub').textContent = 'Responses are grounded in prerequisite concepts first';
+  hideElement('gate-subj');
+  showElement('notebook');
+  document.getElementById('notebook').classList.add('fade-in');
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('messages').appendChild(buildEmptyState(subject.code));
+  loadUnits(subject.code);
+  loadPrereqs(subject.code);
+  loadSubjectResources(subject.code);
+  if (options.syncRoute !== false) {
+    setCurrentRoute(buildNotebookPath(subject.semester, subject.code));
+  }
+}
+
+function buildEmptyState(code) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'empty-state';
+  wrapper.id = 'empty-state';
+  const suggestions = state.topicHints.length
+    ? state.topicHints.slice(0, 3)
+    : [
+        'Explain the core concepts of this subject',
+        'What are the key topics in Unit I?',
+        'How does this relate to prerequisite subjects?',
+      ];
+  wrapper.innerHTML = `
+    <i class="ti ti-messages" aria-hidden="true"></i>
+    <p>Ask a question about this subject. The system automatically pulls prerequisite concepts to explain from the ground up.</p>
+    <div class="suggestion-chips" id="suggestion-chips">${suggestions.map((item) => `<button class="chip" type="button">${escapeHtml(item)}</button>`).join('')}</div>
+  `;
+  wrapper.querySelectorAll('.chip').forEach((button) => {
+    button.addEventListener('click', () => prefill(button.textContent.trim()));
+  });
+  return wrapper;
+}
+
+function renderUnits(units) {
+  const unitsContainer = unitsContainerEl();
+  if (!unitsContainer) return;
+  unitsContainer.innerHTML = '';
+  if (!units.length) {
+    unitsContainer.innerHTML = '<p class="helper-text">No unit entries were returned by the graph.</p>';
+    return;
+  }
+
+  state.topicHints = [];
+  units.forEach((unit, index) => {
+    const block = document.createElement('div');
+    block.className = 'unit-block';
+    const topics = (unit.topics || []).map((topic) => {
+      state.topicHints.push(topic);
+      return `<div class="topic-item" role="button" tabindex="0"><i class="ti ti-point" aria-hidden="true"></i>${escapeHtml(topic)}</div>`;
+    }).join('');
+
+    block.innerHTML = `
+      <div class="unit-title" id="ut-${index}"><span>Unit ${escapeHtml(unit.number)}: ${escapeHtml(unit.title)}</span><i class="ti ti-chevron-down" aria-hidden="true"></i></div>
+      <div class="topic-list" id="tl-${index}">${topics}</div>
+    `;
+
+    const title = block.querySelector('.unit-title');
+    const topicList = block.querySelector('.topic-list');
+    title.addEventListener('click', () => {
+      title.classList.toggle('open');
+      topicList.classList.toggle('visible');
+    });
+
+    block.querySelectorAll('.topic-item').forEach((topicItem) => {
+      const topicName = topicItem.textContent.trim();
+      topicItem.addEventListener('click', () => prefill(`Explain ${topicName} in the context of ${state.currentSubject.name}`));
+      topicItem.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          prefill(`Explain ${topicName} in the context of ${state.currentSubject.name}`);
+        }
+      });
+    });
+
+    unitsContainer.appendChild(block);
+  });
+
+  const firstTitle = unitsContainer.querySelector('.unit-title');
+  const firstList = unitsContainer.querySelector('.topic-list');
+  if (firstTitle && firstList) {
+    firstTitle.classList.add('open');
+    firstList.classList.add('visible');
+  }
+
+  const chips = document.getElementById('suggestion-chips');
+  if (chips) {
+    chips.innerHTML = '';
+    const suggestionItems = state.topicHints.slice(0, 3);
+    suggestionItems.forEach((item) => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.textContent = item;
+      chip.addEventListener('click', () => prefill(`Explain ${item} in the context of ${state.currentSubject.name}`));
+      chips.appendChild(chip);
+    });
+  }
+}
+
+async function loadUnits(code) {
+  const unitsContainer = unitsContainerEl();
+  if (!unitsContainer) return;
+  unitsContainer.innerHTML = '<p class="helper-text">Loading from graph…</p>';
+  try {
+    const payload = await fetchJson(`/subject/${encodeURIComponent(code)}/topics`);
+    renderUnits(payload.units || []);
+  } catch (error) {
+    unitsContainer.innerHTML = `<p class="helper-text">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+function renderPrereqs(subject, prerequisites) {
+  state.prereqItems = prerequisites;
+  prereqChain.innerHTML = '';
+  if (!prerequisites.length) {
+    prereqChain.innerHTML = '<p class="helper-text">No prerequisites defined.</p>';
+    document.getElementById('context-badge').textContent = '0 prereqs loaded';
+    return;
+  }
+
+  prerequisites.forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = 'prereq-item';
+    row.innerHTML = `<i class="ti ti-arrow-narrow-right" aria-hidden="true"></i><span class="mono-label">${escapeHtml(item.code)}</span>${escapeHtml(item.name)}`;
+    prereqChain.appendChild(row);
+    if (index < prerequisites.length - 1) {
+      const arrow = document.createElement('div');
+      arrow.className = 'prereq-arrow';
+      arrow.innerHTML = '<i class="ti ti-arrow-down arrow-icon" aria-hidden="true"></i>';
+      prereqChain.appendChild(arrow);
+    }
+  });
+
+  document.getElementById('context-badge').textContent = `${prerequisites.length} prereq${prerequisites.length !== 1 ? 's' : ''} loaded`;
+}
+
+async function loadPrereqs(code) {
+  prereqChain.innerHTML = '<p class="helper-text">Loading prerequisites…</p>';
+  try {
+    const payload = await fetchJson(`/subject/${encodeURIComponent(code)}/prerequisites`);
+    renderPrereqs(payload.subject || state.currentSubject, payload.prerequisites || []);
+  } catch (error) {
+    prereqChain.innerHTML = `<p class="helper-text">${escapeHtml(error.message)}</p>`;
+    document.getElementById('context-badge').textContent = '0 prereqs loaded';
+  }
+}
+
+async function loadSubjectResources(code) {
+  try {
+    const payload = await fetchJson(`/subject/${encodeURIComponent(code)}/resources`);
+    state.resourceSections = payload.resources || null;
+  } catch (error) {
+    state.resourceSections = null;
+  }
+}
+
+function prefill(text) {
+  const input = document.getElementById('chat-input');
+  input.value = text;
+  input.focus();
+}
+
+function handleKey(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+}
+
+function appendMsg(role, text) {
+  const msgs = document.getElementById('messages');
+  const message = document.createElement('div');
+  message.className = `msg ${role} fade-in`;
+  message.innerHTML = `<span class="msg-label">${role === 'user' ? 'You' : 'Curriculum AI'}</span><div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(message);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const typing = document.createElement('div');
+  typing.className = 'msg assistant fade-in';
+  typing.id = 'typing-indicator';
+  typing.innerHTML = '<span class="msg-label">Curriculum AI</span><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function simulateResponse(query) {
+  const typing = document.getElementById('typing-indicator');
+  if (typing) typing.remove();
+  const prereqNames = (state.prereqItems || []).map((item) => item.name).filter(Boolean);
+  const contextNote = prereqNames.length
+    ? `<div class="prereq-context"><i class="ti ti-info-circle info-icon" aria-hidden="true"></i>Context pulled from: ${escapeHtml(prereqNames.join(', '))} → ${escapeHtml(state.currentSubject.name)}</div>`
+    : '';
+  const response = `${contextNote}This is a placeholder response for: "<em>${escapeHtml(query)}</em>"<br><br>In production, this is where the FastAPI query pipeline fires: Neo4j traverses the prerequisite chain, Chroma retrieves the relevant chunks, and the model generates a bottom-up explanation starting from foundational concepts.`;
+  appendMsg('assistant', response);
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  const empty = document.getElementById('empty-state');
+  if (empty) empty.remove();
+  appendMsg('user', escapeHtml(text));
+  showTyping();
+  setTimeout(() => simulateResponse(text), 900 + Math.random() * 500);
+}
+
+function resetToSubject() {
+  hideElement('notebook');
+  hideElement('bc-subj');
+  hideElement('bc-sep1');
+  showElement('gate-subj');
+  if (state.currentSemester) {
+    setCurrentRoute(buildNotebookPath(state.currentSemester));
+  }
+}
+
+async function bootstrap() {
+  try {
+    const [health, subjects] = await Promise.all([
+      fetchJson('/health'),
+      fetchJson('/subjects'),
+    ]);
+    if (health.status === 'ok') {
+      setStatus('ok', 'API online');
+    }
+    state.subjectsBySemester = subjects.semesters || {};
+    renderSemesterButtons();
+    syncRouteFromLocation();
+  } catch (error) {
+    setStatus('bad', 'API unavailable');
+    renderSemesterButtons();
+    console.error(error);
+  }
+}
+
+window.addEventListener(routeMode === 'hash' ? 'hashchange' : 'popstate', () => {
+  syncRouteFromLocation();
+});
+
+bootstrap();
+</script>
+</body>
+</html>

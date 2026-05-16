@@ -1,15 +1,19 @@
 """FastAPI query layer for the curriculum knowledge graph."""
 
+from collections import defaultdict, deque
 from functools import lru_cache
 import csv
 import os
 import re
-from collections import defaultdict, deque
+import tempfile
+from typing import Dict
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
+from parser import parse_file
+from vector_store import upsert_chunks
 
 try:
 	from neo4j import GraphDatabase
@@ -40,6 +44,7 @@ NEO4J_USER = os.getenv("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 CSV_PATH = os.getenv("CSV_PATH", "subjects.csv")
 SYLLABUS_PDF_PATH = os.getenv("SYLLABUS_PDF_PATH", "REGULATIONS.pdf")
+ALLOWED_EXTENSIONS = {"pdf", "ppt", "pptx"}
 
 app = FastAPI(title="Yggdrasil Curriculum API", version="1.0.0")
 app.add_middleware(
@@ -51,19 +56,33 @@ app.add_middleware(
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-FRONTEND_INDEX = os.path.join(FRONTEND_DIR, "index.html")
+NOTEBOOK_INDEX = os.path.join(BASE_DIR, "curriculum_notebook.html")
+UPLOAD_INDEX = os.path.join(BASE_DIR, "upload_resources.html")
 _driver = None
-
-if os.path.isdir(FRONTEND_DIR):
-	app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+_subject_resource_index = None
 
 
 @app.get("/")
 def home_page():
-	if not os.path.exists(FRONTEND_INDEX):
-		raise HTTPException(status_code=404, detail="Frontend index not found")
-	return FileResponse(FRONTEND_INDEX, media_type="text/html")
+	if os.path.exists(NOTEBOOK_INDEX):
+		return FileResponse(NOTEBOOK_INDEX, media_type="text/html")
+	raise HTTPException(status_code=404, detail="Notebook frontend not found")
+
+
+@app.get("/app")
+@app.get("/app/semester/{semester}")
+@app.get("/app/semester/{semester}/subject/{code}")
+def notebook_page(semester: int | None = None, code: str | None = None):
+	if os.path.exists(NOTEBOOK_INDEX):
+		return FileResponse(NOTEBOOK_INDEX, media_type="text/html")
+	raise HTTPException(status_code=404, detail="Notebook frontend not found")
+
+
+@app.get("/app/semester/{semester}/subject/{code}/upload")
+def upload_page(semester: int, code: str):
+	if os.path.exists(UPLOAD_INDEX):
+		return FileResponse(UPLOAD_INDEX, media_type="text/html")
+	raise HTTPException(status_code=404, detail="Upload frontend not found")
 
 
 def normalize_whitespace(text):
@@ -111,6 +130,27 @@ def load_subject_codes(path):
 	return codes
 
 
+def _ext(filename):
+	return filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+
+
+def _detect_source_type(filepath, ext):
+	"""Classify uploads so Neo4j can distinguish syllabus-style PDFs from resource decks."""
+	if ext in ("ppt", "pptx"):
+		return "ppt"
+
+	try:
+		import pdfplumber
+	except ImportError as error:
+		raise HTTPException(status_code=500, detail="pdfplumber is required to inspect uploaded PDFs") from error
+
+	import re as _re
+	unit_re = _re.compile(r"^\s*(unit\s*[-–]?\s*(i{1,3}|iv|v?i{0,3}|[1-5]))\b", _re.I | _re.M)
+	with pdfplumber.open(filepath) as pdf:
+		sample = "\n".join((pdf.pages[i].extract_text() or "") for i in range(min(5, len(pdf.pages))))
+	return "syllabus" if len(unit_re.findall(sample)) >= 2 else "textbook"
+
+
 def get_driver():
 	global _driver
 	if GraphDatabase is None:
@@ -120,6 +160,150 @@ def get_driver():
 	if _driver is None:
 		_driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 	return _driver
+
+
+def get_subject(code):
+	driver = get_driver()
+	with driver.session() as session:
+		row = session.run(
+			"""
+			MATCH (s:Subject {code: $code})
+			OPTIONAL MATCH (s)-[:BELONGS_TO]->(sem:Semester)
+			OPTIONAL MATCH (s)-[:HAS_RESOURCE]->(r:Resource)
+			WITH s, sem, count(DISTINCT r) AS resource_count
+			RETURN s.code AS code, s.name AS name, s.category AS category, sem.number AS semester, s.credits AS credits,
+			       resource_count
+			""",
+			code=code,
+		).single()
+
+	if not row:
+		return None
+
+	return {
+		"code": row["code"],
+		"name": row["name"],
+		"category": row["category"],
+		"semester": row["semester"],
+		"credits": row["credits"],
+		"resource_count": row["resource_count"],
+	}
+
+
+def get_all_subjects():
+	driver = get_driver()
+	with driver.session() as session:
+		rows = session.run(
+			"""
+			MATCH (s:Subject)
+			OPTIONAL MATCH (s)-[:BELONGS_TO]->(sem:Semester)
+			OPTIONAL MATCH (s)-[:HAS_RESOURCE]->(r:Resource)
+			WITH s, sem, count(DISTINCT r) AS resource_count
+			RETURN s.code AS code, s.name AS name, s.category AS category, sem.number AS semester, s.credits AS credits,
+			       resource_count
+			ORDER BY semester, code
+			"""
+		).data()
+
+	return rows
+
+
+def attach_resource_node(subject_code, source_file, source_type, chunk_count):
+	driver = get_driver()
+	resource_id = f"{subject_code}:{source_file}"
+	with driver.session() as session:
+		session.run(
+			"""
+			MATCH (s:Subject {code: $subject_code})
+			MERGE (r:Resource {resource_id: $resource_id})
+			SET r.subject_code = $subject_code,
+				r.source_file = $source_file,
+				r.source_type = $source_type,
+				r.chunk_count = $chunk_count,
+				r.updated_at = datetime()
+			MERGE (s)-[:HAS_RESOURCE]->(r)
+			""",
+			subject_code=subject_code,
+			resource_id=resource_id,
+			source_file=source_file,
+			source_type=source_type,
+			chunk_count=chunk_count,
+		)
+
+
+@app.get("/subjects")
+def list_subjects():
+	"""Return all subjects grouped by semester for upload and query UIs."""
+	subjects = get_all_subjects()
+	grouped: Dict[int, list] = {}
+	for subject in subjects:
+		semester = subject.get("semester")
+		if semester is None:
+			continue
+		grouped.setdefault(semester, []).append(subject)
+	return {"semesters": grouped}
+
+
+@app.post("/ingest")
+async def ingest(
+	file: UploadFile = File(...),
+	subject_code: str = Form(...),
+):
+	"""Chunk an uploaded resource, store vectors in Chroma, and link metadata in Neo4j."""
+	ext = _ext(file.filename or "")
+	if ext not in ALLOWED_EXTENSIONS:
+		raise HTTPException(
+			status_code=400,
+			detail=f"Unsupported file type '.{ext}'. Allowed: {ALLOWED_EXTENSIONS}",
+		)
+
+	subject = get_subject(subject_code.strip().upper())
+	if subject is None:
+		raise HTTPException(
+			status_code=404,
+			detail=f"Subject code '{subject_code}' not found in the knowledge graph.",
+		)
+
+	suffix = f".{ext}"
+	with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+		content = await file.read()
+		tmp.write(content)
+		tmp_path = tmp.name
+
+	try:
+		chunks = parse_file(tmp_path, chunk_size=CHUNK_SIZE_TOKENS, overlap=CHUNK_OVERLAP_TOKENS)
+		if not chunks:
+			raise HTTPException(status_code=422, detail="No extractable content found in the uploaded file.")
+
+		source_type = _detect_source_type(tmp_path, ext)
+		original_filename = file.filename or f"upload.{ext}"
+		for chunk in chunks:
+			chunk.source_file = original_filename
+
+		summary = upsert_chunks(
+			chunks=chunks,
+			subject_code=subject["code"],
+			subject_name=subject["name"],
+			semester=subject["semester"],
+			source_type=source_type,
+		)
+
+		attach_resource_node(
+			subject_code=subject["code"],
+			source_file=original_filename,
+			source_type=source_type,
+			chunk_count=summary["upserted"],
+		)
+	finally:
+		os.unlink(tmp_path)
+
+	return {
+		"status": "success",
+		"subject": subject,
+		"source_type": source_type,
+		"file": original_filename,
+		"chunks": summary,
+	}
 
 
 @lru_cache(maxsize=1)
@@ -307,11 +491,50 @@ def fetch_related_topics(driver, name):
 
 
 def fetch_subject_resources(code):
-	resource_index = get_subject_resource_index()
-	resources = resource_index.get(code)
-	if resources is None:
-		raise HTTPException(status_code=404, detail=f"Subject not found in syllabus PDF: {code}")
+	try:
+		resource_index = get_subject_resource_index()
+		resources = resource_index.get(code)
+		if resources is None:
+			resources = {"textbooks": [], "references": []}
+	except HTTPException:
+		resources = {"textbooks": [], "references": []}
 	return {"code": code, "resources": resources}
+
+
+def fetch_subject_prerequisites(driver, code):
+	with driver.session() as session:
+		subject_row = session.run(
+			"""
+			MATCH (s:Subject {code: $code})
+			OPTIONAL MATCH (s)-[:BELONGS_TO]->(sem:Semester)
+			RETURN s.code AS code, s.name AS name, s.category AS category, sem.number AS semester, s.credits AS credits
+			""",
+			code=code,
+		).single()
+
+		if not subject_row:
+			raise HTTPException(status_code=404, detail=f"Subject not found: {code}")
+
+		rows = session.run(
+			"""
+			MATCH (pre:Subject)-[:PREREQUISITE_OF]->(dep:Subject {code: $code})
+			OPTIONAL MATCH (pre)-[:BELONGS_TO]->(sem:Semester)
+			RETURN pre.code AS code, pre.name AS name, pre.category AS category, sem.number AS semester, pre.credits AS credits
+			ORDER BY semester, code
+			""",
+			code=code,
+		).data()
+
+	return {
+		"subject": {
+			"code": subject_row["code"],
+			"name": subject_row["name"],
+			"category": subject_row["category"],
+			"semester": subject_row["semester"],
+			"credits": subject_row["credits"],
+		},
+		"prerequisites": rows,
+	}
 
 
 def topological_learning_path(driver, start_semester, end_semester):
@@ -401,6 +624,12 @@ def get_topic_related(name: str):
 @app.get("/subject/{code}/resources")
 def get_subject_resources(code: str):
 	return fetch_subject_resources(code)
+
+
+@app.get("/subject/{code}/prerequisites")
+def get_subject_prerequisites(code: str):
+	driver = get_driver()
+	return fetch_subject_prerequisites(driver, code)
 
 
 @app.get("/path")

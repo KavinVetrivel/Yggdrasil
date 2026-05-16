@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curriculum Notebook - Upload Resources</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --sans:'DM Sans',sans-serif;
+      --mono:'JetBrains Mono',monospace;
+      --color-background-primary:#ffffff;
+      --color-background-secondary:#f8fafc;
+      --color-background-tertiary:#eef2f7;
+      --color-background-info:#eef6ff;
+      --color-text-primary:#0f172a;
+      --color-text-secondary:#475569;
+      --color-text-tertiary:#64748b;
+      --color-text-success:#0f766e;
+      --color-text-info:#1d4ed8;
+      --color-border-secondary:#cbd5e1;
+      --color-border-tertiary:#e2e8f0;
+      --color-border-info:#60a5fa;
+      --border-radius-md:10px;
+      --border-radius-lg:16px;
+    }
+    body{font-family:var(--sans);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
+    .app{display:flex;flex-direction:column;min-height:100vh;max-width:1100px;margin:0 auto;padding:1.5rem}
+    .top-bar{display:flex;align-items:center;gap:16px;margin-bottom:1.5rem;flex-wrap:wrap}
+    .logo{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.04em;border:0.5px solid var(--color-border-secondary);padding:6px 12px;border-radius:var(--border-radius-md)}
+    .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-tertiary);flex-wrap:wrap}
+    .breadcrumb span{color:var(--color-text-primary);font-weight:500}
+    .breadcrumb .sep{opacity:0.4}
+    .upload-shell{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:16px;flex:1;min-height:0}
+    .panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px}
+    .panel-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+    .panel-sub{font-size:12px;color:var(--color-text-secondary);margin-top:4px;line-height:1.5}
+    .subject-card{display:flex;flex-direction:column;gap:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px}
+    .subject-code{font-family:var(--mono);font-size:11px;color:var(--color-text-tertiary)}
+    .subject-name{font-size:18px;font-weight:500;line-height:1.35}
+    .subject-meta{font-size:12px;color:var(--color-text-secondary)}
+    .resource-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary);padding:5px 10px;border-radius:999px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);width:max-content}
+    .resource-pill .dot{width:7px;height:7px;border-radius:50%;background:#1D9E75}
+    .upload-card{display:flex;flex-direction:column;gap:14px;height:100%}
+    .upload-head{display:flex;flex-direction:column;gap:4px}
+    .upload-note{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+    .upload-grid{display:flex;flex-direction:column;gap:12px}
+    .upload-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .upload-file-btn{font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 12px;background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--sans)}
+    .upload-file-btn:hover{background:var(--color-background-primary)}
+    .upload-file-name{font-size:12px;color:var(--color-text-secondary);min-height:18px}
+    .upload-status{font-size:12px;color:var(--color-text-secondary);line-height:1.5;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary)}
+    .upload-status.ok{color:var(--color-text-success);border-color:rgba(29,158,117,.25);background:rgba(29,158,117,.08)}
+    .upload-status.bad{color:#c2410c;border-color:rgba(194,65,12,.25);background:rgba(194,65,12,.08)}
+    .upload-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .btn{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 14px;font-size:12px;cursor:pointer;font-family:var(--sans);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+    .btn.primary{border-color:var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info)}
+    .btn.secondary{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+    .btn:hover{filter:brightness(.98)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .success-box{display:none;flex-direction:column;gap:10px;padding:12px 14px;border:0.5px solid rgba(29,158,117,.25);border-radius:var(--border-radius-md);background:rgba(29,158,117,.08)}
+    .success-box.visible{display:flex}
+    .success-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+    .success-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+    .helper-text{font-size:12px;color:var(--color-text-tertiary)}
+    .muted{color:var(--color-text-tertiary)}
+    .hidden{display:none!important}
+    @media (max-width: 900px){.upload-shell{grid-template-columns:1fr}.subject-card{order:2}.upload-card{order:1}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top-bar">
+      <div class="logo">curriculum.kg</div>
+      <div class="breadcrumb" id="breadcrumb">
+        <span id="bc-sem">Semester</span>
+        <span class="sep">›</span>
+        <span id="bc-subj">Subject</span>
+        <span class="sep">›</span>
+        <span class="muted">Upload resources</span>
+      </div>
+    </div>
+
+    <div class="upload-shell">
+      <div class="panel subject-card" id="subject-card">
+        <div class="subject-code" id="subject-code">--</div>
+        <div class="subject-name" id="subject-name">Loading subject...</div>
+        <div class="subject-meta" id="subject-meta"></div>
+        <div class="resource-pill" id="resource-pill"><span class="dot"></span><span id="resource-pill-text">No resources yet</span></div>
+        <div class="panel-sub">Upload PDFs, PPTs, or PPTX files for this subject. The file will be chunked and stored in Chroma, and the subject metadata will remain linked in Neo4j.</div>
+      </div>
+
+      <div class="panel upload-card">
+        <div class="upload-head">
+          <div class="panel-title">Upload subject resources</div>
+          <div class="panel-sub">Choose a file and upload it for the selected subject. When upload finishes, open the notebook for that subject immediately.</div>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-row">
+            <button type="button" class="upload-file-btn" id="upload-file-btn">Choose file</button>
+            <input id="upload-file-input" class="hidden" type="file" accept=".pdf,.ppt,.pptx">
+            <div class="upload-file-name" id="upload-file-name">No file chosen</div>
+          </div>
+
+          <div class="upload-status" id="upload-status">Select a file to begin.</div>
+
+          <div class="success-box" id="success-box">
+            <div class="success-title">Upload complete</div>
+            <div class="success-sub" id="success-text">Your resources were stored successfully.</div>
+            <div class="upload-actions">
+              <a class="btn secondary" id="back-sem-btn" href="#">Back to semester</a>
+              <a class="btn primary hidden" id="open-notebook-btn" href="#">Open notebook</a>
+            </div>
+          </div>
+
+          <div class="upload-actions">
+            <button type="button" class="btn secondary" id="reset-btn">Reset file</button>
+            <button type="button" class="btn primary" id="upload-submit">Upload resource</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+    const fileInput = document.getElementById('upload-file-input');
+    const fileBtn = document.getElementById('upload-file-btn');
+    const fileName = document.getElementById('upload-file-name');
+    const statusBox = document.getElementById('upload-status');
+    const uploadBtn = document.getElementById('upload-submit');
+    const successBox = document.getElementById('success-box');
+    const successText = document.getElementById('success-text');
+    const openNotebookBtn = document.getElementById('open-notebook-btn');
+    const backSemBtn = document.getElementById('back-sem-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const subjectCodeEl = document.getElementById('subject-code');
+    const subjectNameEl = document.getElementById('subject-name');
+    const subjectMetaEl = document.getElementById('subject-meta');
+    const resourcePillText = document.getElementById('resource-pill-text');
+    const bcSem = document.getElementById('bc-sem');
+    const bcSubj = document.getElementById('bc-subj');
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function getRouteInfo() {
+      const match = location.pathname.match(/^\/app\/semester\/(\d{1,2})\/subject\/([^/]+)\/upload$/);
+      if (!match) {
+        return null;
+      }
+      return { semester: Number(match[1]), code: decodeURIComponent(match[2]) };
+    }
+
+    function subjectNotebookUrl(semester, code) {
+      return `/app/semester/${semester}/subject/${encodeURIComponent(code)}`;
+    }
+
+    function semesterUrl(semester) {
+      return `/app/semester/${semester}`;
+    }
+
+    function setStatus(message, kind = '') {
+      statusBox.textContent = message;
+      statusBox.className = `upload-status${kind ? ` ${kind}` : ''}`;
+    }
+
+    function setSuccessVisible(visible) {
+      successBox.classList.toggle('visible', visible);
+      openNotebookBtn.classList.toggle('hidden', !visible);
+    }
+
+    function renderSubject(subject, semester) {
+      subjectCodeEl.textContent = subject.code;
+      subjectNameEl.textContent = subject.name;
+      subjectMetaEl.textContent = `${subject.category || 'Course'} · ${subject.credits} credits`;
+      bcSem.textContent = `Sem ${semester}`;
+      bcSubj.textContent = subject.code;
+      const loaded = Number(subject.resource_count || 0);
+      resourcePillText.textContent = loaded > 0 ? `${loaded} resource${loaded !== 1 ? 's' : ''} already loaded` : 'No resources yet';
+      backSemBtn.href = semesterUrl(semester);
+      openNotebookBtn.href = subjectNotebookUrl(semester, subject.code);
+    }
+
+    async function fetchJson(path) {
+      const response = await fetch(`${apiBase}${path}`);
+      if (!response.ok) {
+        let message = `Request failed: ${response.status}`;
+        try {
+          const payload = await response.json();
+          message = payload.detail || message;
+        } catch (error) {
+          const text = await response.text();
+          if (text) message = text;
+        }
+        throw new Error(message);
+      }
+      return response.json();
+    }
+
+    async function loadSubject() {
+      const route = getRouteInfo();
+      if (!route) {
+        setStatus('Invalid upload route.', 'bad');
+        uploadBtn.disabled = true;
+        return;
+      }
+
+      try {
+        const payload = await fetchJson('/subjects');
+        const allSubjects = Object.values(payload.semesters || {}).flat();
+        const subject = allSubjects.find((item) => item.code === route.code);
+        if (!subject) {
+          throw new Error(`Subject not found: ${route.code}`);
+        }
+        renderSubject(subject, route.semester);
+        setStatus(`Ready to upload resources for ${subject.name}.`);
+      } catch (error) {
+        setStatus(error.message, 'bad');
+        uploadBtn.disabled = true;
+      }
+    }
+
+    async function uploadResource() {
+      const route = getRouteInfo();
+      const file = fileInput.files && fileInput.files[0];
+      if (!route) {
+        setStatus('Invalid upload route.', 'bad');
+        return;
+      }
+      if (!file) {
+        setStatus('Choose a PDF, PPT, or PPTX file before uploading.', 'bad');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('subject_code', route.code);
+
+      uploadBtn.disabled = true;
+      fileBtn.disabled = true;
+      resetBtn.disabled = true;
+      setSuccessVisible(false);
+      setStatus(`Uploading ${escapeHtml(file.name)}...`);
+
+      try {
+        const response = await fetch(`${apiBase}/ingest`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          let message = `Upload failed: ${response.status}`;
+          try {
+            const payload = await response.json();
+            message = payload.detail || message;
+          } catch (error) {
+            const text = await response.text();
+            if (text) message = text;
+          }
+          throw new Error(message);
+        }
+
+        const payload = await response.json();
+        const notebookUrl = subjectNotebookUrl(route.semester, route.code);
+        openNotebookBtn.href = notebookUrl;
+        openNotebookBtn.classList.remove('hidden');
+        successText.textContent = `Stored ${payload.file} for ${payload.subject.code}. Chunks stored: ${payload.chunks?.upserted ?? 0}.`;
+        setSuccessVisible(true);
+        setStatus('Upload complete. Open the notebook to continue.', 'ok');
+      } catch (error) {
+        setStatus(error.message, 'bad');
+      } finally {
+        uploadBtn.disabled = false;
+        fileBtn.disabled = false;
+        resetBtn.disabled = false;
+      }
+    }
+
+    function resetFile() {
+      fileInput.value = '';
+      fileName.textContent = 'No file chosen';
+      setSuccessVisible(false);
+      setStatus('Select a file to begin.');
+    }
+
+    fileBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      fileName.textContent = file ? file.name : 'No file chosen';
+      if (file) {
+        setStatus(`Ready to upload ${file.name}.`);
+      }
+    });
+    uploadBtn.addEventListener('click', uploadResource);
+    resetBtn.addEventListener('click', resetFile);
+
+    loadSubject();
+  </script>
+</body>
+</html>

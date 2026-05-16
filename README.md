@@ -5,6 +5,10 @@ Typically, the response generated will not only be dependent on the provided sou
 Students can provide the available resources for each semester, and the resource documents are chunked and loaded into the database with relationships between them. If the student prompts for a particular topic, the topic is searched along with its related topics, its prerequisites, and the resources connected to it. The agent (Gemini) is then asked to explain the topic by starting with the prerequisite topic, if any, and then moving on to the specified topic. This ensures better understanding.
 
 
+The notebook UI in `curriculum_notebook.html` is now the main project surface. The older curriculum explorer dashboard has been removed from the app flow.
+
+Notebook navigation now uses route-style pages under `/app`, for example `/app/semester/6`, `/app/semester/6/subject/23N604`, and `/app/semester/6/subject/23N604/upload`, so browser back and forward work without refresh.
+
 Right now the implementation is just an interface that connects all the subjects, topics, and semesters based on various relations. No resource for the topics has been chunked or uploaded in the db.
 
 CHALLENGES:
