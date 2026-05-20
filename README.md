@@ -18,3 +18,9 @@ CHALLENGES:
 ![StudentLM architecture](img/studentlm_full_architecture.svg)
 
 ![Database schema](img/image.png)
+
+To execute:
+python main.py
+python api.py
+
+url: [127.0.0.1:57094](http://127.0.0.1:8000/app)

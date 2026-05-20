@@ -12,6 +12,7 @@ from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
+from load_data import load_regulation_graph
 from parser import parse_file
 from vector_store import upsert_chunks
 
@@ -58,12 +59,15 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 NOTEBOOK_INDEX = os.path.join(BASE_DIR, "curriculum_notebook.html")
 UPLOAD_INDEX = os.path.join(BASE_DIR, "upload_resources.html")
+REGULATION_UPLOAD_INDEX = os.path.join(BASE_DIR, "regulation_upload.html")
 _driver = None
 _subject_resource_index = None
 
 
 @app.get("/")
 def home_page():
+	if not graph_is_initialized() and os.path.exists(REGULATION_UPLOAD_INDEX):
+		return FileResponse(REGULATION_UPLOAD_INDEX, media_type="text/html")
 	if os.path.exists(NOTEBOOK_INDEX):
 		return FileResponse(NOTEBOOK_INDEX, media_type="text/html")
 	raise HTTPException(status_code=404, detail="Notebook frontend not found")
@@ -73,6 +77,8 @@ def home_page():
 @app.get("/app/semester/{semester}")
 @app.get("/app/semester/{semester}/subject/{code}")
 def notebook_page(semester: int | None = None, code: str | None = None):
+	if not graph_is_initialized() and os.path.exists(REGULATION_UPLOAD_INDEX):
+		return FileResponse(REGULATION_UPLOAD_INDEX, media_type="text/html")
 	if os.path.exists(NOTEBOOK_INDEX):
 		return FileResponse(NOTEBOOK_INDEX, media_type="text/html")
 	raise HTTPException(status_code=404, detail="Notebook frontend not found")
@@ -83,6 +89,13 @@ def upload_page(semester: int, code: str):
 	if os.path.exists(UPLOAD_INDEX):
 		return FileResponse(UPLOAD_INDEX, media_type="text/html")
 	raise HTTPException(status_code=404, detail="Upload frontend not found")
+
+
+@app.get("/app/regulation/upload")
+def regulation_upload_page():
+	if os.path.exists(REGULATION_UPLOAD_INDEX):
+		return FileResponse(REGULATION_UPLOAD_INDEX, media_type="text/html")
+	raise HTTPException(status_code=404, detail="Regulation upload frontend not found")
 
 
 def normalize_whitespace(text):
@@ -128,6 +141,20 @@ def load_subject_codes(path):
 		raise ValueError(f"Failed to load subject codes from {path}: {error}") from error
 
 	return codes
+
+
+def graph_is_initialized():
+	try:
+		driver = get_driver()
+	except HTTPException:
+		return False
+
+	try:
+		with driver.session() as session:
+			row = session.run("MATCH (s:Subject) RETURN count(s) AS count").single()
+			return bool(row and row["count"])
+	except Exception:
+		return False
 
 
 def _ext(filename):
@@ -303,6 +330,34 @@ async def ingest(
 		"source_type": source_type,
 		"file": original_filename,
 		"chunks": summary,
+	}
+
+
+@app.post("/ingest/regulation")
+async def ingest_regulation(file: UploadFile = File(...)):
+	ext = _ext(file.filename or "")
+	if ext != "pdf":
+		raise HTTPException(
+			status_code=400,
+			detail="Only PDF regulation uploads are supported.",
+		)
+
+	suffix = ".pdf"
+	with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+		content = await file.read()
+		tmp.write(content)
+		tmp_path = tmp.name
+
+	try:
+		summary = load_regulation_graph(tmp_path, csv_path=CSV_PATH, verify_graph=False)
+	finally:
+		os.unlink(tmp_path)
+
+	return {
+		"status": "success",
+		"file": file.filename or "REGULATIONS.pdf",
+		"summary": summary,
+		"next": "/app",
 	}
 
 

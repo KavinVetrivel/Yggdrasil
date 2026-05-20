@@ -47,6 +47,43 @@ CSV_PATH       = os.getenv("CSV_PATH", "subjects.csv")         # path to your su
 SYLLABUS_PDF_PATH = os.getenv("SYLLABUS_PDF_PATH", "REGULATIONS.pdf")
 GEMINI_QUOTA_EXHAUSTED = False
 _subject_resource_index = None
+_GROQ_UNAVAILABLE = False
+_GROQ_UNAVAILABLE_REASON = ""
+
+# Matches common Indian university subject code formats:
+#   23N101  (your current format)
+#   GE3151  (Anna University style)
+#   22MAT11 (Amrita/VTU style)
+#   BCS301  (VTU 2021 scheme)
+#   CS6301  (older Anna University)
+SUBJECT_CODE_RE = re.compile(
+    r"(?P<code>"
+    r"[A-Z]{1,4}\d{4,6}"          # GE3151, CS6301, BCS301
+    r"|[A-Z]{1,3}\d{2}[A-Z]{2,4}\d{2,3}"  # 22MAT11-style (starts alpha)
+    r"|\d{2}[A-Z]{1,4}\d{2,4}"    # 23N101, 21CS42
+    r"|\d{2}[A-Z]{2,6}\d{1,3}"    # 22MAT11
+    r")"
+    r"\b",
+    re.ASCII
+)
+SEMESTER_HEADER_PATTERNS = (
+    re.compile(r"^\s*(?:semester|sem)\s*[-:–—]?\s*([ivx]+|\d{1,2})\b", re.I),
+    re.compile(r"^\s*([ivx]+|\d{1,2})\s*(?:st|nd|rd|th)?\s+semester\b", re.I),
+    re.compile(r"^\s*semester\s+([ivx]+|\d{1,2})\b", re.I),
+    re.compile(r"^\s*year\s*[-:–]?\s*\d+\s*[-:–]?\s*(?:odd|even)?\s*sem(?:ester)?\s*([ivx]+|\d{1,2})\b", re.I),
+    re.compile(r"^\s*\d+\s*[-:–]\s*([ivx]+|\d{1,2})\s+sem(?:ester)?\b", re.I),
+)
+SEMESTER_TYPE_VALUES = {"theory", "practical", "lab", "laboratory"}
+SUBJECT_CATEGORY_VALUES = {"BS", "ES", "HS", "MC", "PC", "EEC", "PE", "OE", "SC"}
+ROMAN_SEMESTERS = {"i": 1, "ii": 2, "iii": 3, "iv": 4, "v": 5, "vi": 6, "vii": 7, "viii": 8, "ix": 9, "x": 10}
+
+
+def get_groq_api_key():
+    for env_name in ("GROQ_API_KEY", "GROQ_API", "GROQ_API1", "GROQ_API2"):
+        api_key = os.getenv(env_name, "")
+        if api_key and api_key != "your_groq_api_key_here":
+            return api_key
+    return ""
 
 PREDEFINED_PREREQUISITES = [
     ("23N101", "23N201"),
@@ -120,7 +157,7 @@ def slugify(text):
     return slug or "item"
 
 
-def load_syllabus_text(pdf_path):
+def load_pdf_pages(pdf_path):
     try:
         import pdfplumber
     except ImportError as error:
@@ -131,10 +168,390 @@ def load_syllabus_text(pdf_path):
 
     pages = []
     with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages[6:]:
+        for page in pdf.pages:
             pages.append(page.extract_text() or "")
 
-    return "\n".join(pages)
+    return pages
+
+
+def load_pdf_text(pdf_path):
+    return "\n".join(load_pdf_pages(pdf_path))
+
+
+def find_syllabus_start_page(pages):
+    """
+    Dynamically detect which page the actual syllabus content starts on.
+    Looks for the first page that has both a subject code and a unit/module heading.
+    Falls back to page 0 if nothing matches.
+    """
+    unit_pattern = re.compile(r"\b(UNIT|MODULE)\b", re.I)
+    for i, page_text in enumerate(pages):
+        has_code = bool(SUBJECT_CODE_RE.search(page_text))
+        has_unit = bool(unit_pattern.search(page_text))
+        if has_code and has_unit:
+            # Step back one page to avoid cutting off the first subject header
+            return max(0, i - 1)
+
+    # Fallback: look for just a subject code (curriculum table pages)
+    for i, page_text in enumerate(pages):
+        if SUBJECT_CODE_RE.search(page_text):
+            return max(0, i - 1)
+
+    return 0
+
+
+def load_syllabus_text(pdf_path):
+    pages = load_pdf_pages(pdf_path)
+    start = find_syllabus_start_page(pages)
+    return "\n".join(pages[start:])
+
+
+def parse_semester_value(raw_value):
+    value = normalize_whitespace(raw_value).lower()
+    if not value:
+        return None
+
+    if value.isdigit():
+        semester = int(value)
+    else:
+        semester = ROMAN_SEMESTERS.get(value)
+        if semester is None:
+            return None
+
+    if 1 <= semester <= 10:
+        return semester
+    return None
+
+
+def detect_semester_from_line(line):
+    cleaned = normalize_whitespace(line)
+    for pattern in SEMESTER_HEADER_PATTERNS:
+        match = pattern.search(cleaned)
+        if match:
+            semester = parse_semester_value(match.group(1))
+            if semester is not None:
+                return semester
+    return None
+
+
+def normalize_subject_record(item):
+    if not isinstance(item, dict):
+        return None
+
+    code = normalize_whitespace(str(item.get("code", ""))).upper()
+    name = normalize_whitespace(str(item.get("name", "")))
+    category = normalize_whitespace(str(item.get("category", ""))).upper()
+
+    try:
+        semester = int(item.get("semester"))
+        lecture_hrs = int(float(item.get("lecture_hrs", 0)))
+        tutorial_hrs = int(float(item.get("tutorial_hrs", 0)))
+        practical_hrs = int(float(item.get("practical_hrs", 0)))
+        credits = int(float(item.get("credits", 0)))
+    except (TypeError, ValueError):
+        return None
+
+    if not code or not name or semester < 1 or semester > 10:
+        return None
+
+    if not category:
+        category = "UNKNOWN"
+    if category != "UNKNOWN" and category not in SUBJECT_CATEGORY_VALUES:
+        category = "UNKNOWN"
+
+    subject_type = normalize_whitespace(str(item.get("type", "")))
+    if subject_type.lower() not in SEMESTER_TYPE_VALUES:
+        subject_type = "Practical" if practical_hrs > 0 else "Theory"
+
+    return {
+        "code": code,
+        "name": name,
+        "semester": semester,
+        "lecture_hrs": lecture_hrs,
+        "tutorial_hrs": tutorial_hrs,
+        "practical_hrs": practical_hrs,
+        "credits": credits,
+        "category": category,
+        "type": subject_type,
+    }
+
+
+def extract_subjects_with_groq(pdf_path):
+    api_key = get_groq_api_key()
+    if not api_key or _GROQ_UNAVAILABLE:
+        return []
+
+    subjects = []
+    seen = set()
+
+    try:
+        import pdfplumber
+    except ImportError:
+        return []
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for page_index, page in enumerate(pdf.pages, start=1):
+            page_rows = collect_page_candidate_rows(page)
+            page_text = normalize_whitespace(page.extract_text() or "")
+
+            if not page_text and not page_rows:
+                continue
+
+            prompt = f"""You extract curriculum subject rows from engineering regulation tables.
+
+Return ONLY a JSON array. Each item must have exactly these fields:
+- code
+- name
+- semester
+- lecture_hrs
+- tutorial_hrs
+- practical_hrs
+- credits
+- category
+- type
+
+Rules:
+- Extract only actual subjects, not totals, not marks rules, not notes, not exam criteria.
+- Keep the exact subject code and title from the regulation.
+- Semester is the semester number for the row.
+- If the table shows a row like serial number + subject code + title + hours + credits + category, use it.
+- If there is no explicit category, use UNKNOWN.
+- type should be Theory or Practical when obvious, otherwise infer from the row.
+- Do not invent rows.
+
+Page number: {page_index}
+
+Page text:
+{page_text}
+
+Candidate rows:
+{chr(10).join(page_rows[:180])}
+"""
+
+            raw = call_groq(prompt, f"extract regulation subjects page {page_index}", max_tokens=2200)
+            if not raw:
+                continue
+
+            try:
+                parsed = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+
+            if not isinstance(parsed, list):
+                continue
+
+            for item in parsed:
+                record = normalize_subject_record(item)
+                if record is None:
+                    continue
+                key = (record["code"], record["semester"])
+                if key in seen:
+                    continue
+                seen.add(key)
+                subjects.append(record)
+
+    return subjects
+
+
+def collect_page_candidate_rows(page):
+    candidates = []
+
+    page_text = page.extract_text() or ""
+    candidates.extend(line for line in (normalize_whitespace(raw_line) for raw_line in page_text.splitlines()) if line)
+
+    try:
+        tables = page.extract_tables() or []
+    except Exception:
+        tables = []
+
+    for table in tables:
+        for row in table or []:
+            row_text = normalize_whitespace(" ".join(cell for cell in row if cell))
+            if row_text:
+                candidates.append(row_text)
+
+    try:
+        words = page.extract_words(use_text_flow=True, keep_blank_chars=False, extra_attrs=["fontname", "size"])
+    except Exception:
+        words = []
+
+    if words:
+        line_map = defaultdict(list)
+        for word in words:
+            top = round(float(word.get("top", 0.0)) / 3.0) * 3.0
+            line_map[top].append(word)
+
+        for top in sorted(line_map):
+            words_on_line = sorted(line_map[top], key=lambda item: float(item.get("x0", 0.0)))
+            row_text = normalize_whitespace(" ".join(word.get("text", "") for word in words_on_line))
+            if row_text:
+                candidates.append(row_text)
+
+    deduped = []
+    seen = set()
+    for row in candidates:
+        key = row.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(row)
+
+    return deduped
+
+
+def parse_subject_row(line, semester):
+    """
+    Parse a subject row from any Indian university regulation format.
+
+    Handles:
+    - 4-column numeric:  L  T  P  C  (most common)
+    - 3-column numeric:  L  P  C     (no tutorial column)
+    - 3-column numeric:  L  T  C     (no practical column, treated as T=val, P=0)
+    - Optional trailing category token (2-5 uppercase letters)
+    - Any subject code format matched by SUBJECT_CODE_RE
+    """
+    cleaned = normalize_whitespace(line)
+    if not cleaned or semester is None:
+        return None
+
+    tokens = cleaned.split()
+    if len(tokens) < 4:
+        return None
+
+    # Find subject code position
+    code_index = None
+    for index, token in enumerate(tokens):
+        if SUBJECT_CODE_RE.match(token):
+            code_index = index
+            break
+
+    if code_index is None:
+        return None
+
+    # Optional trailing category — accept any 2-5 uppercase alpha token
+    # Don't reject rows that lack it; just mark as UNKNOWN
+    last_token = tokens[-1].upper()
+    if re.fullmatch(r"[A-Z]{2,5}", last_token):
+        category = last_token
+        search_end = len(tokens) - 1   # numeric window must end before category
+    else:
+        category = "UNKNOWN"
+        search_end = len(tokens)
+
+    # Find numeric window: try 4-col then 3-col
+    numeric_start = None
+    window_size = None
+    for ws in (4, 3):
+        for idx in range(code_index + 1, search_end - ws + 1):
+            window = tokens[idx: idx + ws]
+            if all(re.fullmatch(r"\d+(?:\.\d+)?", t) for t in window):
+                numeric_start = idx
+                window_size = ws
+                break
+        if numeric_start is not None:
+            break
+
+    if numeric_start is None:
+        return None
+
+    num = tokens[numeric_start: numeric_start + window_size]
+    if window_size == 4:
+        lecture_hrs   = int(float(num[0]))
+        tutorial_hrs  = int(float(num[1]))
+        practical_hrs = int(float(num[2]))
+        credits       = int(float(num[3]))
+    else:
+        # 3-column: assume L  P  C  (tutorial = 0)
+        lecture_hrs   = int(float(num[0]))
+        tutorial_hrs  = 0
+        practical_hrs = int(float(num[1]))
+        credits       = int(float(num[2]))
+
+    name_tokens = tokens[code_index + 1: numeric_start]
+    name = normalize_whitespace(" ".join(name_tokens)).strip(" -–—")
+    if not name:
+        return None
+
+    subject_type = "Practical" if practical_hrs > 0 else "Theory"
+
+    return {
+        "code":          tokens[code_index],
+        "name":          name,
+        "semester":      semester,
+        "lecture_hrs":   lecture_hrs,
+        "tutorial_hrs":  tutorial_hrs,
+        "practical_hrs": practical_hrs,
+        "credits":       credits,
+        "category":      category,
+        "type":          subject_type,
+    }
+
+
+def extract_subjects_from_regulation(pdf_path):
+    groq_subjects = extract_subjects_with_groq(pdf_path)
+    if groq_subjects:
+        print(f"[Groq] Extracted {len(groq_subjects)} subjects from regulation PDF")
+        return groq_subjects
+
+    subjects = []
+    current_semester = None
+    pending_row = None
+    seen = set()
+
+    try:
+        import pdfplumber
+    except ImportError as error:
+        raise RuntimeError("Install pdfplumber in this venv before loading syllabus topics.") from error
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            page_rows = collect_page_candidate_rows(page)
+
+            for line in page_rows:
+                if line.startswith("====="):
+                    continue
+
+                detected_semester = detect_semester_from_line(line)
+                if detected_semester is not None:
+                    current_semester = detected_semester
+                    pending_row = None
+                    continue
+
+                if pending_row is not None:
+                    if SUBJECT_CODE_RE.search(line):
+                        parsed_pending = parse_subject_row(pending_row, current_semester)
+                        if parsed_pending is not None:
+                            key = (parsed_pending["code"], parsed_pending["semester"])
+                            if key not in seen:
+                                seen.add(key)
+                                subjects.append(parsed_pending)
+                        pending_row = None
+                    else:
+                        combined_row = normalize_whitespace(f"{pending_row} {line}")
+                        parsed = parse_subject_row(combined_row, current_semester)
+                        if parsed is not None:
+                            key = (parsed["code"], parsed["semester"])
+                            if key not in seen:
+                                seen.add(key)
+                                subjects.append(parsed)
+                            pending_row = None
+                            continue
+                        pending_row = combined_row
+                        continue
+
+                parsed = parse_subject_row(line, current_semester)
+                if parsed is None:
+                    if SUBJECT_CODE_RE.search(line):
+                        pending_row = line
+                    continue
+
+                key = (parsed["code"], parsed["semester"])
+                if key in seen:
+                    continue
+                seen.add(key)
+                subjects.append(parsed)
+
+    return subjects
 
 
 def collect_subject_blocks(syllabus_text, subject_codes):
@@ -174,13 +591,32 @@ def collect_subject_blocks(syllabus_text, subject_codes):
 
 
 def parse_unit_blocks(subject_lines):
+    """
+    Extract unit blocks from a subject's syllabus lines.
+
+    Detects headings in these formats:
+      UNIT I / UNIT - 1 / UNIT–II        (most Anna University, VTU)
+      MODULE 1 / MODULE - II              (Amrita, some VTU)
+      UNIT I: Title text                  (combined heading + title)
+      Title Text:                         (colon-terminated heading, old format)
+    """
+    UNIT_HEADING_RE = re.compile(
+        r"^(?:"
+        r"(?:UNIT|MODULE)\s*[-–—]?\s*([IVXivx]+|\d+)"  # UNIT I, MODULE 2
+        r")"
+        r"(?:\s*[-–:]\s*(.+))?$",                        # optional ": Title" suffix
+        re.I,
+    )
+    COLON_HEADING_RE = re.compile(r"^(.{3,140}?):\s*(.*)$")
+
     content_lines = list(subject_lines)
+    # Drop the subject header line and optional credit-hour summary line
     if len(content_lines) > 1 and re.fullmatch(r"[0-9 ]+", content_lines[1]):
         content_lines = content_lines[2:]
     else:
         content_lines = content_lines[1:]
 
-    stop_markers = ("TEXT BOOK", "TEXTBOOK", "REFERENCES", "TOTAL")
+    stop_markers = ("TEXT BOOK", "TEXTBOOK", "REFERENCES", "TOTAL", "REFERENCE BOOK", "SUGGESTED READING")
     filtered_lines = []
     for line in content_lines:
         if any(line.upper().startswith(marker) for marker in stop_markers):
@@ -191,13 +627,25 @@ def parse_unit_blocks(subject_lines):
     current = None
 
     for line in filtered_lines:
-        heading = re.match(r"^(.{3,140}?):\s*(.*)$", line)
-        if heading and not re.match(r"^\d+[\.)]\s*", line):
+        unit_match = UNIT_HEADING_RE.match(line.strip())
+        if unit_match:
             if current is not None:
                 units.append(current)
+            # Use the suffix after the unit number as the title, or blank if absent
+            title_suffix = normalize_whitespace(unit_match.group(2) or "")
+            unit_label = normalize_whitespace(unit_match.group(0).split(":")[0])
+            title = title_suffix if title_suffix else unit_label
+            current = {"title": title, "body_lines": []}
+            continue
+
+        colon_match = COLON_HEADING_RE.match(line)
+        if colon_match and not re.match(r"^\d+[\.)]\s*", line):
+            if current is not None:
+                units.append(current)
+            body_start = normalize_whitespace(colon_match.group(2))
             current = {
-                "title": normalize_whitespace(heading.group(1)),
-                "body_lines": [normalize_whitespace(heading.group(2))] if heading.group(2).strip() else [],
+                "title": normalize_whitespace(colon_match.group(1)),
+                "body_lines": [body_start] if body_start else [],
             }
             continue
 
@@ -243,6 +691,11 @@ def extract_topics_from_unit(unit_body_lines):
                 cleaned_items.append(item)
         return cleaned_items
 
+    if len(text) > 600:
+        summarized_items = summarize_unit_text(text, max_sentences=4)
+        if summarized_items:
+            return summarized_items
+
     chunks = re.split(r"\s[–—]\s|\s-\s|\s;\s", text)
     topics = []
     seen = set()
@@ -260,7 +713,152 @@ def extract_topics_from_unit(unit_body_lines):
     return topics
 
 
+def normalize_topic_graph_item(item):
+    if not isinstance(item, dict):
+        return None
+
+    try:
+        number = int(item.get("number"))
+    except (TypeError, ValueError):
+        return None
+
+    title = normalize_whitespace(str(item.get("title", "")))
+    if not title:
+        return None
+
+    topics_raw = item.get("topics", [])
+    if not isinstance(topics_raw, list):
+        topics_raw = []
+
+    topics = []
+    seen = set()
+    for topic in topics_raw:
+        cleaned = normalize_whitespace(str(topic))
+        if not cleaned:
+            continue
+        key = cleaned.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        topics.append(cleaned)
+
+    return {"number": number, "title": title, "topics": topics}
+
+
+def extract_topic_graph_with_groq(subjects, pdf_path):
+    api_key = get_groq_api_key()
+    if not api_key or _GROQ_UNAVAILABLE:
+        return []
+
+    try:
+        syllabus_text = load_syllabus_text(pdf_path)
+    except Exception:
+        return []
+
+    subject_codes = [subject["code"] for subject in subjects]
+    subject_blocks = collect_subject_blocks(syllabus_text, subject_codes)
+    topic_graph = []
+
+    for block in subject_blocks:
+        block_text = normalize_whitespace("\n".join(block["lines"]))
+        if not block_text:
+            continue
+
+        prompt = f"""You extract unit and topic nodes from a syllabus section.
+
+Return ONLY a JSON array. Each item must have exactly:
+- number
+- title
+- topics
+
+Rules:
+- Extract only true units/modules from the syllabus.
+- Each topic must be a short topical node, not a sentence paragraph.
+- Ignore references, textbooks, assessment rules, mark schemes, and notes.
+- If a unit has no clear title, use "Overview".
+- Keep topics deduplicated and concise.
+
+Subject code: {block['code']}
+
+Syllabus text:
+{block_text}
+"""
+
+        raw = call_groq(prompt, f"extract topics for {block['code']}", max_tokens=2500)
+        if not raw:
+            continue
+
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+
+        if not isinstance(parsed, list):
+            continue
+
+        units = []
+        seen_numbers = set()
+        for item in parsed:
+            unit = normalize_topic_graph_item(item)
+            if unit is None or unit["number"] in seen_numbers:
+                continue
+            seen_numbers.add(unit["number"])
+            units.append(unit)
+
+        if units:
+            topic_graph.append({"code": block["code"], "units": sorted(units, key=lambda entry: entry["number"])})
+
+    return topic_graph
+
+
+def summarize_unit_text(text, max_sentences=4):
+    try:
+        from nltk.corpus import stopwords
+        from nltk.tokenize import sent_tokenize
+    except ImportError:
+        return []
+
+    try:
+        sentences = [normalize_whitespace(sentence) for sentence in sent_tokenize(text)]
+    except LookupError:
+        sentences = [normalize_whitespace(sentence) for sentence in re.split(r"(?<=[.!?])\s+", text)]
+
+    sentences = [sentence for sentence in sentences if sentence]
+    if not sentences:
+        return []
+    if len(sentences) <= max_sentences:
+        return sentences
+
+    try:
+        stop_words = set(stopwords.words("english"))
+    except LookupError:
+        stop_words = set()
+
+    frequency = defaultdict(int)
+    for sentence in sentences:
+        for word in re.findall(r"[A-Za-z][A-Za-z'-]+", sentence.lower()):
+            if word not in stop_words:
+                frequency[word] += 1
+
+    if not frequency:
+        return sentences[:max_sentences]
+
+    ranked = []
+    for index, sentence in enumerate(sentences):
+        words = re.findall(r"[A-Za-z][A-Za-z'-]+", sentence.lower())
+        score = sum(frequency.get(word, 0) for word in words)
+        ranked.append((score, index, sentence))
+
+    selected = sorted(sorted(ranked, key=lambda item: (-item[0], item[1]))[:max_sentences], key=lambda item: item[1])
+    return [sentence for _, _, sentence in selected]
+
+
 def extract_topic_graph(subjects, pdf_path):
+    groq_topic_graph = extract_topic_graph_with_groq(subjects, pdf_path)
+    if groq_topic_graph:
+        print(f"[Groq] Parsed topic structure for {len(groq_topic_graph)} subjects")
+        return groq_topic_graph
+
     subject_codes = [subject["code"] for subject in subjects]
     syllabus_text = load_syllabus_text(pdf_path)
     subject_blocks = collect_subject_blocks(syllabus_text, subject_codes)
@@ -569,8 +1167,14 @@ def infer_related_topics_fallback(subjects, prerequisites, topic_graph):
 
 
 def infer_related_topics(subjects, prerequisites, topic_graph):
-    if GEMINI_QUOTA_EXHAUSTED:
-        print("[API] Gemini quota exhausted; using local heuristic topic matching.")
+    """
+    Infer RELATED_TO edges between topics in different subjects.
+    Priority: Groq → Gemini → local heuristic fallback.
+    """
+    use_groq = bool(get_groq_api_key()) and not _GROQ_UNAVAILABLE
+
+    if GEMINI_QUOTA_EXHAUSTED and not use_groq:
+        print("[API] All LLM quotas exhausted; using local heuristic topic matching.")
         return infer_related_topics_fallback(subjects, prerequisites, topic_graph)
 
     subject_lookup = {subject["code"]: subject for subject in subjects}
@@ -619,9 +1223,15 @@ Candidate target subjects:
 {chr(10).join(target_summaries)}
 """
 
-        raw = call_gemini(prompt, f"infer topic links for {source_code}", max_output_tokens=1400)
+        raw = None
+        if use_groq:
+            raw = call_groq(prompt, f"infer topic links for {source_code}", max_tokens=1400)
+
+        if raw is None and not GEMINI_QUOTA_EXHAUSTED:
+            raw = call_gemini(prompt, f"infer topic links for {source_code}", max_output_tokens=1400)
+
         if raw is None:
-            if GEMINI_QUOTA_EXHAUSTED:
+            if GEMINI_QUOTA_EXHAUSTED and not use_groq:
                 return infer_related_topics_fallback(subjects, prerequisites, topic_graph)
             continue
 
@@ -629,7 +1239,6 @@ Candidate target subjects:
             parsed = json.loads(raw)
         except json.JSONDecodeError as error:
             print(f"[API] JSON parse failed for topic links from {source_code}: {error}")
-            print(f"[API] Raw response:\n{raw}")
             continue
 
         if not isinstance(parsed, list):
@@ -667,67 +1276,188 @@ Candidate target subjects:
                 "target_topic": target_topic_name,
             })
 
-    print(f"[LLM] Inferred {len(related_pairs)} cross-subject topic relationships")
+    provider = "Groq" if use_groq else "Gemini"
+    print(f"[{provider}] Inferred {len(related_pairs)} cross-subject topic relationships")
     return related_pairs
 
 
 # ─────────────────────────────────────────────
-# STEP 2: Infer prerequisites via Gemini API
+# GROQ — free LLM for prerequisite inference
 # ─────────────────────────────────────────────
-def infer_prerequisites(subjects):
-    if PREDEFINED_PREREQUISITES:
-        print(f"[Prerequisites] Using {len(PREDEFINED_PREREQUISITES)} predefined relationships")
-        return [
-            {"prerequisite": prerequisite, "dependent": dependent}
-            for prerequisite, dependent in PREDEFINED_PREREQUISITES
-        ]
+def call_groq(prompt, label, max_tokens=2000):
+    """
+    Call Groq free-tier API (llama-3.3-70b-versatile).
+    Returns raw text or None on failure.
+    Set GROQ_API_KEY in .env — free at console.groq.com.
+    """
+    global _GROQ_UNAVAILABLE, _GROQ_UNAVAILABLE_REASON
 
-    # Build a compact subject list for the prompt
-    subject_list = "\n".join(
-        f"Sem{s['semester']} | {s['code']} | {s['name']} | {s['category']}"
-        for s in subjects
-        if s['category'] not in ('MC',)   # skip mandatory non-academic courses
+    if _GROQ_UNAVAILABLE:
+        return None
+
+    api_key = get_groq_api_key()
+    if not api_key:
+        return None
+
+    payload = {
+        "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": max_tokens,
+        "temperature": 0,
+    }
+
+    request = Request(
+        "https://api.groq.com/openai/v1/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        method="POST",
     )
 
-    prompt = f"""You are an expert in computer science curriculum design.
+    try:
+        with urlopen(request, timeout=60) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            raw = data["choices"][0]["message"]["content"].strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            return raw.strip()
+    except HTTPError as error:
+        error_body = error.read().decode('utf-8', errors='replace')
+        print(f"[Groq] HTTP {error.code} for {label}: {error_body}")
+        if error.code == 403 and "1010" in error_body:
+            _GROQ_UNAVAILABLE = True
+            _GROQ_UNAVAILABLE_REASON = (
+                "Groq is rejecting this request at the edge (Cloudflare 1010 / 403), "
+                "so the API call is not reaching Groq's backend. This usually points to "
+                "a blocked IP/network, a restricted key, or a Groq-side access rule."
+            )
+            print(f"[Groq] {_GROQ_UNAVAILABLE_REASON} Disabling Groq for the rest of this run.")
+    except (URLError, KeyError, IndexError, json.JSONDecodeError) as error:
+        print(f"[Groq] Error for {label}: {error}")
 
-Below is the complete subject list for a BE CSE (AI & ML) 8-semester program.
-Format: Semester | Code | Name | Category
+    return None
 
-{subject_list}
 
-Task: Identify prerequisite relationships between these subjects.
-A prerequisite means: a student should ideally complete subject A before taking subject B,
-because B builds directly on A's concepts.
+def infer_prerequisites_heuristic(subjects):
+    """
+    Local fallback: infer prerequisites purely from subject names and semester ordering.
+    Looks for explicit name-based signals like "Advanced X" following "X", lab versions
+    of theory subjects, and common CS/ML curriculum patterns.
+    """
+    NAME_SIGNALS = [
+        (re.compile(r"\badvanced\b", re.I), re.compile(r"(?!advanced)\b", re.I)),
+        (re.compile(r"\bii\b", re.I), None),
+        (re.compile(r"\b2\b"), None),
+        (re.compile(r"\blab\b|\blaboratory\b|\bpractical\b", re.I), None),
+    ]
+
+    by_sem = defaultdict(list)
+    for s in subjects:
+        by_sem[s["semester"]].append(s)
+
+    name_to_subjects = defaultdict(list)
+    for s in subjects:
+        key = re.sub(r"\b(advanced|ii|2|lab|laboratory|practical|and|the|of|in|to)\b", "", s["name"], flags=re.I)
+        key = re.sub(r"\s+", " ", key).strip().lower()
+        name_to_subjects[key].append(s)
+
+    prereqs = []
+    seen = set()
+
+    for s in subjects:
+        # "Advanced X" → find plain "X" in earlier semester
+        if re.search(r"\badvanced\b", s["name"], re.I):
+            base_name = re.sub(r"\badvanced\b\s*", "", s["name"], flags=re.I).strip().lower()
+            for candidate in subjects:
+                if candidate["semester"] < s["semester"] and base_name in candidate["name"].lower():
+                    pair = (candidate["code"], s["code"])
+                    if pair not in seen:
+                        seen.add(pair)
+                        prereqs.append({"prerequisite": candidate["code"], "dependent": s["code"]})
+
+        # "X Lab" / "X Laboratory" → find "X" theory in same or earlier semester
+        if re.search(r"\blab\b|\blaboratory\b", s["name"], re.I):
+            base_name = re.sub(r"\s*(lab|laboratory|practical)\s*", " ", s["name"], flags=re.I).strip().lower()
+            for candidate in subjects:
+                if candidate["semester"] <= s["semester"] and candidate["code"] != s["code"]:
+                    if base_name in candidate["name"].lower() or candidate["name"].lower() in base_name:
+                        pair = (candidate["code"], s["code"])
+                        if pair not in seen:
+                            seen.add(pair)
+                            prereqs.append({"prerequisite": candidate["code"], "dependent": s["code"]})
+
+    print(f"[Heuristic] Inferred {len(prereqs)} prerequisite relationships")
+    return prereqs
+
+
+# ─────────────────────────────────────────────
+# STEP 2: Infer prerequisites
+# ─────────────────────────────────────────────
+def infer_prerequisites(subjects):
+    """
+    Infer prerequisite relationships between subjects.
+    Priority: Groq (free LLM) → local heuristic fallback.
+    """
+    if not subjects:
+        return []
+
+    if not get_groq_api_key():
+        print("[Prerequisites] No Groq key set; using local heuristic inference.")
+        return infer_prerequisites_heuristic(subjects)
+
+    # Format subjects as a compact list for the prompt
+    lines = []
+    for s in subjects:
+        lines.append(f"  {s['code']} | Sem {s['semester']} | {s['name']} | {s['category']} | {s['type']}")
+    subject_list = "\n".join(lines)
+
+    prompt = f"""You are building a curriculum knowledge graph for an engineering college.
+Given this list of subjects, infer PREREQUISITE_OF relationships: which subject must be completed before another.
 
 Rules:
-- Only use subject codes from the list above.
-- A prerequisite must be in an EARLIER semester than the dependent subject.
-- Be strict — only add a relationship if there is a clear conceptual dependency.
-- Do NOT add relationships for general foundational subjects like calculus or English.
-- Focus on core CS/AI/ML subject chains.
+- Only create prerequisites where there is a clear conceptual dependency.
+- A subject can only prerequisite subjects in LATER semesters.
+- "Advanced X" always requires plain "X".
+- Labs require their corresponding theory subject.
+- Do not invent relationships; if unclear, skip.
+- Return ONLY a JSON array. Each object: {{"prerequisite": "CODE", "dependent": "CODE"}}
+- No explanation, no markdown.
 
-Return ONLY a JSON array, no explanation, no markdown, no extra text.
-Each object must have exactly: "prerequisite" and "dependent" as subject codes.
+Subjects:
+{subject_list}
+"""
 
-Example format:
-[
-  {{"prerequisite": "23N303", "dependent": "23N403"}},
-  {{"prerequisite": "23N405", "dependent": "23N501"}}
-]"""
+    print(f"[Groq] Inferring prerequisites for {len(subjects)} subjects...")
+    raw = call_groq(prompt, "infer prerequisites", max_tokens=2000)
 
-    raw = call_gemini(prompt, "infer prerequisites", max_output_tokens=1000)
     if raw is None:
-        return []
+        print("[Prerequisites] Groq unavailable; using local heuristic inference.")
+        return infer_prerequisites_heuristic(subjects)
 
     try:
-        pairs = json.loads(raw)
-        print(f"[API] Got {len(pairs)} prerequisite relationships")
-        return pairs
-    except json.JSONDecodeError as e:
-        print(f"[API] JSON parse failed: {e}")
-        print(f"[API] Raw response:\n{raw}")
-        return []
+        parsed = json.loads(raw)
+        if not isinstance(parsed, list):
+            raise ValueError("Expected a JSON array")
+    except (json.JSONDecodeError, ValueError) as error:
+        print(f"[Prerequisites] JSON parse failed: {error}; using local heuristic.")
+        return infer_prerequisites_heuristic(subjects)
+
+    # Validate: only accept pairs where prerequisite semester < dependent semester
+    sem_map = {s["code"]: s["semester"] for s in subjects}
+    code_set = set(sem_map.keys())
+    valid = []
+    for item in parsed:
+        pre = str(item.get("prerequisite", "")).strip()
+        dep = str(item.get("dependent", "")).strip()
+        if pre in code_set and dep in code_set and sem_map[pre] < sem_map[dep]:
+            valid.append({"prerequisite": pre, "dependent": dep})
+
+    print(f"[Groq] Inferred {len(valid)} valid prerequisite relationships")
+    return valid
 
 
 # ─────────────────────────────────────────────
@@ -739,6 +1469,15 @@ def load_into_neo4j(subjects, prerequisites, topic_graph):
 
     driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
     related_topics = infer_related_topics(subjects, prerequisites, topic_graph)
+    summary = {
+        "subjects_loaded": len(subjects),
+        "prerequisites_loaded": 0,
+        "prerequisites_skipped": 0,
+        "units_loaded": 0,
+        "topics_loaded": 0,
+        "related_loaded": 0,
+        "related_skipped": 0,
+    }
 
     with driver.session() as session:
 
@@ -750,23 +1489,12 @@ def load_into_neo4j(subjects, prerequisites, topic_graph):
         session.run("CREATE CONSTRAINT topic_key IF NOT EXISTS FOR (t:Topic) REQUIRE t.key IS UNIQUE")
         session.run("CREATE INDEX topic_lookup IF NOT EXISTS FOR (t:Topic) ON (t.subject_code, t.name_normalized)")
 
-        # Program
-        print("[Neo4j] Creating Program node...")
-        session.run("""
-            MERGE (p:Program {code: 'CSE_AIML'})
-            SET p.name       = 'BE Computer Science and Engineering (AI&ML)',
-                p.regulation = '2023',
-                p.total_credits = 166
-        """)
-
-        # Semesters
+        # Semesters — infer range from actual subjects (supports 4-yr, 5-yr programs)
         print("[Neo4j] Creating Semester nodes...")
-        for n in range(1, 9):
+        max_sem = max((s["semester"] for s in subjects), default=8)
+        for n in range(1, max_sem + 1):
             session.run("""
                 MERGE (sem:Semester {number: $n})
-                WITH sem
-                MATCH (p:Program {code: 'CSE_AIML'})
-                MERGE (sem)-[:PART_OF]->(p)
             """, n=n)
 
         # Subjects
@@ -813,6 +1541,8 @@ def load_into_neo4j(subjects, prerequisites, topic_graph):
                 skipped += 1
 
         print(f"  Loaded: {loaded} | Skipped: {skipped}")
+        summary["prerequisites_loaded"] = loaded
+        summary["prerequisites_skipped"] = skipped
 
         # Units and topics
         print(f"[Neo4j] Loading topic graph for {len(topic_graph)} subjects...")
@@ -864,6 +1594,8 @@ def load_into_neo4j(subjects, prerequisites, topic_graph):
                     topic_count += 1
 
         print(f"  Loaded: {unit_count} units | {topic_count} topics")
+        summary["units_loaded"] = unit_count
+        summary["topics_loaded"] = topic_count
 
         # Cross-subject topic relationships
         print(f"[Neo4j] Loading {len(related_topics)} RELATED_TO relationships...")
@@ -900,9 +1632,55 @@ def load_into_neo4j(subjects, prerequisites, topic_graph):
                 related_skipped += 1
 
         print(f"  Loaded: {related_loaded} | Skipped: {related_skipped}")
+        summary["related_loaded"] = related_loaded
+        summary["related_skipped"] = related_skipped
 
     driver.close()
     print("[Neo4j] Done.")
+    return summary
+
+
+def reset_curriculum_graph(driver):
+    with driver.session() as session:
+        session.run("MATCH (n:Topic) DETACH DELETE n")
+        session.run("MATCH (n:Unit) DETACH DELETE n")
+        session.run("MATCH (n:Subject) DETACH DELETE n")
+        session.run("MATCH (n:Semester) DETACH DELETE n")
+        session.run("MATCH (n:Program) DETACH DELETE n")
+
+
+def load_regulation_graph(regulation_pdf_path, csv_path=CSV_PATH, verify_graph=False):
+    if GraphDatabase is None:
+        raise RuntimeError("Install the neo4j driver in this venv before loading data: c:/vscode/Yggdrasil/.venv/Scripts/python.exe -m pip install neo4j")
+
+    subjects = extract_subjects_from_regulation(regulation_pdf_path)
+    if not subjects:
+        raise RuntimeError(
+            "No subjects were extracted from the uploaded regulation PDF. Check that the file has semester headings and subject rows in a readable table format."
+        )
+
+    prerequisites = infer_prerequisites(subjects)
+    topic_graph = extract_topic_graph(subjects, regulation_pdf_path)
+
+    driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    reset_curriculum_graph(driver)
+    driver.close()
+
+    summary = load_into_neo4j(subjects, prerequisites, topic_graph)
+
+    result = {
+        "regulation_pdf": regulation_pdf_path,
+        "csv_path": csv_path,
+        "subjects": len(subjects),
+        "prerequisites": len(prerequisites),
+        "topic_subjects": len(topic_graph),
+    }
+    result.update(summary)
+
+    if verify_graph:
+        verify(subjects, prerequisites, topic_graph)
+
+    return result
 
 
 # ─────────────────────────────────────────────

@@ -39,10 +39,18 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-tertiary)}
 .breadcrumb span{color:var(--color-text-primary);font-weight:500}
 .breadcrumb .sep{opacity:0.4}
+.topbar-action{margin-left:auto;font-size:12px;border:0.5px solid rgba(29,78,216,.25);border-radius:999px;padding:8px 12px;background:var(--color-background-info);color:var(--color-text-info);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.topbar-action:hover{filter:brightness(.98)}
 
 .gate{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:2rem;padding:3rem 0}
 .gate-title{font-size:22px;font-weight:500;text-align:center}
 .gate-sub{font-size:14px;color:var(--color-text-secondary);text-align:center;max-width:400px;line-height:1.6}
+.setup-card{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(100%,760px);padding:16px 18px;border:0.5px solid rgba(29,78,216,.18);border-radius:var(--border-radius-lg);background:var(--color-background-primary);box-shadow:0 12px 30px rgba(15,23,42,.05)}
+.setup-copy{display:flex;flex-direction:column;gap:4px}
+.setup-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.setup-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.5;max-width:56ch}
+.setup-btn{font-size:12px;border:0.5px solid rgba(29,78,216,.25);border-radius:999px;padding:9px 12px;background:var(--color-background-info);color:var(--color-text-info);text-decoration:none;white-space:nowrap}
+.setup-btn:hover{filter:brightness(.98)}
 
 .sem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;width:100%;max-width:560px}
 .sem-btn{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 8px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;font-family:var(--sans)}
@@ -157,6 +165,7 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
       <span class="sep hidden" id="bc-sep1">›</span>
       <span id="bc-subj" class="hidden"></span>
     </div>
+    <a class="topbar-action" href="/app/regulation/upload">Initialize regulation</a>
   </div>
 
   <!-- GATE: Semester selection -->
@@ -166,6 +175,13 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
       <p class="gate-sub">You'll see subjects up to your current semester. Upload resources for those subjects to unlock AI tutoring.</p>
     </div>
     <div class="sem-grid" id="sem-grid"></div>
+    <div class="setup-card">
+      <div class="setup-copy">
+        <div class="setup-title">Need to seed the graph first?</div>
+        <div class="setup-sub">Upload the regulation PDF once to extract subjects, units, topics, and relations into Neo4j before you start uploading subject resources.</div>
+      </div>
+      <a class="setup-btn" href="/app/regulation/upload">Upload regulation</a>
+    </div>
   </div>
 
   <!-- GATE: Subject selection -->

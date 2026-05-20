@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curriculum Notebook - Upload Regulation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --sans:'DM Sans',sans-serif;
+      --mono:'JetBrains Mono',monospace;
+      --bg:#eef2f7;
+      --panel:#ffffff;
+      --panel-soft:#f8fafc;
+      --panel-accent:#eef6ff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --muted-2:#94a3b8;
+      --line:#e2e8f0;
+      --line-strong:#cbd5e1;
+      --brand:#1d4ed8;
+      --brand-soft:#dbeafe;
+      --success:#0f766e;
+      --success-soft:rgba(29,158,117,.10);
+      --danger:#c2410c;
+      --danger-soft:rgba(194,65,12,.10);
+      --radius-lg:20px;
+      --radius-md:12px;
+      --shadow:0 24px 60px rgba(15,23,42,.08);
+    }
+    body{
+      font-family:var(--sans);
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(29,78,216,.12), transparent 34%),
+        radial-gradient(circle at top right, rgba(15,118,110,.10), transparent 28%),
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
+    }
+    .app{
+      min-height:100vh;
+      max-width:1180px;
+      margin:0 auto;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    .top-bar{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .logo{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#334155;
+      border:1px solid var(--line-strong);
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(8px);
+      padding:7px 12px;
+      border-radius:999px;
+    }
+    .breadcrumb{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      color:var(--muted);
+      flex-wrap:wrap;
+    }
+    .breadcrumb .current{
+      color:var(--text);
+      font-weight:500;
+    }
+    .breadcrumb .sep{opacity:.4}
+    .topbar-action{
+      margin-left:auto;
+      font-size:12px;
+      border:1px solid rgba(29,78,216,.20);
+      background:var(--brand-soft);
+      color:var(--brand);
+      border-radius:999px;
+      padding:8px 12px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 6px 18px rgba(29,78,216,.08);
+    }
+    .hero{
+      display:grid;
+      grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);
+      gap:16px;
+      align-items:stretch;
+    }
+    .hero-card,.panel{
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--line);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow);
+    }
+    .hero-card{
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card::after{
+      content:'';
+      position:absolute;
+      inset:auto -60px -80px auto;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(29,78,216,.16), transparent 68%);
+      pointer-events:none;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-family:var(--mono);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--brand);
+      background:var(--brand-soft);
+      border-radius:999px;
+      padding:6px 10px;
+      margin-bottom:16px;
+    }
+    h1{
+      font-size:clamp(28px,4vw,46px);
+      line-height:1.02;
+      letter-spacing:-.03em;
+      max-width:12ch;
+    }
+    .hero-copy{
+      margin-top:14px;
+      font-size:15px;
+      line-height:1.7;
+      color:var(--muted);
+      max-width:64ch;
+    }
+    .hero-points{
+      margin-top:20px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      max-width:720px;
+    }
+    .point{
+      background:rgba(248,250,252,.92);
+      border:1px solid var(--line);
+      border-radius:var(--radius-md);
+      padding:12px 14px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .point strong{color:var(--text);font-weight:500}
+    .status-card{
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .status-title{
+      font-size:13px;
+      font-weight:500;
+      color:var(--text);
+    }
+    .status-sub{
+      font-size:12px;
+      line-height:1.6;
+      color:var(--muted);
+    }
+    .stat-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .stat{
+      padding:12px;
+      border-radius:var(--radius-md);
+      background:var(--panel-soft);
+      border:1px solid var(--line);
+    }
+    .stat-value{
+      font-family:var(--mono);
+      font-size:20px;
+      font-weight:500;
+      color:var(--text);
+    }
+    .stat-label{
+      margin-top:4px;
+      font-size:11px;
+      color:var(--muted-2);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    .content-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 320px;
+      gap:16px;
+      align-items:start;
+      flex:1;
+      min-height:0;
+    }
+    .panel{
+      padding:20px;
+    }
+    .upload-panel{display:flex;flex-direction:column;gap:16px}
+    .panel-title{font-size:14px;font-weight:500;color:var(--text)}
+    .panel-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-top:4px}
+    .dropzone{
+      border:1.5px dashed var(--line-strong);
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(248,250,252,.9));
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      align-items:flex-start;
+      transition:border-color .15s ease, transform .15s ease, background .15s ease;
+    }
+    .dropzone.dragover{
+      border-color:var(--brand);
+      background:rgba(219,234,254,.65);
+      transform:translateY(-1px);
+    }
+    .drop-title{
+      font-size:18px;
+      font-weight:500;
+      color:var(--text);
+    }
+    .drop-sub{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.6;
+      max-width:56ch;
+    }
+    .upload-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .btn{
+      border-radius:12px;
+      border:1px solid var(--line-strong);
+      background:var(--panel);
+      color:var(--text);
+      font-family:var(--sans);
+      font-size:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+    }
+    .btn.primary{
+      background:var(--brand);
+      color:#fff;
+      border-color:var(--brand);
+      box-shadow:0 12px 22px rgba(29,78,216,.18);
+    }
+    .btn.secondary{background:var(--panel-soft);color:var(--muted)}
+    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .file-name{font-size:12px;color:var(--muted);min-height:18px}
+    .status-box{
+      font-size:12px;
+      line-height:1.6;
+      border-radius:var(--radius-md);
+      padding:12px 14px;
+      border:1px solid var(--line);
+      background:var(--panel-soft);
+      color:var(--muted);
+    }
+    .status-box.ok{color:var(--success);background:var(--success-soft);border-color:rgba(29,158,117,.24)}
+    .status-box.bad{color:var(--danger);background:var(--danger-soft);border-color:rgba(194,65,12,.24)}
+    .summary{
+      display:none;
+      flex-direction:column;
+      gap:10px;
+      border-radius:18px;
+      padding:16px;
+      background:rgba(15,118,110,.08);
+      border:1px solid rgba(15,118,110,.16);
+    }
+    .summary.visible{display:flex}
+    .summary-title{font-size:13px;font-weight:500;color:var(--text)}
+    .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .summary-item{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.8);border:1px solid rgba(15,118,110,.12)}
+    .summary-value{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text)}
+    .summary-label{font-size:11px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+    .side-panel{display:flex;flex-direction:column;gap:14px}
+    .side-list{display:flex;flex-direction:column;gap:10px}
+    .side-item{padding:12px 14px;border-radius:var(--radius-md);background:var(--panel-soft);border:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.5}
+    .side-item strong{color:var(--text);font-weight:500}
+    .actions{display:flex;flex-wrap:wrap;gap:10px}
+    .hidden{display:none!important}
+    input[type="file"]{display:none}
+    @media (max-width: 980px){
+      .hero,.content-grid{grid-template-columns:1fr}
+      .topbar-action{margin-left:0}
+    }
+    @media (max-width: 640px){
+      .app{padding:16px}
+      .hero-card,.panel{padding:18px}
+      .hero-points,.summary-grid,.stat-grid{grid-template-columns:1fr}
+      h1{max-width:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top-bar">
+      <div class="logo">curriculum.kg</div>
+      <div class="breadcrumb">
+        <span>Setup</span>
+        <span class="sep">›</span>
+        <span class="current">Upload regulation</span>
+      </div>
+      <a class="topbar-action" href="/app">Open notebook</a>
+    </div>
+
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Initial graph build</div>
+        <h1>Upload the regulation once to seed Neo4j.</h1>
+        <p class="hero-copy">This page ingests the curriculum regulation PDF, extracts subjects, units, and topics, then loads the graph structure and relation edges into Neo4j so the notebook can use them immediately.</p>
+        <div class="hero-points">
+          <div class="point"><strong>Subjects</strong> are read from the course list and linked to semesters.</div>
+          <div class="point"><strong>Units and topics</strong> are parsed from the uploaded regulation pages.</div>
+          <div class="point"><strong>Relations</strong> are created for prerequisites and topic structure.</div>
+          <div class="point"><strong>Fallback summarization</strong> uses NLTK when a unit body needs a shorter topic readout.</div>
+        </div>
+      </div>
+
+      <aside class="panel status-card">
+        <div>
+          <div class="status-title">What happens after upload</div>
+          <div class="status-sub">The loader writes the extracted curriculum graph into Neo4j and returns a summary you can verify before opening the notebook.</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-value">Neo4j</div><div class="stat-label">Target database</div></div>
+          <div class="stat"><div class="stat-value">PDF</div><div class="stat-label">Accepted file type</div></div>
+        </div>
+        <div class="actions">
+          <a class="btn secondary" href="/app">Skip to notebook</a>
+          <a class="btn primary" href="#upload-panel">Start upload</a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="content-grid">
+      <div class="panel upload-panel" id="upload-panel">
+        <div>
+          <div class="panel-title">Upload regulation PDF</div>
+          <div class="panel-sub">Choose the regulation file that defines your curriculum. The upload will be parsed directly into the graph model.</div>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+          <div class="drop-title">Drop the regulation PDF here or browse for a file.</div>
+          <div class="drop-sub">Only PDF uploads are accepted. After processing, the app will show how many subjects, units, topics, and relations were written to Neo4j.</div>
+          <div class="upload-row">
+            <button type="button" class="btn secondary" id="choose-btn">Choose file</button>
+            <input id="file-input" type="file" accept=".pdf">
+            <div class="file-name" id="file-name">No regulation selected</div>
+          </div>
+          <div class="upload-row">
+            <button type="button" class="btn secondary" id="clear-btn">Reset</button>
+            <button type="button" class="btn primary" id="upload-btn">Upload regulation</button>
+          </div>
+        </div>
+
+        <div class="status-box" id="status-box">Select the regulation PDF to begin initialization.</div>
+
+        <div class="summary" id="summary-box">
+          <div class="summary-title">Load summary</div>
+          <div class="summary-grid" id="summary-grid"></div>
+          <div class="actions">
+            <a class="btn secondary" href="/app">Open notebook</a>
+            <a class="btn primary hidden" id="go-home-btn" href="/app">Continue</a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="panel side-panel">
+        <div>
+          <div class="panel-title">Ingestion notes</div>
+          <div class="panel-sub">Keep the PDF in the regulation format used by the curriculum. The parser looks for subject codes, unit headers, and topic lines.</div>
+        </div>
+        <div class="side-list">
+          <div class="side-item"><strong>Before upload:</strong> confirm the CSV subject list matches the regulation you’re loading.</div>
+          <div class="side-item"><strong>After upload:</strong> open the notebook and verify the semester tree and topic panels.</div>
+          <div class="side-item"><strong>Fallback:</strong> if a unit has dense prose, NLTK summarization is used to keep extracted topics readable.</div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+    const chooseBtn = document.getElementById('choose-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileName = document.getElementById('file-name');
+    const statusBox = document.getElementById('status-box');
+    const summaryBox = document.getElementById('summary-box');
+    const summaryGrid = document.getElementById('summary-grid');
+    const goHomeBtn = document.getElementById('go-home-btn');
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function setStatus(message, kind = '') {
+      statusBox.textContent = message;
+      statusBox.className = `status-box${kind ? ` ${kind}` : ''}`;
+    }
+
+    function setSummaryVisible(visible) {
+      summaryBox.classList.toggle('visible', visible);
+      goHomeBtn.classList.toggle('hidden', !visible);
+    }
+
+    function renderSummary(summary) {
+      const entries = [
+        ['subjects', summary.subjects ?? summary.subjects_loaded ?? 0],
+        ['prerequisites', summary.prerequisites ?? summary.prerequisites_loaded ?? 0],
+        ['topic subjects', summary.topic_subjects ?? 0],
+        ['units', summary.units_loaded ?? 0],
+        ['topics', summary.topics_loaded ?? 0],
+        ['related edges', summary.related_loaded ?? 0],
+      ];
+
+      summaryGrid.innerHTML = entries
+        .map(([label, value]) => `
+          <div class="summary-item">
+            <div class="summary-value">${escapeHtml(value)}</div>
+            <div class="summary-label">${escapeHtml(label)}</div>
+          </div>
+        `)
+        .join('');
+    }
+
+    function syncFileName() {
+      const file = fileInput.files && fileInput.files[0];
+      fileName.textContent = file ? file.name : 'No regulation selected';
+    }
+
+    function resetForm() {
+      fileInput.value = '';
+      syncFileName();
+      setSummaryVisible(false);
+      setStatus('Select the regulation PDF to begin initialization.');
+    }
+
+    async function uploadRegulation() {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) {
+        setStatus('Choose a regulation PDF before uploading.', 'bad');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      uploadBtn.disabled = true;
+      chooseBtn.disabled = true;
+      clearBtn.disabled = true;
+      setSummaryVisible(false);
+      setStatus(`Uploading ${file.name}...`);
+
+      try {
+        const response = await fetch(`${apiBase}/ingest/regulation`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.detail || 'Failed to upload regulation.');
+        }
+
+        renderSummary(payload.summary || {});
+        setSummaryVisible(true);
+        setStatus(`Regulation uploaded successfully from ${payload.file}.`, 'ok');
+      } catch (error) {
+        setStatus(error.message, 'bad');
+      } finally {
+        uploadBtn.disabled = false;
+        chooseBtn.disabled = false;
+        clearBtn.disabled = false;
+      }
+    }
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', syncFileName);
+    clearBtn.addEventListener('click', resetForm);
+    uploadBtn.addEventListener('click', uploadRegulation);
+
+    dropzone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropzone.classList.remove('dragover');
+      const file = event.dataTransfer.files && event.dataTransfer.files[0];
+      if (!file) {
+        return;
+      }
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      fileInput.files = transfer.files;
+      syncFileName();
+      setStatus(`Ready to upload ${file.name}.`);
+    });
+
+    resetForm();
+  </script>
+</body>
+</html>
