@@ -14,11 +14,13 @@ from typing import Dict
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
 from parser import parse_file, detect_source_type
 from vector_store import upsert_chunks
 from graph_store import get_subject, get_all_subjects, attach_resource_node
+from rag_pipeline import ask as rag_ask
 
 app = FastAPI(title="Curriculum Ingestion API", version="0.1.0")
 
@@ -41,6 +43,11 @@ def _ext(filename: str) -> str:
 def _detect_source_type(filepath: str, ext: str) -> str:
     del ext
     return detect_source_type(filepath)
+
+
+class ChatRequest(BaseModel):
+    question: str
+    subject_code: str
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -141,6 +148,20 @@ async def ingest(
         "source_type": source_type,
         "file": original_filename,
         "chunks": summary,
+    }
+
+
+@app.post("/chat")
+def chat(payload: ChatRequest):
+    try:
+        result = rag_ask(payload.question, payload.subject_code.strip().upper())
+    except ValueError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+    graph_context = result.get("graph_context_used", {})
+    return {
+        "answer": result.get("answer", ""),
+        "sources": result.get("sources", []),
+        "prereqs_used": graph_context.get("prerequisites", []),
     }
 
 

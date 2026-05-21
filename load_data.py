@@ -10,6 +10,7 @@ import csv
 import json
 import os
 import re
+import time
 from collections import defaultdict, deque
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -49,6 +50,10 @@ GEMINI_QUOTA_EXHAUSTED = False
 _subject_resource_index = None
 _GROQ_UNAVAILABLE = False
 _GROQ_UNAVAILABLE_REASON = ""
+_LAST_GROQ_REQUEST_AT = 0.0
+GROQ_REQUEST_DELAY_SECONDS = float(os.getenv("GROQ_REQUEST_DELAY_SECONDS", "1.5"))
+GROQ_MAX_PAGE_ROWS = int(os.getenv("GROQ_MAX_PAGE_ROWS", "100"))
+GROQ_MAX_BLOCK_CHARS = int(os.getenv("GROQ_MAX_BLOCK_CHARS", "8000"))
 
 # Matches common Indian university subject code formats:
 #   23N101  (your current format)
@@ -83,6 +88,27 @@ def get_groq_api_key():
         api_key = os.getenv(env_name, "")
         if api_key and api_key != "your_groq_api_key_here":
             return api_key
+    return ""
+
+
+def get_openrouter_api_key():
+    for env_name in (
+        "OPENROUTER_API_KEY",
+        "OPENROUTER_API_KEY1",
+        "OPENROUTER_API_KEY2",
+        "OPENROUTER_API_KEY_2",
+        "OPENROUTER_API_KEY_ALT",
+        "OPENROUTER_API_KEY_BACKUP",
+    ):
+        api_key = os.getenv(env_name, "")
+        if api_key and api_key != "your_openrouter_api_key_here":
+            return api_key
+
+    combined = os.getenv("OPENROUTER_API_KEYS", "")
+    if combined:
+        for api_key in (part.strip() for part in combined.split(",")):
+            if api_key and api_key != "your_openrouter_api_key_here":
+                return api_key
     return ""
 
 PREDEFINED_PREREQUISITES = [
@@ -176,6 +202,15 @@ def load_pdf_pages(pdf_path):
 
 def load_pdf_text(pdf_path):
     return "\n".join(load_pdf_pages(pdf_path))
+
+
+def compact_prompt_text(text, max_chars):
+    normalized = normalize_whitespace(text)
+    if not normalized or max_chars <= 0:
+        return normalized
+    if len(normalized) <= max_chars:
+        return normalized
+    return normalized[:max_chars].rsplit(" ", 1)[0].strip() or normalized[:max_chars]
 
 
 def find_syllabus_start_page(pages):
@@ -277,7 +312,7 @@ def normalize_subject_record(item):
 
 
 def extract_subjects_with_groq(pdf_path):
-    api_key = get_groq_api_key()
+    api_key = get_groq_api_key() or get_openrouter_api_key()
     if not api_key or _GROQ_UNAVAILABLE:
         return []
 
@@ -322,13 +357,15 @@ Rules:
 Page number: {page_index}
 
 Page text:
-{page_text}
+{compact_prompt_text(page_text, 5000)}
 
 Candidate rows:
-{chr(10).join(page_rows[:180])}
+{chr(10).join(page_rows[:GROQ_MAX_PAGE_ROWS])}
 """
 
             raw = call_groq(prompt, f"extract regulation subjects page {page_index}", max_tokens=2200)
+            if not raw:
+                raw = call_openrouter(prompt, f"extract regulation subjects page {page_index}", max_tokens=2200)
             if not raw:
                 continue
 
@@ -746,7 +783,7 @@ def normalize_topic_graph_item(item):
 
 
 def extract_topic_graph_with_groq(subjects, pdf_path):
-    api_key = get_groq_api_key()
+    api_key = get_groq_api_key() or get_openrouter_api_key()
     if not api_key or _GROQ_UNAVAILABLE:
         return []
 
@@ -760,7 +797,7 @@ def extract_topic_graph_with_groq(subjects, pdf_path):
     topic_graph = []
 
     for block in subject_blocks:
-        block_text = normalize_whitespace("\n".join(block["lines"]))
+        block_text = compact_prompt_text("\n".join(block["lines"]), GROQ_MAX_BLOCK_CHARS)
         if not block_text:
             continue
 
@@ -785,6 +822,8 @@ Syllabus text:
 """
 
         raw = call_groq(prompt, f"extract topics for {block['code']}", max_tokens=2500)
+        if not raw:
+            raw = call_openrouter(prompt, f"extract topics for {block['code']}", max_tokens=2500)
         if not raw:
             continue
 
@@ -1169,11 +1208,12 @@ def infer_related_topics_fallback(subjects, prerequisites, topic_graph):
 def infer_related_topics(subjects, prerequisites, topic_graph):
     """
     Infer RELATED_TO edges between topics in different subjects.
-    Priority: Groq → Gemini → local heuristic fallback.
+    Priority: Groq → OpenRouter → Gemini → local heuristic fallback.
     """
     use_groq = bool(get_groq_api_key()) and not _GROQ_UNAVAILABLE
+    use_openrouter = bool(get_openrouter_api_key())
 
-    if GEMINI_QUOTA_EXHAUSTED and not use_groq:
+    if GEMINI_QUOTA_EXHAUSTED and not use_groq and not use_openrouter:
         print("[API] All LLM quotas exhausted; using local heuristic topic matching.")
         return infer_related_topics_fallback(subjects, prerequisites, topic_graph)
 
@@ -1183,6 +1223,7 @@ def infer_related_topics(subjects, prerequisites, topic_graph):
 
     related_pairs = []
     seen_pairs = set()
+    provider_counts = defaultdict(int)
 
     for source_code in sorted(target_map):
         source_subject = subject_lookup.get(source_code)
@@ -1224,16 +1265,29 @@ Candidate target subjects:
 """
 
         raw = None
+        provider_used = None
         if use_groq:
             raw = call_groq(prompt, f"infer topic links for {source_code}", max_tokens=1400)
+            if raw is not None:
+                provider_used = "Groq"
+
+        if raw is None and use_openrouter:
+            raw = call_openrouter(prompt, f"infer topic links for {source_code}", max_tokens=1400)
+            if raw is not None:
+                provider_used = "OpenRouter"
 
         if raw is None and not GEMINI_QUOTA_EXHAUSTED:
             raw = call_gemini(prompt, f"infer topic links for {source_code}", max_output_tokens=1400)
+            if raw is not None:
+                provider_used = "Gemini"
 
         if raw is None:
-            if GEMINI_QUOTA_EXHAUSTED and not use_groq:
+            if GEMINI_QUOTA_EXHAUSTED and not use_groq and not use_openrouter:
                 return infer_related_topics_fallback(subjects, prerequisites, topic_graph)
             continue
+
+        if provider_used:
+            provider_counts[provider_used] += 1
 
         try:
             parsed = json.loads(raw)
@@ -1276,8 +1330,11 @@ Candidate target subjects:
                 "target_topic": target_topic_name,
             })
 
-    provider = "Groq" if use_groq else "Gemini"
-    print(f"[{provider}] Inferred {len(related_pairs)} cross-subject topic relationships")
+    if provider_counts:
+        breakdown = ", ".join(f"{provider}: {count}" for provider, count in sorted(provider_counts.items()))
+        print(f"[LLM] Inferred {len(related_pairs)} cross-subject topic relationships ({breakdown})")
+    else:
+        print(f"[LLM] Inferred {len(related_pairs)} cross-subject topic relationships (no LLM provider succeeded; fallback may have been used)")
     return related_pairs
 
 
@@ -1299,8 +1356,14 @@ def call_groq(prompt, label, max_tokens=2000):
     if not api_key:
         return None
 
+    global _LAST_GROQ_REQUEST_AT
+    if GROQ_REQUEST_DELAY_SECONDS > 0:
+        elapsed = time.monotonic() - _LAST_GROQ_REQUEST_AT
+        if elapsed < GROQ_REQUEST_DELAY_SECONDS:
+            time.sleep(GROQ_REQUEST_DELAY_SECONDS - elapsed)
+
     payload = {
-        "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        "model": os.getenv("GROQ_MODEL", "llama3-8b-8192"),
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": max_tokens,
         "temperature": 0,
@@ -1315,6 +1378,8 @@ def call_groq(prompt, label, max_tokens=2000):
         },
         method="POST",
     )
+
+    _LAST_GROQ_REQUEST_AT = time.monotonic()
 
     try:
         with urlopen(request, timeout=60) as response:
@@ -1338,6 +1403,54 @@ def call_groq(prompt, label, max_tokens=2000):
             print(f"[Groq] {_GROQ_UNAVAILABLE_REASON} Disabling Groq for the rest of this run.")
     except (URLError, KeyError, IndexError, json.JSONDecodeError) as error:
         print(f"[Groq] Error for {label}: {error}")
+
+    return None
+
+
+def call_openrouter(prompt, label, max_tokens=2000):
+    """
+    Call OpenRouter API (supports Claude, Llama, GPT-4, etc.).
+    Returns raw text or None on failure.
+    Set OPENROUTER_API_KEY in .env — signup at openrouter.ai.
+    """
+    api_key = get_openrouter_api_key()
+    if not api_key:
+        return None
+
+    model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct")
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": max_tokens,
+        "temperature": 0,
+    }
+
+    request = Request(
+        "https://openrouter.ai/api/v1/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+            "HTTP-Referer": "https://yggdrasil.local",
+            "X-Title": "Yggdrasil",
+        },
+        method="POST",
+    )
+
+    try:
+        with urlopen(request, timeout=60) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            raw = data["choices"][0]["message"]["content"].strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            return raw.strip()
+    except HTTPError as error:
+        error_body = error.read().decode('utf-8', errors='replace')
+        print(f"[OpenRouter] HTTP {error.code} for {label}: {error_body}")
+    except (URLError, KeyError, IndexError, json.JSONDecodeError) as error:
+        print(f"[OpenRouter] Error for {label}: {error}")
 
     return None
 
@@ -1400,13 +1513,13 @@ def infer_prerequisites_heuristic(subjects):
 def infer_prerequisites(subjects):
     """
     Infer prerequisite relationships between subjects.
-    Priority: Groq (free LLM) → local heuristic fallback.
+    Priority: Groq (free LLM) → OpenRouter (paid, more reliable) → local heuristic fallback.
     """
     if not subjects:
         return []
 
-    if not get_groq_api_key():
-        print("[Prerequisites] No Groq key set; using local heuristic inference.")
+    if not get_groq_api_key() and not get_openrouter_api_key():
+        print("[Prerequisites] No Groq or OpenRouter key set; using local heuristic inference.")
         return infer_prerequisites_heuristic(subjects)
 
     # Format subjects as a compact list for the prompt
@@ -1431,11 +1544,17 @@ Subjects:
 {subject_list}
 """
 
-    print(f"[Groq] Inferring prerequisites for {len(subjects)} subjects...")
-    raw = call_groq(prompt, "infer prerequisites", max_tokens=2000)
+    raw = None
+    if get_groq_api_key():
+        print(f"[Groq] Inferring prerequisites for {len(subjects)} subjects...")
+        raw = call_groq(prompt, "infer prerequisites", max_tokens=2000)
+
+    if raw is None and get_openrouter_api_key():
+        print(f"[OpenRouter] Inferring prerequisites for {len(subjects)} subjects...")
+        raw = call_openrouter(prompt, "infer prerequisites", max_tokens=2000)
 
     if raw is None:
-        print("[Prerequisites] Groq unavailable; using local heuristic inference.")
+        print("[Prerequisites] All LLM providers unavailable; using local heuristic inference.")
         return infer_prerequisites_heuristic(subjects)
 
     try:

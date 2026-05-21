@@ -11,10 +11,12 @@ from typing import Dict
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
 from load_data import load_regulation_graph
 from parser import parse_file
 from vector_store import upsert_chunks
+from rag_pipeline import ask as rag_ask
 
 try:
 	from neo4j import GraphDatabase
@@ -62,6 +64,11 @@ UPLOAD_INDEX = os.path.join(BASE_DIR, "upload_resources.html")
 REGULATION_UPLOAD_INDEX = os.path.join(BASE_DIR, "regulation_upload.html")
 _driver = None
 _subject_resource_index = None
+
+
+class ChatRequest(BaseModel):
+	question: str
+	subject_code: str
 
 
 @app.get("/")
@@ -685,6 +692,21 @@ def get_subject_resources(code: str):
 def get_subject_prerequisites(code: str):
 	driver = get_driver()
 	return fetch_subject_prerequisites(driver, code)
+
+
+@app.post("/chat")
+def chat(payload: ChatRequest):
+	try:
+		result = rag_ask(payload.question, payload.subject_code.strip().upper())
+	except ValueError as error:
+		raise HTTPException(status_code=404, detail=str(error))
+
+	graph_context = result.get("graph_context_used", {})
+	return {
+		"answer": result.get("answer", ""),
+		"sources": result.get("sources", []),
+		"prereqs_used": graph_context.get("prerequisites", []),
+	}
 
 
 @app.get("/path")

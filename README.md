@@ -14,6 +14,7 @@ Right now the implementation is just an interface that connects all the subjects
 CHALLENGES:
 1. Rate limit of Gemini is hindering the feature to extract useful information from the regulation to make it modular instead of just hardcoding the relationship extraction.
 2. Huge process of chunking which could be inefficient when done manually without the help of agent.
+3. i need to implementing some indexing mechanis for the chunks for efficient retrieval process thus decreasing the latency
 
 ![StudentLM architecture](img/studentlm_full_architecture.svg)
 

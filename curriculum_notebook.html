@@ -147,6 +147,15 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .dot:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 
+.answer-text{white-space:pre-wrap}
+.sources-details{margin-top:10px;border-top:0.5px solid var(--color-border-tertiary);padding-top:8px}
+.sources-details summary{cursor:pointer;font-size:11px;color:var(--color-text-secondary);font-family:var(--sans);list-style:none}
+.sources-details summary::-webkit-details-marker{display:none}
+.sources-list{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.source-item{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;line-height:1.5}
+.source-meta{font-family:var(--mono);font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px}
+.error-bubble{background:#fff1f2;color:#9f1239;border:0.5px solid #fecdd3}
+
 .hidden{display:none!important}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .fade-in{animation:fadeIn .25s ease}
@@ -678,6 +687,58 @@ function appendMsg(role, text) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+function renderSources(sources) {
+  if (!sources || !sources.length) {
+    return '<details class="sources-details"><summary>Sources</summary><div class="sources-list"><div class="source-item">No source chunks were retrieved.</div></div></details>';
+  }
+
+  const items = sources.map((source, index) => {
+    const metadata = source.metadata || {};
+    const sourceFile = escapeHtml(source.source_file || metadata.source_file || 'unknown');
+    const unit = escapeHtml(source.unit || metadata.topic_hint || 'Unknown unit');
+    const score = source.score !== undefined && source.score !== null ? ` · score ${escapeHtml(source.score)}` : '';
+    const text = escapeHtml(source.text || '');
+    return `
+      <div class="source-item">
+        <div class="source-meta">[${index + 1}] ${sourceFile} · ${unit}${score}</div>
+        <div>${text}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `<details class="sources-details"><summary>Sources</summary><div class="sources-list">${items}</div></details>`;
+}
+
+function appendAssistantResponse(answer, sources, prereqsUsed) {
+  const msgs = document.getElementById('messages');
+  const typing = document.getElementById('typing-indicator');
+  if (typing) typing.remove();
+
+  const prereqText = prereqsUsed && prereqsUsed.length
+    ? `<div class="prereq-context"><i class="ti ti-info-circle info-icon" aria-hidden="true"></i>Prerequisites used: ${escapeHtml(prereqsUsed.map((item) => `${item.code} ${item.name}`).join(', '))}</div>`
+    : '';
+  const answerHtml = `<div class="answer-text">${escapeHtml(answer)}</div>`;
+  const bubble = `${prereqText}${answerHtml}${renderSources(sources)}`;
+
+  const message = document.createElement('div');
+  message.className = 'msg assistant fade-in';
+  message.innerHTML = `<span class="msg-label">Curriculum AI</span><div class="msg-bubble">${bubble}</div>`;
+  msgs.appendChild(message);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function appendAssistantError(messageText) {
+  const msgs = document.getElementById('messages');
+  const typing = document.getElementById('typing-indicator');
+  if (typing) typing.remove();
+
+  const message = document.createElement('div');
+  message.className = 'msg assistant fade-in';
+  message.innerHTML = `<span class="msg-label">Curriculum AI</span><div class="msg-bubble error-bubble">${escapeHtml(messageText)}</div>`;
+  msgs.appendChild(message);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
 function showTyping() {
   const msgs = document.getElementById('messages');
   const typing = document.createElement('div');
@@ -688,18 +749,38 @@ function showTyping() {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-function simulateResponse(query) {
-  const typing = document.getElementById('typing-indicator');
-  if (typing) typing.remove();
-  const prereqNames = (state.prereqItems || []).map((item) => item.name).filter(Boolean);
-  const contextNote = prereqNames.length
-    ? `<div class="prereq-context"><i class="ti ti-info-circle info-icon" aria-hidden="true"></i>Context pulled from: ${escapeHtml(prereqNames.join(', '))} → ${escapeHtml(state.currentSubject.name)}</div>`
-    : '';
-  const response = `${contextNote}This is a placeholder response for: "<em>${escapeHtml(query)}</em>"<br><br>In production, this is where the FastAPI query pipeline fires: Neo4j traverses the prerequisite chain, Chroma retrieves the relevant chunks, and the model generates a bottom-up explanation starting from foundational concepts.`;
-  appendMsg('assistant', response);
+async function simulateResponse(query) {
+  try {
+    if (!state.currentSubject || !state.currentSubject.code) {
+      throw new Error('No subject is selected. Please open a subject before asking a question.');
+    }
+
+    const response = await fetch(`${apiBase}/chat`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ question: query, subject_code: state.currentSubject.code })
+    });
+
+    if (!response.ok) {
+      let message = `Request failed: ${response.status}`;
+      try {
+        const payload = await response.json();
+        message = payload.detail || payload.error || message;
+      } catch (error) {
+        const text = await response.text();
+        if (text) message = text;
+      }
+      throw new Error(message);
+    }
+
+    const data = await response.json();
+    appendAssistantResponse(data.answer || 'No answer was returned.', data.sources || [], data.prereqs_used || []);
+  } catch (error) {
+    appendAssistantError(error.message || 'Unable to fetch an answer right now.');
+  }
 }
 
-function sendMessage() {
+async function sendMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
@@ -708,7 +789,7 @@ function sendMessage() {
   if (empty) empty.remove();
   appendMsg('user', escapeHtml(text));
   showTyping();
-  setTimeout(() => simulateResponse(text), 900 + Math.random() * 500);
+  await simulateResponse(text);
 }
 
 function resetToSubject() {
