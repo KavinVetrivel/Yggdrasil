@@ -40,7 +40,29 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .breadcrumb span{color:var(--color-text-primary);font-weight:500}
 .breadcrumb .sep{opacity:0.4}
 .topbar-action{margin-left:auto;font-size:12px;border:0.5px solid rgba(29,78,216,.25);border-radius:999px;padding:8px 12px;background:var(--color-background-info);color:var(--color-text-info);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.topbar-action{cursor:pointer;font-family:var(--sans)}
 .topbar-action:hover{filter:brightness(.98)}
+.topbar-action.hidden{display:none!important}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
+.modal-card{width:min(100%,520px);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:22px;box-shadow:0 24px 80px rgba(15,23,42,.18);padding:18px 18px 16px}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.modal-title{font-size:16px;font-weight:500;line-height:1.35}
+.modal-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.6;margin-top:3px}
+.modal-close{border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);border-radius:10px;width:32px;height:32px;cursor:pointer;color:var(--color-text-secondary)}
+.modal-form{display:flex;flex-direction:column;gap:12px}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em}
+.field input{width:100%;font-family:var(--sans);font-size:13px;padding:10px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);outline:none}
+.field input:focus{border-color:var(--color-border-primary)}
+.field-full{grid-column:1 / -1}
+.modal-note{font-size:11px;color:var(--color-text-tertiary);line-height:1.5}
+.modal-status{font-size:12px;line-height:1.5;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.modal-status.ok{color:var(--color-text-success);border-color:rgba(29,158,117,.25);background:rgba(29,158,117,.08)}
+.modal-status.bad{color:#c2410c;border-color:rgba(194,65,12,.25);background:rgba(194,65,12,.08)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:4px}
+.modal-actions .btn{min-width:110px}
 
 .gate{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:2rem;padding:3rem 0}
 .gate-title{font-size:22px;font-weight:500;text-align:center}
@@ -74,6 +96,8 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .subj-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
 .subj-action-btn{font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--sans);transition:background .1s,border-color .1s}
 .subj-action-btn:hover{background:var(--color-background-primary);border-color:var(--color-border-primary)}
+.subj-action-btn.danger{color:#b91c1c;border-color:rgba(185,28,28,.2)}
+.subj-action-btn.danger:hover{background:#fff1f2;border-color:rgba(185,28,28,.35)}
 .subj-click-hint{font-size:10px;color:var(--color-text-tertiary)}
 
 .notebook{display:grid;grid-template-columns:280px 1fr;gap:16px;flex:1;min-height:0}
@@ -85,6 +109,8 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .sidebar-sem{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
 .change-btn{font-size:12px;color:var(--color-text-secondary);background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 10px;cursor:pointer;margin-top:10px;font-family:var(--sans);width:100%;text-align:left}
 .change-btn:hover{background:var(--color-background-secondary)}
+.danger-btn{color:#b91c1c;border-color:rgba(185,28,28,.2)}
+.danger-btn:hover{background:#fff1f2;border-color:rgba(185,28,28,.35)}
 
 .units-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;flex:1;overflow-y:auto;max-height:500px}
 .units-panel h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:12px}
@@ -147,7 +173,11 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .dot:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 
-.answer-text{white-space:pre-wrap}
+.answer-text{display:flex;flex-direction:column;gap:8px;white-space:normal}
+.answer-text p{line-height:1.6}
+.answer-text ul,.answer-text ol{margin-left:1.25rem;padding-left:1rem;display:flex;flex-direction:column;gap:6px}
+.answer-text li{line-height:1.6}
+.answer-text code{font-family:var(--mono);font-size:12px;padding:1px 5px;border-radius:6px;background:rgba(148,163,184,.15);color:var(--color-text-primary)}
 .sources-details{margin-top:10px;border-top:0.5px solid var(--color-border-tertiary);padding-top:8px}
 .sources-details summary{cursor:pointer;font-size:11px;color:var(--color-text-secondary);font-family:var(--sans);list-style:none}
 .sources-details summary::-webkit-details-marker{display:none}
@@ -174,6 +204,7 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
       <span class="sep hidden" id="bc-sep1">›</span>
       <span id="bc-subj" class="hidden"></span>
     </div>
+    <button type="button" class="topbar-action hidden" id="add-subject-btn">Add subject</button>
     <a class="topbar-action" href="/app/regulation/upload">Initialize regulation</a>
   </div>
 
@@ -210,6 +241,7 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
         <div class="sidebar-subject-name" id="nb-name"></div>
         <div class="sidebar-sem" id="nb-sem"></div>
         <button class="change-btn" onclick="resetToSubject()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Change subject</button>
+        <button class="change-btn danger-btn" type="button" id="delete-subject-btn"><i class="ti ti-trash" aria-hidden="true"></i> Delete subject</button>
       </div>
 
       <div class="units-panel">
@@ -248,6 +280,47 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
       </div>
     </div>
   </div>
+
+  <div id="subject-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="subject-modal-title">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title" id="subject-modal-title">Add a subject to this semester</div>
+          <div class="modal-sub" id="subject-modal-sub">Create a new subject entry for the active semester.</div>
+        </div>
+        <button type="button" class="modal-close" id="subject-modal-close" aria-label="Close add subject form">×</button>
+      </div>
+
+      <form class="modal-form" id="subject-form">
+        <div class="field-grid">
+          <div class="field">
+            <label for="subject-code-input">Course code</label>
+            <input id="subject-code-input" name="code" type="text" placeholder="23N999" required>
+          </div>
+          <div class="field">
+            <label for="subject-credits-input">Credits</label>
+            <input id="subject-credits-input" name="credits" type="number" min="0" step="1" placeholder="3" required>
+          </div>
+          <div class="field field-full">
+            <label for="subject-name-input">Subject name</label>
+            <input id="subject-name-input" name="name" type="text" placeholder="Advanced Machine Learning" required>
+          </div>
+          <div class="field field-full">
+            <label for="subject-prereq-input">Prerequisites</label>
+            <input id="subject-prereq-input" name="prerequisites" type="text" placeholder="23N301, 23N302">
+          </div>
+        </div>
+
+        <div class="modal-note" id="subject-semester-note">This subject will be added to Semester 1.</div>
+        <div class="modal-status" id="subject-modal-status">Enter the required details to create the subject.</div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn secondary" id="subject-modal-cancel">Cancel</button>
+          <button type="submit" class="btn primary" id="subject-modal-submit">Create subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -267,6 +340,19 @@ const semGrid = document.getElementById('sem-grid');
 const subjGrid = document.getElementById('subj-grid');
 const unitsContainerEl = () => document.getElementById('units-container');
 const prereqChain = document.getElementById('prereq-chain');
+const addSubjectBtn = document.getElementById('add-subject-btn');
+const subjectModal = document.getElementById('subject-modal');
+const subjectForm = document.getElementById('subject-form');
+const subjectModalStatus = document.getElementById('subject-modal-status');
+const subjectSemesterNote = document.getElementById('subject-semester-note');
+const subjectCodeInput = document.getElementById('subject-code-input');
+const subjectNameInput = document.getElementById('subject-name-input');
+const subjectCreditsInput = document.getElementById('subject-credits-input');
+const subjectPrereqInput = document.getElementById('subject-prereq-input');
+const subjectModalClose = document.getElementById('subject-modal-close');
+const subjectModalCancel = document.getElementById('subject-modal-cancel');
+const subjectModalSubmit = document.getElementById('subject-modal-submit');
+const deleteSubjectBtn = document.getElementById('delete-subject-btn');
 const routeMode = location.protocol === 'file:' ? 'hash' : 'path';
 const notebookRoutePrefix = '/app';
 
@@ -340,6 +426,7 @@ function clearNotebookState() {
   hideElement('bc-subj');
   hideElement('bc-sep1');
   hideElement('gate-subj');
+  setAddSubjectButtonVisible(false);
   showElement('gate-sem');
 }
 
@@ -385,8 +472,65 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
-async function fetchJson(path) {
-  const response = await fetch(`${apiBase}${path}`);
+function formatInlineMarkdown(text) {
+  const escaped = escapeHtml(text);
+  return escaped
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function renderAnswerMarkdown(text) {
+  const lines = String(text || '').replace(/\r\n/g, '\n').split('\n');
+  const blocks = [];
+  let listType = '';
+  let listItems = [];
+
+  function flushList() {
+    if (!listItems.length) return;
+    const itemsHtml = listItems.map((item) => `<li>${formatInlineMarkdown(item)}</li>`).join('');
+    blocks.push(listType === 'ol' ? `<ol>${itemsHtml}</ol>` : `<ul>${itemsHtml}</ul>`);
+    listItems = [];
+    listType = '';
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      flushList();
+      continue;
+    }
+
+    const unorderedMatch = line.match(/^[-*]\s+(.+)$/);
+    const orderedMatch = line.match(/^\d+\.\s+(.+)$/);
+
+    if (unorderedMatch) {
+      if (listType && listType !== 'ul') flushList();
+      listType = 'ul';
+      listItems.push(unorderedMatch[1]);
+      continue;
+    }
+
+    if (orderedMatch) {
+      if (listType && listType !== 'ol') flushList();
+      listType = 'ol';
+      listItems.push(orderedMatch[1]);
+      continue;
+    }
+
+    flushList();
+    blocks.push(`<p>${formatInlineMarkdown(line)}</p>`);
+  }
+
+  flushList();
+  return blocks.join('');
+}
+
+function normalizeInput(value) {
+  return String(value || '').trim().replace(/\s+/g, ' ');
+}
+
+async function fetchJson(path, init = {}) {
+  const response = await fetch(`${apiBase}${path}`, init);
   if (!response.ok) {
     let message = `Request failed: ${response.status}`;
     try {
@@ -419,6 +563,87 @@ function showElement(id) {
   document.getElementById(id).classList.remove('hidden');
 }
 
+function setAddSubjectButtonVisible(visible) {
+  if (!addSubjectBtn) return;
+  addSubjectBtn.classList.toggle('hidden', !visible);
+}
+
+function setSubjectModalStatus(message, kind = '') {
+  if (!subjectModalStatus) return;
+  subjectModalStatus.textContent = message;
+  subjectModalStatus.className = `modal-status${kind ? ` ${kind}` : ''}`;
+}
+
+function openSubjectModal() {
+  if (!state.currentSemester) {
+    return;
+  }
+
+  subjectForm.reset();
+  subjectSemesterNote.textContent = `This subject will be added to Semester ${state.currentSemester}.`;
+  setSubjectModalStatus('Enter the required details to create the subject.');
+  subjectCreditsInput.value = '';
+  subjectModal.classList.remove('hidden');
+  subjectModal.setAttribute('aria-hidden', 'false');
+  subjectCodeInput.focus();
+}
+
+function closeSubjectModal() {
+  subjectModal.classList.add('hidden');
+  subjectModal.setAttribute('aria-hidden', 'true');
+}
+
+async function deleteSubjectByCode(code, semester = state.currentSemester) {
+  if (!code) {
+    return;
+  }
+
+  const confirmation = window.confirm(`Delete subject ${code}? This will remove it from the graph and local CSV.`);
+  if (!confirmation) {
+    return;
+  }
+
+  try {
+    setStatus('ok', 'Deleting subject...');
+    const response = await fetchJson(`/subject/${encodeURIComponent(code)}`, {
+      method: 'DELETE',
+    });
+
+    await refreshSubjectsFromServer();
+
+    if (state.currentSubject && state.currentSubject.code === code) {
+      state.currentSubject = null;
+      document.getElementById('messages').innerHTML = '';
+      clearNotebookState();
+    }
+
+    if (semester) {
+      selectSem(semester, { syncRoute: false });
+      setCurrentRoute(buildNotebookPath(semester));
+    } else {
+      setCurrentRoute('/');
+    }
+
+    setStatus('ok', `Deleted ${response.code}.`);
+  } catch (error) {
+    setStatus('bad', error.message || 'Unable to delete the subject.');
+  }
+}
+
+async function deleteCurrentSubject() {
+  if (!state.currentSubject || !state.currentSubject.code) {
+    return;
+  }
+  await deleteSubjectByCode(state.currentSubject.code, state.currentSemester || state.currentSubject.semester);
+}
+
+function refreshSubjectsFromServer() {
+  return fetchJson('/subjects').then((payload) => {
+    state.subjectsBySemester = payload.semesters || {};
+    return payload;
+  });
+}
+
 function renderSemesterButtons() {
   semGrid.innerHTML = '';
   state.semesters.forEach((semester) => {
@@ -448,6 +673,7 @@ function selectSem(semester, options = {}) {
   const bcSem = document.getElementById('bc-sem');
   bcSem.textContent = `Sem ${semester}`;
   bcSem.classList.remove('hidden');
+  setAddSubjectButtonVisible(true);
   setTimeout(() => showSubjectGate(semester), 120);
   if (options.syncRoute !== false) {
     setCurrentRoute(buildNotebookPath(semester));
@@ -478,7 +704,10 @@ function showSubjectGate(semester) {
       <div class="subj-meta">${escapeHtml(subject.category || 'Course')} · ${escapeHtml(subject.credits)} credits${subject.resource_count > 0 ? ' · resources loaded' : ''}</div>
       <div class="subj-actions">
         <span class="subj-click-hint">Click card to open notebook</span>
-        <button type="button" class="subj-action-btn">Upload resource</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          <button type="button" class="subj-action-btn">Upload resource</button>
+          <button type="button" class="subj-action-btn danger">Delete</button>
+        </div>
       </div>
     `;
     card.addEventListener('click', () => openNotebook(subject));
@@ -489,10 +718,15 @@ function showSubjectGate(semester) {
       }
     });
     const uploadButton = card.querySelector('.subj-action-btn');
+    const deleteButton = card.querySelector('.subj-action-btn.danger');
     // Intentional full-page navigation: upload uses a dedicated HTML page, not the notebook SPA.
     uploadButton.addEventListener('click', (event) => {
       event.stopPropagation();
       window.location.href = buildNotebookPath(subject.semester, subject.code, 'upload');
+    });
+    deleteButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      await deleteSubjectByCode(subject.code, subject.semester);
     });
     subjGrid.appendChild(card);
   });
@@ -502,6 +736,7 @@ function openNotebook(subject, options = {}) {
   state.currentSubject = subject;
   document.getElementById('bc-subj').classList.remove('hidden');
   document.getElementById('bc-sep1').classList.remove('hidden');
+  setAddSubjectButtonVisible(true);
   document.getElementById('nb-code').textContent = subject.code;
   document.getElementById('nb-name').textContent = subject.name;
   document.getElementById('nb-sem').textContent = `Semester ${subject.semester}`;
@@ -717,7 +952,7 @@ function appendAssistantResponse(answer, sources, prereqsUsed) {
   const prereqText = prereqsUsed && prereqsUsed.length
     ? `<div class="prereq-context"><i class="ti ti-info-circle info-icon" aria-hidden="true"></i>Prerequisites used: ${escapeHtml(prereqsUsed.map((item) => `${item.code} ${item.name}`).join(', '))}</div>`
     : '';
-  const answerHtml = `<div class="answer-text">${escapeHtml(answer)}</div>`;
+  const answerHtml = `<div class="answer-text">${renderAnswerMarkdown(answer)}</div>`;
   const bubble = `${prereqText}${answerHtml}${renderSources(sources)}`;
 
   const message = document.createElement('div');
@@ -797,8 +1032,59 @@ function resetToSubject() {
   hideElement('bc-subj');
   hideElement('bc-sep1');
   showElement('gate-subj');
+  setAddSubjectButtonVisible(true);
   if (state.currentSemester) {
     setCurrentRoute(buildNotebookPath(state.currentSemester));
+  }
+}
+
+async function submitSubjectForm(event) {
+  event.preventDefault();
+  if (!state.currentSemester) {
+    setSubjectModalStatus('Select a semester before creating a subject.', 'bad');
+    return;
+  }
+
+  const code = normalizeInput(subjectCodeInput.value).toUpperCase().replace(/\s+/g, '');
+  const name = normalizeInput(subjectNameInput.value);
+  const credits = Number.parseInt(subjectCreditsInput.value, 10);
+  const prerequisites = subjectPrereqInput.value
+    .split(/[;,\n]+/)
+    .map((value) => normalizeInput(value).toUpperCase().replace(/\s+/g, ''))
+    .filter(Boolean);
+
+  if (!code || !name || Number.isNaN(credits)) {
+    setSubjectModalStatus('Course code, subject name, and credits are required.', 'bad');
+    return;
+  }
+
+  subjectModalSubmit.disabled = true;
+  setSubjectModalStatus('Creating subject...');
+
+  try {
+    const payload = await fetchJson('/subjects', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        code,
+        name,
+        semester: state.currentSemester,
+        credits,
+        prerequisites,
+      }),
+    });
+
+    await refreshSubjectsFromServer();
+    setSubjectModalStatus(`Created ${payload.subject.code} for Semester ${payload.subject.semester}.`, 'ok');
+    closeSubjectModal();
+
+    if (document.getElementById('notebook').classList.contains('hidden') && state.currentSemester) {
+      showSubjectGate(state.currentSemester);
+    }
+  } catch (error) {
+    setSubjectModalStatus(error.message || 'Unable to create the subject.', 'bad');
+  } finally {
+    subjectModalSubmit.disabled = false;
   }
 }
 
@@ -824,6 +1110,34 @@ async function bootstrap() {
 window.addEventListener(routeMode === 'hash' ? 'hashchange' : 'popstate', () => {
   syncRouteFromLocation();
 });
+
+if (addSubjectBtn) {
+  addSubjectBtn.addEventListener('click', openSubjectModal);
+}
+
+if (subjectModalClose) {
+  subjectModalClose.addEventListener('click', closeSubjectModal);
+}
+
+if (subjectModalCancel) {
+  subjectModalCancel.addEventListener('click', closeSubjectModal);
+}
+
+if (subjectModal) {
+  subjectModal.addEventListener('click', (event) => {
+    if (event.target === subjectModal) {
+      closeSubjectModal();
+    }
+  });
+}
+
+if (subjectForm) {
+  subjectForm.addEventListener('submit', submitSubjectForm);
+}
+
+if (deleteSubjectBtn) {
+  deleteSubjectBtn.addEventListener('click', deleteCurrentSubject);
+}
 
 bootstrap();
 </script>

@@ -124,7 +124,31 @@ def retrieve_context(question: str, subject_code: str, top_k: int = 5) -> List[D
             }
         )
 
-    return hits
+    return _select_relevant_sources(hits)
+
+
+def _select_relevant_sources(hits: List[Dict[str, Any]], max_sources: int = 3, min_score: float = 0.22) -> List[Dict[str, Any]]:
+    if not hits:
+        return []
+
+    ordered_hits = sorted(hits, key=lambda item: (float(item.get("score", 0.0)), str(item.get("source_file", ""))), reverse=True)
+    selected: List[Dict[str, Any]] = []
+    seen_files = set()
+
+    for hit in ordered_hits:
+        source_file = str(hit.get("source_file", "unknown"))
+        score = float(hit.get("score", 0.0))
+        if source_file in seen_files or score < min_score:
+            continue
+        selected.append(hit)
+        seen_files.add(source_file)
+        if len(selected) >= max_sources:
+            break
+
+    if selected:
+        return selected
+
+    return ordered_hits[:max_sources]
 
 
 def get_graph_context(subject_code: str, topic_name: Optional[str] = None) -> Dict[str, Any]:
@@ -293,12 +317,12 @@ def _call_openrouter(prompt: str, max_tokens: int = 900) -> str:
 
 def _get_openrouter_api_keys() -> List[str]:
     explicit = [
-        os.getenv("OPENROUTER_API_KEY", ""),
-        os.getenv("OPENROUTER_API_KEY1", ""),
-        os.getenv("OPENROUTER_API_KEY_2", ""),
         os.getenv("OPENROUTER_API_KEY2", ""),
+        os.getenv("OPENROUTER_API_KEY_2", ""),
         os.getenv("OPENROUTER_API_KEY_ALT", ""),
         os.getenv("OPENROUTER_API_KEY_BACKUP", ""),
+        os.getenv("OPENROUTER_API_KEY1", ""),
+        os.getenv("OPENROUTER_API_KEY", ""),
     ]
 
     combined = os.getenv("OPENROUTER_API_KEYS", "")

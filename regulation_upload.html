@@ -421,6 +421,7 @@
     const summaryBox = document.getElementById('summary-box');
     const summaryGrid = document.getElementById('summary-grid');
     const goHomeBtn = document.getElementById('go-home-btn');
+    let nextRoute = '/app';
 
     function escapeHtml(value) {
       return String(value)
@@ -440,6 +441,11 @@
       summaryBox.classList.toggle('visible', visible);
       goHomeBtn.classList.toggle('hidden', !visible);
     }
+
+    goHomeBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.location.href = nextRoute;
+    });
 
     function renderSummary(summary) {
       const entries = [
@@ -502,6 +508,8 @@
 
         renderSummary(payload.summary || {});
         setSummaryVisible(true);
+        nextRoute = payload.next || '/app';
+        goHomeBtn.href = nextRoute;
         setStatus(`Regulation uploaded successfully from ${payload.file}.`, 'ok');
       } catch (error) {
         setStatus(error.message, 'bad');

@@ -28,6 +28,48 @@ def _basename(filepath: str) -> str:
     return os.path.basename(filepath)
 
 
+def _window_text_chunks(
+    text: str,
+    filename: str,
+    chunk_index_start: int,
+    topic_hint: str,
+    page_or_slide: int,
+    chunk_size: int,
+    overlap: int,
+) -> List[RawChunk]:
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be > 0")
+    if overlap < 0 or overlap >= chunk_size:
+        raise ValueError("overlap must be >= 0 and < chunk_size")
+
+    words = re.findall(r"\S+", text or "")
+    if not words:
+        return []
+
+    chunks = []
+    step = max(1, chunk_size - min(overlap, chunk_size - 1))
+    start = 0
+    chunk_index = chunk_index_start
+
+    while start < len(words):
+        end = min(start + chunk_size, len(words))
+        chunk_text = " ".join(words[start:end]).strip()
+        if chunk_text:
+            chunks.append(RawChunk(
+                text=chunk_text,
+                source_file=filename,
+                chunk_index=chunk_index,
+                topic_hint=topic_hint,
+                page_or_slide=page_or_slide,
+            ))
+            chunk_index += 1
+        if end >= len(words):
+            break
+        start += step
+
+    return chunks
+
+
 def detect_source_type(filepath: str) -> str:
     """Classify uploads as syllabus, textbook, or ppt based on file contents."""
     ext = os.path.splitext(filepath)[1].lower().lstrip(".")
@@ -46,7 +88,7 @@ def _open_pdf_pages(filepath: str):
 
 # ── PPT/PPTX ──────────────────────────────────────────────────────────────────
 
-def parse_pptx(filepath: str) -> List[RawChunk]:
+def parse_pptx(filepath: str, chunk_size: int = 512, overlap: int = 100) -> List[RawChunk]:
     prs = Presentation(filepath)
     chunks = []
     filename = _basename(filepath)
@@ -71,20 +113,24 @@ def parse_pptx(filepath: str) -> List[RawChunk]:
         if not combined:
             continue
 
-        chunks.append(RawChunk(
-            text=combined,
-            source_file=filename,
-            chunk_index=i,
+        slide_chunks = _window_text_chunks(
+            combined,
+            filename=filename,
+            chunk_index_start=len(chunks),
             topic_hint=title[:120],
             page_or_slide=i + 1,
-        ))
+            chunk_size=chunk_size,
+            overlap=overlap,
+        )
+        if slide_chunks:
+            chunks.extend(slide_chunks)
 
     return chunks
 
 
 # ── PDF ───────────────────────────────────────────────────────────────────────
 
-def _split_by_units(full_text: str, filename: str) -> List[RawChunk]:
+def _split_by_units(full_text: str, filename: str, chunk_size: int = 512, overlap: int = 100) -> List[RawChunk]:
     """Split syllabus PDFs on unit headings while keeping the heading as context."""
     matches = list(UNIT_HEADING_RE.finditer(full_text))
     if not matches:
@@ -97,15 +143,18 @@ def _split_by_units(full_text: str, filename: str) -> List[RawChunk]:
         body = full_text[start:end].strip()
         if not body:
             continue
-        chunks.append(
-            RawChunk(
-                text=body,
-                source_file=filename,
-                chunk_index=idx,
-                topic_hint=match.group(0).strip()[:120],
-                page_or_slide=0,
-            )
+
+        body_chunks = _window_text_chunks(
+            body,
+            filename=filename,
+            chunk_index_start=len(chunks),
+            topic_hint=match.group(0).strip()[:120],
+            page_or_slide=0,
+            chunk_size=chunk_size,
+            overlap=overlap,
         )
+        if body_chunks:
+            chunks.extend(body_chunks)
     return chunks
 
 
@@ -165,7 +214,7 @@ def parse_pdf(filepath: str, chunk_size: int = 512, overlap: int = 100) -> List[
     full_text = "\n".join(pages_text)
 
     if len(UNIT_HEADING_RE.findall(full_text)) >= 2:
-        return _split_by_units(full_text, filename)
+        return _split_by_units(full_text, filename, chunk_size, overlap)
     else:
         return _fixed_window_chunks(pages_text, filename, chunk_size, overlap)
 
@@ -175,7 +224,7 @@ def parse_pdf(filepath: str, chunk_size: int = 512, overlap: int = 100) -> List[
 def parse_file(filepath: str, chunk_size: int = 512, overlap: int = 100) -> List[RawChunk]:
     ext = os.path.splitext(filepath)[1].lower().lstrip(".")
     if ext in ("ppt", "pptx"):
-        return parse_pptx(filepath)
+        return parse_pptx(filepath, chunk_size, overlap)
     elif ext == "pdf":
         return parse_pdf(filepath, chunk_size, overlap)
     else:

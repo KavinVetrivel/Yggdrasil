@@ -6,7 +6,7 @@ import csv
 import os
 import re
 import tempfile
-from typing import Dict
+from typing import Dict, List
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
@@ -48,6 +48,20 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 CSV_PATH = os.getenv("CSV_PATH", "subjects.csv")
 SYLLABUS_PDF_PATH = os.getenv("SYLLABUS_PDF_PATH", "REGULATIONS.pdf")
 ALLOWED_EXTENSIONS = {"pdf", "ppt", "pptx"}
+SUBJECT_CSV_FIELDNAMES = [
+	"code",
+	"name",
+	"semester",
+	"lecture_hrs",
+	"tutorial_hrs",
+	"practical_hrs",
+	"credits",
+	"category",
+	"type",
+	"prerequisites",
+]
+DEFAULT_MANUAL_CATEGORY = "MC"
+DEFAULT_MANUAL_TYPE = "Theory"
 
 app = FastAPI(title="Yggdrasil Curriculum API", version="1.0.0")
 app.add_middleware(
@@ -69,6 +83,14 @@ _subject_resource_index = None
 class ChatRequest(BaseModel):
 	question: str
 	subject_code: str
+
+
+class CreateSubjectRequest(BaseModel):
+	code: str
+	name: str
+	semester: int
+	credits: int
+	prerequisites: List[str] = []
 
 
 @app.get("/")
@@ -107,6 +129,131 @@ def regulation_upload_page():
 
 def normalize_whitespace(text):
 	return re.sub(r"\s+", " ", text or "").strip()
+
+
+def derive_chunk_profile(file_size_bytes, ext):
+	file_size_mb = max(float(file_size_bytes) / (1024.0 * 1024.0), 0.1)
+	size_scale = max(0.65, min(2.75, file_size_mb ** 0.5))
+	chunk_size = int(CHUNK_SIZE_TOKENS / size_scale)
+	chunk_size = max(120, min(700, chunk_size))
+	overlap = max(40, min(120, int(chunk_size * 0.2)))
+	if ext in {"ppt", "pptx"}:
+		chunk_size = max(100, int(chunk_size * 0.85))
+		chunk_size = min(chunk_size, 600)
+		if file_size_mb > 3:
+			chunk_size = max(90, int(chunk_size * 0.9))
+		overlap = max(30, min(100, int(chunk_size * 0.15)))
+	return chunk_size, overlap
+
+
+def normalize_subject_code(value):
+	return normalize_whitespace(value).upper().replace(" ", "")
+
+
+def parse_prerequisite_codes(value):
+	if not value:
+		return []
+	if isinstance(value, str):
+		raw_values = re.split(r"[;,\n]+", value)
+	else:
+		raw_values = value
+
+	codes = []
+	seen = set()
+	for raw_value in raw_values:
+		code = normalize_subject_code(raw_value)
+		if not code or code in seen:
+			continue
+		seen.add(code)
+		codes.append(code)
+	return codes
+
+
+def read_subject_csv_rows(path):
+	if not os.path.exists(path):
+		return []
+
+	with open(path, newline="", encoding="utf-8") as file_handle:
+		reader = csv.DictReader(file_handle)
+		return list(reader)
+
+
+def find_subject_csv_row(code):
+	normalized_code = normalize_subject_code(code)
+	for index, row in enumerate(read_subject_csv_rows(CSV_PATH)):
+		if normalize_subject_code(row.get("code")) == normalized_code:
+			return index, row
+	return None, None
+
+
+def subject_code_exists_in_csv(code):
+	_, row = find_subject_csv_row(code)
+	return row is not None
+
+
+def upsert_subject_csv_record(record):
+	rows = read_subject_csv_rows(CSV_PATH)
+	fieldnames = list(rows[0].keys()) if rows else list(SUBJECT_CSV_FIELDNAMES)
+	if "prerequisites" not in fieldnames:
+		fieldnames.append("prerequisites")
+
+	updated_rows = []
+	found = False
+	for row in rows:
+		row_code = normalize_subject_code(row.get("code"))
+		if row_code == record["code"]:
+			updated_rows.append(record)
+			found = True
+		else:
+			row.setdefault("prerequisites", "")
+			updated_rows.append(row)
+
+	if not found:
+		updated_rows.append(record)
+
+	with tempfile.NamedTemporaryFile("w", delete=False, newline="", encoding="utf-8") as tmp_file:
+		writer = csv.DictWriter(tmp_file, fieldnames=fieldnames)
+		writer.writeheader()
+		for row in updated_rows:
+			writer.writerow({field: row.get(field, "") for field in fieldnames})
+		tmp_path = tmp_file.name
+
+	os.replace(tmp_path, CSV_PATH)
+
+
+def remove_subject_from_csv(code):
+	rows = read_subject_csv_rows(CSV_PATH)
+	if not rows:
+		return False
+
+	fieldnames = list(rows[0].keys())
+	if "prerequisites" not in fieldnames:
+		fieldnames.append("prerequisites")
+
+	normalized_code = normalize_subject_code(code)
+	updated_rows = []
+	removed = False
+	for row in rows:
+		row_code = normalize_subject_code(row.get("code"))
+		if row_code == normalized_code:
+			removed = True
+			continue
+		prerequisites = parse_prerequisite_codes(row.get("prerequisites", ""))
+		prerequisites = [prereq for prereq in prerequisites if prereq != normalized_code]
+		row["prerequisites"] = ",".join(prerequisites)
+		updated_rows.append(row)
+
+	if removed or len(updated_rows) != len(rows):
+		with tempfile.NamedTemporaryFile("w", delete=False, newline="", encoding="utf-8") as tmp_file:
+			writer = csv.DictWriter(tmp_file, fieldnames=fieldnames)
+			writer.writeheader()
+			for row in updated_rows:
+				writer.writerow({field: row.get(field, "") for field in fieldnames})
+			tmp_path = tmp_file.name
+
+		os.replace(tmp_path, CSV_PATH)
+
+	return removed
 
 
 def parse_semester_label(value):
@@ -265,6 +412,184 @@ def attach_resource_node(subject_code, source_file, source_type, chunk_count):
 		)
 
 
+def resolve_prerequisite_subjects(prerequisite_codes, semester):
+	driver = get_driver()
+	resolved = []
+	seen = set()
+	with driver.session() as session:
+		for prerequisite_code in prerequisite_codes:
+			row = session.run(
+				"""
+				MATCH (s:Subject {code: $code})
+				OPTIONAL MATCH (s)-[:BELONGS_TO]->(sem:Semester)
+				RETURN s.code AS code, s.name AS name, sem.number AS semester
+				""",
+				code=prerequisite_code,
+			).single()
+			if not row:
+				raise HTTPException(status_code=400, detail=f"Prerequisite subject not found: {prerequisite_code}")
+			if row["semester"] is None or int(row["semester"]) >= int(semester):
+				raise HTTPException(status_code=400, detail=f"Prerequisite {prerequisite_code} must be in an earlier semester")
+			normalized_code = normalize_subject_code(row["code"])
+			if normalized_code in seen:
+				continue
+			seen.add(normalized_code)
+			resolved.append({"code": row["code"], "name": row["name"], "semester": row["semester"]})
+	return resolved
+
+
+def create_subject_in_graph(subject, prerequisite_codes):
+	driver = get_driver()
+	with driver.session() as session:
+		session.run(
+			"""
+			MERGE (s:Subject {code: $code})
+			SET s.name = $name,
+				s.semester = $semester,
+				s.lecture_hrs = $lecture_hrs,
+				s.tutorial_hrs = $tutorial_hrs,
+				s.practical_hrs = $practical_hrs,
+				s.credits = $credits,
+				s.category = $category,
+				s.type = $type,
+				s.updated_at = datetime()
+			WITH s
+				MERGE (sem:Semester {number: $semester})
+				SET sem.number = $semester,
+					sem.updated_at = datetime()
+			MERGE (s)-[:BELONGS_TO]->(sem)
+			WITH s
+			UNWIND $prerequisites AS prerequisite_code
+			MATCH (pre:Subject {code: prerequisite_code})
+			MERGE (pre)-[:PREREQUISITE_OF]->(s)
+			""",
+			code=subject["code"],
+			name=subject["name"],
+			semester=subject["semester"],
+			lecture_hrs=subject["lecture_hrs"],
+			tutorial_hrs=subject["tutorial_hrs"],
+			practical_hrs=subject["practical_hrs"],
+			credits=subject["credits"],
+			category=subject["category"],
+			type=subject["type"],
+			prerequisites=prerequisite_codes,
+		)
+
+
+def delete_subject_in_graph(code):
+	driver = get_driver()
+	with driver.session() as session:
+		subject_row = session.run(
+			"MATCH (s:Subject {code: $code}) RETURN s.code AS code",
+			code=code,
+		).single()
+		if not subject_row:
+			return False
+
+		session.run(
+			"""
+			MATCH (s:Subject {code: $code})-[:HAS_RESOURCE]->(r:Resource)
+			DETACH DELETE r
+			""",
+			code=code,
+		)
+		session.run(
+			"""
+			MATCH (s:Subject {code: $code})-[:HAS_TOPIC]->(t:Topic)
+			DETACH DELETE t
+			""",
+			code=code,
+		)
+		session.run(
+			"""
+			MATCH (s:Subject {code: $code})-[:HAS_UNIT]->(u:Unit)
+			DETACH DELETE u
+			""",
+			code=code,
+		)
+		session.run(
+			"""
+			MATCH (s:Subject {code: $code})
+			DETACH DELETE s
+			""",
+			code=code,
+		)
+		return True
+
+
+@app.post("/subjects")
+def create_subject(payload: CreateSubjectRequest):
+	code = normalize_subject_code(payload.code)
+	name = normalize_whitespace(payload.name)
+	if not code:
+		raise HTTPException(status_code=400, detail="Subject code is required")
+	if not name:
+		raise HTTPException(status_code=400, detail="Subject name is required")
+	if payload.semester < 1 or payload.semester > 8:
+		raise HTTPException(status_code=400, detail="Semester must be between 1 and 8")
+	if payload.credits < 0:
+		raise HTTPException(status_code=400, detail="Credits must be zero or greater")
+	if get_subject(code) is not None:
+		raise HTTPException(status_code=409, detail=f"Subject code '{code}' already exists in the current graph.")
+	_, csv_row = find_subject_csv_row(code)
+	if csv_row is not None:
+		csv_semester = csv_row.get("semester", "")
+		csv_name = csv_row.get("name", "")
+		print(
+			f"[Subject Create] Recreating code {code} from CSV row: semester={csv_semester}, name={csv_name!r}. "
+			"The code is not present in the active graph, so this will overwrite the CSV row."
+		)
+
+	prerequisite_codes = parse_prerequisite_codes(payload.prerequisites)
+	resolved_prerequisites = resolve_prerequisite_subjects(prerequisite_codes, payload.semester)
+	subject_record = {
+		"code": code,
+		"name": name,
+		"semester": int(payload.semester),
+		"lecture_hrs": int(payload.credits),
+		"tutorial_hrs": 0,
+		"practical_hrs": 0,
+		"credits": int(payload.credits),
+		"category": DEFAULT_MANUAL_CATEGORY,
+		"type": DEFAULT_MANUAL_TYPE,
+		"prerequisites": ",".join(prerequisite_codes),
+	}
+
+	create_subject_in_graph(subject_record, [item["code"] for item in resolved_prerequisites])
+	upsert_subject_csv_record(subject_record)
+
+	created_subject = get_subject(code)
+	if created_subject is None:
+		raise HTTPException(status_code=500, detail="Subject was created in the graph but could not be reloaded")
+
+	return {
+		"status": "success",
+		"subject": created_subject,
+		"prerequisites": resolved_prerequisites,
+	}
+
+
+@app.delete("/subject/{code}")
+def delete_subject(code: str):
+	normalized_code = normalize_subject_code(code)
+	graph_subject = get_subject(normalized_code)
+	deleted_from_graph = False
+	if graph_subject is not None:
+		deleted_from_graph = delete_subject_in_graph(normalized_code)
+
+	deleted_from_csv = remove_subject_from_csv(normalized_code)
+
+	if not deleted_from_graph and not deleted_from_csv:
+		raise HTTPException(status_code=404, detail=f"Subject code '{normalized_code}' was not found in the graph or CSV.")
+
+	return {
+		"status": "success",
+		"code": normalized_code,
+		"deleted_from_graph": deleted_from_graph,
+		"deleted_from_csv": deleted_from_csv,
+	}
+
+
 @app.get("/subjects")
 def list_subjects():
 	"""Return all subjects grouped by semester for upload and query UIs."""
@@ -305,7 +630,9 @@ async def ingest(
 		tmp_path = tmp.name
 
 	try:
-		chunks = parse_file(tmp_path, chunk_size=CHUNK_SIZE_TOKENS, overlap=CHUNK_OVERLAP_TOKENS)
+		file_size_bytes = os.path.getsize(tmp_path)
+		chunk_size, overlap = derive_chunk_profile(file_size_bytes, ext)
+		chunks = parse_file(tmp_path, chunk_size=chunk_size, overlap=overlap)
 		if not chunks:
 			raise HTTPException(status_code=422, detail="No extractable content found in the uploaded file.")
 

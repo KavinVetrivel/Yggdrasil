@@ -1,64 +1,65 @@
-code,name,semester,lecture_hrs,tutorial_hrs,practical_hrs,credits,category,type
-23N101,Calculus and its Applications,1,3,1,0,4,BS,Theory
-23N102,Basics of Electrical and Electronic Systems,1,3,0,0,3,ES,Theory
-23N103,Applied Chemistry,1,3,0,0,3,BS,Theory
-23N104,Computational Thinking,1,3,1,0,4,ES,Theory
-23G105,English Language Proficiency,1,3,1,0,4,HS,Theory
-23N110,Python Programming Laboratory,1,0,0,4,2,ES,Practical
-23N111,Basic Science Laboratory,1,0,0,4,2,BS,Practical
-23N112,Engineering Practices,1,0,0,4,2,EEC,Practical
-23IP15,Induction Programme,1,0,0,0,0,MC,Theory
-23N201,Transforms and its Applications,2,3,1,0,4,BS,Theory
-23N202,Discrete Mathematics,2,3,1,0,4,BS,Theory
-23N203,Computer Organization and Architecture,2,3,0,0,3,ES,Theory
-23N204,C Programming,2,3,0,0,3,ES,Theory
-23G___,Language Elective,2,0,0,4,2,HS,Practical
-23N211,Hardware Programming Laboratory,2,0,0,4,2,ES,Practical
-23N212,C Programming Laboratory,2,0,0,4,2,ES,Practical
-23N214,Engineering Graphics,2,0,0,2,1,ES,Practical
-23N215,Activity Point Programme,2,0,0,0,0,MC,Theory
-23Q213,Foundations for Problem Solving,2,0,0,2,0,MC,Practical
-23N301,Linear Algebra,3,3,1,0,4,BS,Theory
-23N302,"Probability, Stochastic Processes and Statistics",3,3,1,0,4,BS,Theory
-23N303,Data Structures,3,3,0,0,3,PC,Theory
-23N304,Software Engineering,3,3,0,0,3,PC,Theory
-23O305,Engineering Economics,3,3,1,0,4,HS,Theory
-23N310,Object Oriented Programming Laboratory,3,0,0,4,2,ES,Practical
-23N311,Data Structures Laboratory,3,0,0,4,2,PC,Practical
-23Q313,Building Communication Skills,3,0,0,2,1,EEC,Practical
-23K312,Environmental Science,3,2,0,0,0,MC,Theory
-23N315,Activity Point Programme,3,0,0,0,0,MC,Theory
-23TC01,Heritage of Tamils / தமிழர ்மரபு,3,1,0,0,1,HS,Theory
-23N401,Foundations of Optimization Techniques,4,3,1,0,4,BS,Theory
-23N402,Database Management Systems,4,3,0,0,3,PC,Theory
-23N403,Design and Analysis of Algorithms,4,3,1,0,4,PC,Theory
-23N404,Operating Systems,4,3,1,0,4,PC,Theory
-23N405,Machine Learning -1,4,3,0,0,3,PC,Theory
-23N410,Database Management Systems Laboratory,4,0,0,4,2,PC,Practical
-23N411,Machine Learning Laboratory,4,0,0,4,2,PC,Practical
-23Q413,Problem Solving,4,0,0,2,1,EEC,Practical
-23O414,Indian Constitution,4,2,0,0,0,MC,Theory
-23N415,Activity Point Programme,4,0,0,0,0,MC,Theory
-23TC02,Tamils and Technology / தமிழரும் ததொழில் நுட்பமும்,4,1,0,0,1,HS,Theory
-23N501,Machine Learning -2,5,3,1,0,4,PC,Theory
-23N502,Artificial Intelligence,5,3,1,0,4,PC,Theory
-23N503,Embedded Systems,5,2,2,0,4,ES,Theory
-23N504,Computer Networks,5,3,0,0,3,PC,Theory
-23N ___,Professional Elective - 1,5,3,0,0,3,PE,Theory
-23N510,Computer Networks Laboratory,5,0,0,4,2,PC,Practical
-23N511,Application Development Laboratory,5,0,0,4,2,EEC,Practical
-23Q513,Aptitude Skills,5,0,0,2,1,EEC,Practical
-23N515,Activity Point Programme,5,0,0,0,0,MC,Theory
-23N601,Data Privacy and Security,6,3,1,0,4,PC,Theory
-23N602,Parallel and Distributed Systems,6,3,1,0,4,PC,Theory
-23N603,Deep Learning,6,3,0,0,3,PC,Theory
-23N604,Natural Language Processing,6,3,0,0,3,PC,Theory
-23N610,Deep Learning Laboratory,6,0,0,4,2,PC,Practical
-23N611,Innovation Practices,6,0,0,2,1,EEC,Practical
-23Q613,Enhancing Arithmetic Problem Solving,6,0,0,2,1,EEC,Practical
-23N615,Activity Point Programme,6,0,0,0,0,MC,Theory
-23N701,Big Data and Advanced Database Systems,7,3,0,0,3,PC,Theory
-23NO ___,Open Elective – 1,7,3,0,0,3,OE,Theory
-23N710,Big Data and Advanced Database Systems Laboratory,7,0,0,4,2,PC,Practical
-23N720,Project Work - I,7,0,0,4,2,EEC,Practical
-23N820,Project Work - II,8,0,0,8,4,EEC,Practical
+code,name,semester,lecture_hrs,tutorial_hrs,practical_hrs,credits,category,type,prerequisites
+23N101,Calculus and its Applications,1,3,1,0,4,BS,Theory,
+23N102,Basics of Electrical and Electronic Systems,1,3,0,0,3,ES,Theory,
+23N103,Applied Chemistry,1,3,0,0,3,BS,Theory,
+23N104,Computational Thinking,1,3,1,0,4,ES,Theory,
+23G105,English Language Proficiency,1,3,1,0,4,HS,Theory,
+23N110,Python Programming Laboratory,1,0,0,4,2,ES,Practical,
+23N111,Basic Science Laboratory,1,0,0,4,2,BS,Practical,
+23N112,Engineering Practices,1,0,0,4,2,EEC,Practical,
+23IP15,Induction Programme,1,0,0,0,0,MC,Theory,
+23N201,Transforms and its Applications,2,3,1,0,4,BS,Theory,
+23N202,Discrete Mathematics,2,3,1,0,4,BS,Theory,
+23N203,Computer Organization and Architecture,2,3,0,0,3,ES,Theory,
+23N204,C Programming,2,3,0,0,3,ES,Theory,
+23G___,Language Elective,2,0,0,4,2,HS,Practical,
+23N211,Hardware Programming Laboratory,2,0,0,4,2,ES,Practical,
+23N212,C Programming Laboratory,2,0,0,4,2,ES,Practical,
+23N214,Engineering Graphics,2,0,0,2,1,ES,Practical,
+23N215,Activity Point Programme,2,0,0,0,0,MC,Theory,
+23Q213,Foundations for Problem Solving,2,0,0,2,0,MC,Practical,
+23N301,Linear Algebra,3,3,1,0,4,BS,Theory,
+23N302,"Probability, Stochastic Processes and Statistics",3,3,1,0,4,BS,Theory,
+23N303,Data Structures,3,3,0,0,3,PC,Theory,
+23N304,Software Engineering,3,3,0,0,3,PC,Theory,
+23O305,Engineering Economics,3,3,1,0,4,HS,Theory,
+23N310,Object Oriented Programming Laboratory,3,0,0,4,2,ES,Practical,
+23N311,Data Structures Laboratory,3,0,0,4,2,PC,Practical,
+23Q313,Building Communication Skills,3,0,0,2,1,EEC,Practical,
+23K312,Environmental Science,3,2,0,0,0,MC,Theory,
+23N315,Activity Point Programme,3,0,0,0,0,MC,Theory,
+23TC01,Heritage of Tamils / தமிழர ்மரபு,3,1,0,0,1,HS,Theory,
+23N401,Foundations of Optimization Techniques,4,3,1,0,4,BS,Theory,
+23N402,Database Management Systems,4,3,0,0,3,PC,Theory,
+23N403,Design and Analysis of Algorithms,4,3,1,0,4,PC,Theory,
+23N404,Operating Systems,4,3,1,0,4,PC,Theory,
+23N405,Machine Learning -1,4,3,0,0,3,PC,Theory,
+23N410,Database Management Systems Laboratory,4,0,0,4,2,PC,Practical,
+23N411,Machine Learning Laboratory,4,0,0,4,2,PC,Practical,
+23Q413,Problem Solving,4,0,0,2,1,EEC,Practical,
+23O414,Indian Constitution,4,2,0,0,0,MC,Theory,
+23N415,Activity Point Programme,4,0,0,0,0,MC,Theory,
+23TC02,Tamils and Technology / தமிழரும் ததொழில் நுட்பமும்,4,1,0,0,1,HS,Theory,
+23N501,Machine Learning -2,5,3,1,0,4,PC,Theory,
+23N502,Artificial Intelligence,5,3,1,0,4,PC,Theory,
+23N503,Embedded Systems,5,2,2,0,4,ES,Theory,
+23N504,Computer Networks,5,3,0,0,3,PC,Theory,
+23N ___,Professional Elective - 1,5,3,0,0,3,PE,Theory,
+23N510,Computer Networks Laboratory,5,0,0,4,2,PC,Practical,
+23N511,Application Development Laboratory,5,0,0,4,2,EEC,Practical,
+23Q513,Aptitude Skills,5,0,0,2,1,EEC,Practical,
+23N515,Activity Point Programme,5,0,0,0,0,MC,Theory,
+23N601,Data Privacy and Security,6,3,1,0,4,PC,Theory,
+23N602,Parallel and Distributed Systems,6,3,1,0,4,PC,Theory,
+23N603,Deep Learning,6,3,0,0,3,PC,Theory,
+23N604,Natural Language Processing,6,3,0,0,3,PC,Theory,
+23N610,Deep Learning Laboratory,6,0,0,4,2,PC,Practical,
+23N611,Innovation Practices,6,0,0,2,1,EEC,Practical,
+23Q613,Enhancing Arithmetic Problem Solving,6,0,0,2,1,EEC,Practical,
+23N615,Activity Point Programme,6,0,0,0,0,MC,Theory,
+23N701,Big Data and Advanced Database Systems,7,3,0,0,3,PC,Theory,
+23NO ___,Open Elective – 1,7,3,0,0,3,OE,Theory,
+23N710,Big Data and Advanced Database Systems Laboratory,7,0,0,4,2,PC,Practical,
+23N720,Project Work - I,7,0,0,4,2,EEC,Practical,
+23N820,Project Work - II,8,0,0,8,4,EEC,Practical,
+23N606,NLP,6,3,0,0,3,MC,Theory,

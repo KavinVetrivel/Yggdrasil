@@ -150,6 +150,29 @@ PREDEFINED_PREREQUISITES = [
     ("23N720", "23N820"),
 ]
 
+
+def normalize_subject_code(value):
+    return re.sub(r"\s+", "", (value or "").strip().upper())
+
+
+def parse_prerequisite_codes(value):
+    if not value:
+        return []
+    if isinstance(value, str):
+        raw_values = re.split(r"[;,\n]+", value)
+    else:
+        raw_values = value
+
+    codes = []
+    seen = set()
+    for raw_value in raw_values:
+        code = normalize_subject_code(raw_value)
+        if not code or code in seen:
+            continue
+        seen.add(code)
+        codes.append(code)
+    return codes
+
 # ─────────────────────────────────────────────
 # STEP 1: Read subjects from CSV
 # ─────────────────────────────────────────────
@@ -158,19 +181,51 @@ def load_subjects_from_csv(path):
     with open(path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
+            prerequisites = parse_prerequisite_codes(row.get('prerequisites', ''))
             subjects.append({
                 'code':         row['code'],
                 'name':         row['name'],
                 'semester':     int(row['semester']),
-                'lecture_hrs':  int(row['lecture_hrs']),
-                'tutorial_hrs': int(row['tutorial_hrs']),
-                'practical_hrs':int(row['practical_hrs']),
-                'credits':      int(row['credits']),
+                'lecture_hrs':  int(row['lecture_hrs'] or 0),
+                'tutorial_hrs': int(row['tutorial_hrs'] or 0),
+                'practical_hrs':int(row['practical_hrs'] or 0),
+                'credits':      int(row['credits'] or 0),
                 'category':     row['category'],
                 'type':         row['type'],
+                'prerequisites': prerequisites,
             })
     print(f"[CSV] Loaded {len(subjects)} subjects")
     return subjects
+
+
+def _pair_from_codes(prerequisite, dependent):
+    return {"prerequisite": prerequisite, "dependent": dependent}
+
+
+def collect_manual_prerequisites(subjects):
+    pairs = []
+    for subject in subjects:
+        dependent = subject.get("code", "").strip()
+        for prerequisite in subject.get("prerequisites", []):
+            pairs.append(_pair_from_codes(prerequisite, dependent))
+    return pairs
+
+
+def merge_valid_prerequisites(subjects, *sources):
+    sem_map = {s["code"]: s["semester"] for s in subjects}
+    code_set = set(sem_map.keys())
+    valid = []
+    seen = set()
+
+    for source in sources:
+        for item in source:
+            pre = str(item.get("prerequisite", "")).strip().upper()
+            dep = str(item.get("dependent", "")).strip().upper()
+            if pre in code_set and dep in code_set and sem_map[pre] < sem_map[dep] and (pre, dep) not in seen:
+                valid.append({"prerequisite": pre, "dependent": dep})
+                seen.add((pre, dep))
+
+    return valid
 
 
 def normalize_whitespace(text):
@@ -1401,7 +1456,7 @@ def call_groq(prompt, label, max_tokens=2000):
                 "a blocked IP/network, a restricted key, or a Groq-side access rule."
             )
             print(f"[Groq] {_GROQ_UNAVAILABLE_REASON} Disabling Groq for the rest of this run.")
-    except (URLError, KeyError, IndexError, json.JSONDecodeError) as error:
+    except (TimeoutError, URLError, KeyError, IndexError, json.JSONDecodeError) as error:
         print(f"[Groq] Error for {label}: {error}")
 
     return None
@@ -1449,7 +1504,7 @@ def call_openrouter(prompt, label, max_tokens=2000):
     except HTTPError as error:
         error_body = error.read().decode('utf-8', errors='replace')
         print(f"[OpenRouter] HTTP {error.code} for {label}: {error_body}")
-    except (URLError, KeyError, IndexError, json.JSONDecodeError) as error:
+    except (TimeoutError, URLError, KeyError, IndexError, json.JSONDecodeError) as error:
         print(f"[OpenRouter] Error for {label}: {error}")
 
     return None
@@ -1518,9 +1573,16 @@ def infer_prerequisites(subjects):
     if not subjects:
         return []
 
+    manual_prerequisites = collect_manual_prerequisites(subjects)
+    predefined_prerequisites = [
+        {"prerequisite": prerequisite, "dependent": dependent}
+        for prerequisite, dependent in PREDEFINED_PREREQUISITES
+    ]
+
     if not get_groq_api_key() and not get_openrouter_api_key():
         print("[Prerequisites] No Groq or OpenRouter key set; using local heuristic inference.")
-        return infer_prerequisites_heuristic(subjects)
+        inferred = infer_prerequisites_heuristic(subjects)
+        return merge_valid_prerequisites(subjects, predefined_prerequisites, manual_prerequisites, inferred)
 
     # Format subjects as a compact list for the prompt
     lines = []
@@ -1555,7 +1617,8 @@ Subjects:
 
     if raw is None:
         print("[Prerequisites] All LLM providers unavailable; using local heuristic inference.")
-        return infer_prerequisites_heuristic(subjects)
+        inferred = infer_prerequisites_heuristic(subjects)
+        return merge_valid_prerequisites(subjects, predefined_prerequisites, manual_prerequisites, inferred)
 
     try:
         parsed = json.loads(raw)
@@ -1563,20 +1626,21 @@ Subjects:
             raise ValueError("Expected a JSON array")
     except (json.JSONDecodeError, ValueError) as error:
         print(f"[Prerequisites] JSON parse failed: {error}; using local heuristic.")
-        return infer_prerequisites_heuristic(subjects)
+        inferred = infer_prerequisites_heuristic(subjects)
+        return merge_valid_prerequisites(subjects, predefined_prerequisites, manual_prerequisites, inferred)
 
-    # Validate: only accept pairs where prerequisite semester < dependent semester
+    inferred = []
     sem_map = {s["code"]: s["semester"] for s in subjects}
     code_set = set(sem_map.keys())
-    valid = []
     for item in parsed:
-        pre = str(item.get("prerequisite", "")).strip()
-        dep = str(item.get("dependent", "")).strip()
+        pre = str(item.get("prerequisite", "")).strip().upper()
+        dep = str(item.get("dependent", "")).strip().upper()
         if pre in code_set and dep in code_set and sem_map[pre] < sem_map[dep]:
-            valid.append({"prerequisite": pre, "dependent": dep})
+            inferred.append({"prerequisite": pre, "dependent": dep})
 
-    print(f"[Groq] Inferred {len(valid)} valid prerequisite relationships")
-    return valid
+    merged = merge_valid_prerequisites(subjects, predefined_prerequisites, manual_prerequisites, inferred)
+    print(f"[Groq] Inferred {len(merged)} valid prerequisite relationships")
+    return merged
 
 
 # ─────────────────────────────────────────────
