@@ -5,18 +5,28 @@ from functools import lru_cache
 import csv
 import os
 import re
+import sys
 import tempfile
 from typing import Dict, List
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
-from load_data import load_regulation_graph
-from parser import parse_file
-from vector_store import upsert_chunks
-from rag_pipeline import ask as rag_ask
+from pydantic import BaseModel, Field
+
+if __package__ in {None, ""}:
+	sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+	from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
+	from load_data import load_regulation_graph
+	from parser import parse_file
+	from vector_store import upsert_chunks
+	from rag_pipeline import ask as rag_ask
+else:
+	from .config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
+	from .load_data import load_regulation_graph
+	from .parser import parse_file
+	from .vector_store import upsert_chunks
+	from .rag_pipeline import ask as rag_ask
 
 try:
 	from neo4j import GraphDatabase
@@ -72,17 +82,21 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-NOTEBOOK_INDEX = os.path.join(BASE_DIR, "curriculum_notebook.html")
-UPLOAD_INDEX = os.path.join(BASE_DIR, "upload_resources.html")
-REGULATION_UPLOAD_INDEX = os.path.join(BASE_DIR, "regulation_upload.html")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
+NOTEBOOK_INDEX = os.path.join(FRONTEND_DIR, "curriculum_notebook.html")
+UPLOAD_INDEX = os.path.join(FRONTEND_DIR, "upload_resources.html")
+REGULATION_UPLOAD_INDEX = os.path.join(FRONTEND_DIR, "regulation_upload.html")
 _driver = None
 _subject_resource_index = None
 
 
 class ChatRequest(BaseModel):
-	question: str
-	subject_code: str
+	query: str | None = None
+	question: str | None = None
+	subject_id: str | None = None
+	subject_code: str | None = None
+	history: List[dict] = Field(default_factory=list)
 
 
 class CreateSubjectRequest(BaseModel):
@@ -311,6 +325,26 @@ def graph_is_initialized():
 		return False
 
 
+def cleanup_orphan_subjects():
+	driver = get_driver()
+	with driver.session() as session:
+		session.run(
+			"""
+			MATCH (s:Subject)
+			WHERE NOT (s)-[:BELONGS_TO]->(:Semester)
+			DETACH DELETE s
+			"""
+		)
+
+
+@app.on_event("startup")
+def startup_cleanup():
+	try:
+		cleanup_orphan_subjects()
+	except HTTPException:
+		return
+
+
 def _ext(filename):
 	return filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
 
@@ -529,8 +563,6 @@ def create_subject(payload: CreateSubjectRequest):
 		raise HTTPException(status_code=400, detail="Semester must be between 1 and 8")
 	if payload.credits < 0:
 		raise HTTPException(status_code=400, detail="Credits must be zero or greater")
-	if get_subject(code) is not None:
-		raise HTTPException(status_code=409, detail=f"Subject code '{code}' already exists in the current graph.")
 	_, csv_row = find_subject_csv_row(code)
 	if csv_row is not None:
 		csv_semester = csv_row.get("semester", "")
@@ -880,14 +912,35 @@ def fetch_related_topics(driver, name):
 
 
 def fetch_subject_resources(code):
-	try:
-		resource_index = get_subject_resource_index()
-		resources = resource_index.get(code)
-		if resources is None:
-			resources = {"textbooks": [], "references": []}
-	except HTTPException:
-		resources = {"textbooks": [], "references": []}
-	return {"code": code, "resources": resources}
+	driver = get_driver()
+	with driver.session() as session:
+		subject_row = session.run(
+			"""
+			MATCH (s:Subject {code: $code})
+			RETURN s.code AS code, s.name AS name
+			""",
+			code=code,
+		).single()
+		if not subject_row:
+			raise HTTPException(status_code=404, detail=f"Subject not found: {code}")
+
+		resources = session.run(
+			"""
+			MATCH (s:Subject {code: $code})-[:HAS_RESOURCE]->(r:Resource)
+			RETURN r.source_file AS source_file,
+			       r.source_type AS source_type,
+			       r.chunk_count AS chunk_count,
+			       r.updated_at AS updated_at
+			ORDER BY r.updated_at DESC, r.source_file ASC
+			""",
+			code=code,
+		).data()
+
+	return {
+		"code": code,
+		"subject": {"code": subject_row["code"], "name": subject_row["name"]},
+		"resources": resources,
+	}
 
 
 def fetch_subject_prerequisites(driver, code):
@@ -1023,8 +1076,15 @@ def get_subject_prerequisites(code: str):
 
 @app.post("/chat")
 def chat(payload: ChatRequest):
+	question = normalize_whitespace(payload.query or payload.question)
+	subject_code = normalize_whitespace(payload.subject_id or payload.subject_code).upper()
+	if not question:
+		raise HTTPException(status_code=400, detail="Missing chat query.")
+	if not subject_code:
+		raise HTTPException(status_code=400, detail="Missing subject identifier.")
+
 	try:
-		result = rag_ask(payload.question, payload.subject_code.strip().upper())
+		result = rag_ask(question, subject_code, history=payload.history)
 	except ValueError as error:
 		raise HTTPException(status_code=404, detail=str(error))
 
@@ -1054,4 +1114,5 @@ def get_learning_path(
 if __name__ == "__main__":
 	import uvicorn
 
-	uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
+	module_name = "api" if __package__ in {None, ""} else f"{__package__}.api"
+	uvicorn.run(f"{module_name}:app", host="0.0.0.0", port=8000, reload=True)

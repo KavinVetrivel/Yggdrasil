@@ -3,20 +3,46 @@
 import hashlib
 import math
 import re
+import os
+import sys
 from typing import List, Dict, Any
 
 import chromadb
 
-from config import (
-    CHROMA_PERSIST_DIR,
-    CHROMA_COLLECTION_NAME,
-    CHROMA_EMBEDDING_DIMENSIONS,
-    SENTENCE_TRANSFORMERS_MODEL,
-)
-from parser import RawChunk
+if __package__ in {None, ""}:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from config import (
+        CHROMA_BACKEND,
+        CHROMA_CLOUD_API_KEY,
+        CHROMA_CLOUD_DATABASE,
+        CHROMA_CLOUD_HOST,
+        CHROMA_CLOUD_PORT,
+        CHROMA_CLOUD_SSL,
+        CHROMA_CLOUD_TENANT,
+        CHROMA_PERSIST_DIR,
+        CHROMA_COLLECTION_NAME,
+        CHROMA_EMBEDDING_DIMENSIONS,
+        SENTENCE_TRANSFORMERS_MODEL,
+    )
+    from parser import RawChunk
+else:
+    from .config import (
+        CHROMA_BACKEND,
+        CHROMA_CLOUD_API_KEY,
+        CHROMA_CLOUD_DATABASE,
+        CHROMA_CLOUD_HOST,
+        CHROMA_CLOUD_PORT,
+        CHROMA_CLOUD_SSL,
+        CHROMA_CLOUD_TENANT,
+        CHROMA_PERSIST_DIR,
+        CHROMA_COLLECTION_NAME,
+        CHROMA_EMBEDDING_DIMENSIONS,
+        SENTENCE_TRANSFORMERS_MODEL,
+    )
+    from .parser import RawChunk
 
 
-# ── ChromaDB client (persistent, local) ───────────────────────────────────────
+# ── ChromaDB client ───────────────────────────────────────────────────────────
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_+-]*")
 _chroma_client = None
@@ -24,10 +50,52 @@ _collection = None
 _encoder = None
 
 
+def _create_client():
+    backend = (CHROMA_BACKEND or "cloud").strip().lower()
+
+    if backend == "local":
+        return chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
+
+    if backend in {"http", "remote"}:
+        headers = {}
+        if CHROMA_CLOUD_API_KEY:
+            headers["Authorization"] = f"Bearer {CHROMA_CLOUD_API_KEY}"
+        client_kwargs = {
+            "host": CHROMA_CLOUD_HOST,
+            "port": CHROMA_CLOUD_PORT,
+            "ssl": CHROMA_CLOUD_SSL,
+        }
+        if headers:
+            client_kwargs["headers"] = headers
+        if CHROMA_CLOUD_TENANT:
+            client_kwargs["tenant"] = CHROMA_CLOUD_TENANT
+        if CHROMA_CLOUD_DATABASE:
+            client_kwargs["database"] = CHROMA_CLOUD_DATABASE
+        return chromadb.HttpClient(**client_kwargs)
+
+    if not CHROMA_CLOUD_API_KEY:
+        raise RuntimeError(
+            "Chroma Cloud is the default backend. Set CHROMA_API_KEY, CHROMA_TENANT, and CHROMA_DATABASE, "
+            "or set CHROMA_BACKEND=local to keep using the on-disk store."
+        )
+
+    client_kwargs = {"api_key": CHROMA_CLOUD_API_KEY}
+    if CHROMA_CLOUD_TENANT:
+        client_kwargs["tenant"] = CHROMA_CLOUD_TENANT
+    if CHROMA_CLOUD_DATABASE:
+        client_kwargs["database"] = CHROMA_CLOUD_DATABASE
+    if CHROMA_CLOUD_HOST:
+        client_kwargs["cloud_host"] = CHROMA_CLOUD_HOST
+    if CHROMA_CLOUD_PORT:
+        client_kwargs["cloud_port"] = CHROMA_CLOUD_PORT
+    client_kwargs["enable_ssl"] = CHROMA_CLOUD_SSL
+    return chromadb.CloudClient(**client_kwargs)
+
+
 def _get_collection():
     global _chroma_client, _collection
     if _collection is None:
-        _chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
+        _chroma_client = _create_client()
         _collection = _chroma_client.get_or_create_collection(
             name=CHROMA_COLLECTION_NAME,
             metadata={"hnsw:space": "cosine"},

@@ -14,6 +14,7 @@
 :root{
   --sans:'DM Sans',sans-serif;
   --mono:'JetBrains Mono',monospace;
+  --color-overlay:rgba(15,23,42,.42);
   --color-background-primary:#ffffff;
   --color-background-secondary:#f8fafc;
   --color-background-tertiary:#eef2f7;
@@ -27,10 +28,36 @@
   --color-border-secondary:#cbd5e1;
   --color-border-tertiary:#e2e8f0;
   --color-border-info:#60a5fa;
+  --color-accent-success:#1D9E75;
+  --color-accent-danger:#b91c1c;
+  --color-accent-danger-soft:#fff1f2;
+  --color-accent-danger-border:rgba(185,28,28,.2);
   --border-radius-md:10px;
   --border-radius-lg:16px;
 }
-body{font-family:var(--sans);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
+html{color-scheme:light}
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --color-overlay:rgba(2,6,23,.72);
+  --color-background-primary:#0f172a;
+  --color-background-secondary:#111827;
+  --color-background-tertiary:#0b1120;
+  --color-background-info:#0f1a33;
+  --color-text-primary:#e5eef8;
+  --color-text-secondary:#c1c9d6;
+  --color-text-tertiary:#93a4b8;
+  --color-text-success:#6ee7b7;
+  --color-text-info:#93c5fd;
+  --color-border-primary:#5f7ea8;
+  --color-border-secondary:#334155;
+  --color-border-tertiary:#1f2a3a;
+  --color-border-info:#60a5fa;
+  --color-accent-success:#34d399;
+  --color-accent-danger:#f87171;
+  --color-accent-danger-soft:#2a1218;
+  --color-accent-danger-border:rgba(248,113,113,.25);
+}
+body{font-family:var(--sans);background:radial-gradient(circle at top, rgba(96,165,250,.10), transparent 35%), var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh;transition:background-color .2s,color .2s}
 
 .app{display:flex;flex-direction:column;min-height:100vh;max-width:1100px;margin:0 auto;padding:1.5rem}
 
@@ -43,8 +70,10 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .topbar-action{cursor:pointer;font-family:var(--sans)}
 .topbar-action:hover{filter:brightness(.98)}
 .topbar-action.hidden{display:none!important}
+.theme-toggle{margin-left:0}
+.theme-toggle i{font-size:14px;margin-right:6px}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
+.modal-overlay{position:fixed;inset:0;background:var(--color-overlay);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
 .modal-card{width:min(100%,520px);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:22px;box-shadow:0 24px 80px rgba(15,23,42,.18);padding:18px 18px 16px}
 .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
 .modal-title{font-size:16px;font-weight:500;line-height:1.35}
@@ -60,7 +89,7 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .modal-note{font-size:11px;color:var(--color-text-tertiary);line-height:1.5}
 .modal-status{font-size:12px;line-height:1.5;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary)}
 .modal-status.ok{color:var(--color-text-success);border-color:rgba(29,158,117,.25);background:rgba(29,158,117,.08)}
-.modal-status.bad{color:#c2410c;border-color:rgba(194,65,12,.25);background:rgba(194,65,12,.08)}
+.modal-status.bad{color:var(--color-accent-danger);border-color:var(--color-accent-danger-border);background:var(--color-accent-danger-soft)}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:4px}
 .modal-actions .btn{min-width:110px}
 
@@ -89,15 +118,15 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .subj-code{font-family:var(--mono);font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px}
 .subj-name{font-size:13px;font-weight:500;color:var(--color-text-primary);line-height:1.4}
 .subj-meta{font-size:11px;color:var(--color-text-tertiary);margin-top:6px}
-.subj-card.has-resources .subj-code::after{content:'● ';color:#1D9E75;font-size:9px;margin-right:2px}
+.subj-card.has-resources .subj-code::after{content:'● ';color:var(--color-accent-success);font-size:9px;margin-right:2px}
 .subj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .resource-dot{width:7px;height:7px;border-radius:50%;background:transparent;flex-shrink:0;margin-top:4px}
-.subj-card.has-resources .resource-dot{background:#1D9E75;box-shadow:0 0 0 2px rgba(29,158,117,.12)}
+.subj-card.has-resources .resource-dot{background:var(--color-accent-success);box-shadow:0 0 0 2px rgba(29,158,117,.12)}
 .subj-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
 .subj-action-btn{font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--sans);transition:background .1s,border-color .1s}
 .subj-action-btn:hover{background:var(--color-background-primary);border-color:var(--color-border-primary)}
-.subj-action-btn.danger{color:#b91c1c;border-color:rgba(185,28,28,.2)}
-.subj-action-btn.danger:hover{background:#fff1f2;border-color:rgba(185,28,28,.35)}
+.subj-action-btn.danger{color:var(--color-accent-danger);border-color:var(--color-accent-danger-border)}
+.subj-action-btn.danger:hover{background:var(--color-accent-danger-soft);border-color:rgba(185,28,28,.35)}
 .subj-click-hint{font-size:10px;color:var(--color-text-tertiary)}
 
 .notebook{display:grid;grid-template-columns:280px 1fr;gap:16px;flex:1;min-height:0}
@@ -109,8 +138,8 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .sidebar-sem{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
 .change-btn{font-size:12px;color:var(--color-text-secondary);background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 10px;cursor:pointer;margin-top:10px;font-family:var(--sans);width:100%;text-align:left}
 .change-btn:hover{background:var(--color-background-secondary)}
-.danger-btn{color:#b91c1c;border-color:rgba(185,28,28,.2)}
-.danger-btn:hover{background:#fff1f2;border-color:rgba(185,28,28,.35)}
+.danger-btn{color:var(--color-accent-danger);border-color:var(--color-accent-danger-border)}
+.danger-btn:hover{background:var(--color-accent-danger-soft);border-color:rgba(185,28,28,.35)}
 
 .units-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;flex:1;overflow-y:auto;max-height:500px}
 .units-panel h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:12px}
@@ -130,6 +159,13 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .prereq-chain{display:flex;flex-direction:column;gap:4px}
 .prereq-item{font-size:11px;color:var(--color-text-secondary);padding:5px 8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);display:flex;align-items:center;gap:6px}
 .prereq-item i{font-size:12px;color:var(--color-text-tertiary)}
+.resource-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.resource-section h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px}
+.resource-list{display:flex;flex-direction:column;gap:6px}
+.resource-item{padding:8px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);display:flex;flex-direction:column;gap:3px}
+.resource-name{font-size:12px;color:var(--color-text-primary);line-height:1.45;word-break:break-word}
+.resource-meta{font-size:10px;color:var(--color-text-tertiary);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.04em}
+.resource-empty{font-size:12px;color:var(--color-text-tertiary);line-height:1.5}
 .helper-text{font-size:12px;color:var(--color-text-tertiary)}
 .mono-label{font-family:var(--mono);font-size:10px;margin-right:4px;color:var(--color-text-tertiary)}
 .arrow-icon{font-size:11px}
@@ -184,7 +220,7 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
 .sources-list{margin-top:8px;display:flex;flex-direction:column;gap:8px}
 .source-item{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;line-height:1.5}
 .source-meta{font-family:var(--mono);font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px}
-.error-bubble{background:#fff1f2;color:#9f1239;border:0.5px solid #fecdd3}
+.error-bubble{background:var(--color-accent-danger-soft);color:var(--color-accent-danger);border:0.5px solid var(--color-accent-danger-border)}
 
 .hidden{display:none!important}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -204,6 +240,10 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
       <span class="sep hidden" id="bc-sep1">›</span>
       <span id="bc-subj" class="hidden"></span>
     </div>
+    <button type="button" class="topbar-action theme-toggle" id="theme-toggle" aria-pressed="false">
+      <i class="ti ti-moon-stars" aria-hidden="true"></i>
+      <span id="theme-toggle-label">Dark mode</span>
+    </button>
     <button type="button" class="topbar-action hidden" id="add-subject-btn">Add subject</button>
     <a class="topbar-action" href="/app/regulation/upload">Initialize regulation</a>
   </div>
@@ -252,6 +292,13 @@ body{font-family:var(--sans);background:var(--color-background-tertiary);color:v
       <div class="prereq-section" id="prereq-section">
         <h3>Prerequisite chain</h3>
         <div class="prereq-chain" id="prereq-chain"></div>
+      </div>
+
+      <div class="resource-section" id="resource-section">
+        <h3>Uploaded resources</h3>
+        <div class="resource-list" id="resource-list">
+          <p class="resource-empty" id="resource-empty">Loading uploaded documents…</p>
+        </div>
       </div>
     </div>
 
@@ -331,6 +378,7 @@ const state = {
   subjectsBySemester: {},
   currentSemester: null,
   currentSubject: null,
+  conversationHistory: [],
   prereqItems: [],
   topicHints: [],
   resourceSections: null,
@@ -353,6 +401,8 @@ const subjectModalClose = document.getElementById('subject-modal-close');
 const subjectModalCancel = document.getElementById('subject-modal-cancel');
 const subjectModalSubmit = document.getElementById('subject-modal-submit');
 const deleteSubjectBtn = document.getElementById('delete-subject-btn');
+const themeToggleBtn = document.getElementById('theme-toggle');
+const themeToggleLabel = document.getElementById('theme-toggle-label');
 const routeMode = location.protocol === 'file:' ? 'hash' : 'path';
 const notebookRoutePrefix = '/app';
 
@@ -555,6 +605,52 @@ function setStatus(kind, label) {
   }
 }
 
+function getPreferredTheme() {
+  try {
+    const storedTheme = window.localStorage.getItem('yggdrasil-theme');
+    if (storedTheme === 'light' || storedTheme === 'dark') {
+      return storedTheme;
+    }
+  } catch (error) {
+    // Ignore storage failures and fall back to the system preference.
+  }
+
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function updateThemeToggle(theme) {
+  if (!themeToggleBtn || !themeToggleLabel) return;
+  const isDark = theme === 'dark';
+  themeToggleBtn.setAttribute('aria-pressed', String(isDark));
+  const icon = themeToggleBtn.querySelector('i');
+  if (icon) {
+    icon.className = isDark ? 'ti ti-sun-high' : 'ti ti-moon-stars';
+  }
+  themeToggleLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+}
+
+function applyTheme(theme, persist = false) {
+  const nextTheme = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = nextTheme;
+  updateThemeToggle(nextTheme);
+
+  if (!persist) return;
+  try {
+    window.localStorage.setItem('yggdrasil-theme', nextTheme);
+  } catch (error) {
+    // Ignore storage failures; the toggle still applies for this session.
+  }
+}
+
+function initTheme() {
+  applyTheme(getPreferredTheme(), false);
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark', true);
+}
+
 function hideElement(id) {
   document.getElementById(id).classList.add('hidden');
 }
@@ -613,6 +709,7 @@ async function deleteSubjectByCode(code, semester = state.currentSemester) {
 
     if (state.currentSubject && state.currentSubject.code === code) {
       state.currentSubject = null;
+      state.conversationHistory = [];
       document.getElementById('messages').innerHTML = '';
       clearNotebookState();
     }
@@ -733,7 +830,11 @@ function showSubjectGate(semester) {
 }
 
 function openNotebook(subject, options = {}) {
+  const previousSubjectCode = state.currentSubject ? state.currentSubject.code : null;
   state.currentSubject = subject;
+  if (previousSubjectCode !== subject.code) {
+    state.conversationHistory = [];
+  }
   document.getElementById('bc-subj').classList.remove('hidden');
   document.getElementById('bc-sep1').classList.remove('hidden');
   setAddSubjectButtonVisible(true);
@@ -880,6 +981,36 @@ function renderPrereqs(subject, prerequisites) {
   document.getElementById('context-badge').textContent = `${prerequisites.length} prereq${prerequisites.length !== 1 ? 's' : ''} loaded`;
 }
 
+function renderResources(resources) {
+  const resourceList = document.getElementById('resource-list');
+  if (!resourceList) return;
+
+  const items = Array.isArray(resources) ? resources : [];
+  state.resourceSections = items;
+  resourceList.innerHTML = '';
+
+  if (!items.length) {
+    resourceList.innerHTML = '<p class="resource-empty">No uploaded documents yet for this subject.</p>';
+    return;
+  }
+
+  items.forEach((resource) => {
+    const item = document.createElement('div');
+    item.className = 'resource-item';
+
+    const sourceFile = resource.source_file || 'Unknown file';
+    const sourceType = resource.source_type || 'resource';
+    const chunkCount = Number.isFinite(Number(resource.chunk_count)) ? Number(resource.chunk_count) : 0;
+    const updatedAt = resource.updated_at ? new Date(resource.updated_at).toLocaleString() : '';
+
+    item.innerHTML = `
+      <div class="resource-name">${escapeHtml(sourceFile)}</div>
+      <div class="resource-meta">${escapeHtml(sourceType)} · ${chunkCount} chunks${updatedAt ? ` · ${escapeHtml(updatedAt)}` : ''}</div>
+    `;
+    resourceList.appendChild(item);
+  });
+}
+
 async function loadPrereqs(code) {
   prereqChain.innerHTML = '<p class="helper-text">Loading prerequisites…</p>';
   try {
@@ -892,11 +1023,15 @@ async function loadPrereqs(code) {
 }
 
 async function loadSubjectResources(code) {
+  const resourceList = document.getElementById('resource-list');
+  if (resourceList) {
+    resourceList.innerHTML = '<p class="resource-empty" id="resource-empty">Loading uploaded documents…</p>';
+  }
   try {
     const payload = await fetchJson(`/subject/${encodeURIComponent(code)}/resources`);
-    state.resourceSections = payload.resources || null;
+    renderResources(payload.resources || []);
   } catch (error) {
-    state.resourceSections = null;
+    renderResources([]);
   }
 }
 
@@ -993,7 +1128,11 @@ async function simulateResponse(query) {
     const response = await fetch(`${apiBase}/chat`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ question: query, subject_code: state.currentSubject.code })
+      body: JSON.stringify({
+        query,
+        subject_id: state.currentSubject.code,
+        history: state.conversationHistory.slice(-6),
+      })
     });
 
     if (!response.ok) {
@@ -1009,6 +1148,7 @@ async function simulateResponse(query) {
     }
 
     const data = await response.json();
+    state.conversationHistory.push({ role: 'assistant', content: data.answer || 'No answer was returned.' });
     appendAssistantResponse(data.answer || 'No answer was returned.', data.sources || [], data.prereqs_used || []);
   } catch (error) {
     appendAssistantError(error.message || 'Unable to fetch an answer right now.');
@@ -1022,12 +1162,14 @@ async function sendMessage() {
   input.value = '';
   const empty = document.getElementById('empty-state');
   if (empty) empty.remove();
+  state.conversationHistory.push({ role: 'user', content: text });
   appendMsg('user', escapeHtml(text));
   showTyping();
   await simulateResponse(text);
 }
 
 function resetToSubject() {
+  state.conversationHistory = [];
   hideElement('notebook');
   hideElement('bc-subj');
   hideElement('bc-sep1');
@@ -1138,6 +1280,12 @@ if (subjectForm) {
 if (deleteSubjectBtn) {
   deleteSubjectBtn.addEventListener('click', deleteCurrentSubject);
 }
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', toggleTheme);
+}
+
+initTheme();
 
 bootstrap();
 </script>

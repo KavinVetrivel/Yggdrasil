@@ -9,6 +9,7 @@ Endpoints:
 """
 
 import os
+import sys
 import tempfile
 from typing import Dict
 
@@ -16,11 +17,19 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
-from parser import parse_file, detect_source_type
-from vector_store import upsert_chunks
-from graph_store import get_subject, get_all_subjects, attach_resource_node
-from rag_pipeline import ask as rag_ask
+if __package__ in {None, ""}:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
+    from parser import parse_file, detect_source_type
+    from vector_store import upsert_chunks
+    from graph_store import get_subject, get_all_subjects, attach_resource_node
+    from rag_pipeline import ask as rag_ask
+else:
+    from .config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
+    from .parser import parse_file, detect_source_type
+    from .vector_store import upsert_chunks
+    from .graph_store import get_subject, get_all_subjects, attach_resource_node
+    from .rag_pipeline import ask as rag_ask
 
 app = FastAPI(title="Curriculum Ingestion API", version="0.1.0")
 
@@ -32,7 +41,6 @@ app.add_middleware(
 )
 
 ALLOWED_EXTENSIONS = {"pdf", "ppt", "pptx"}
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -156,7 +164,11 @@ def chat(payload: ChatRequest):
     try:
         result = rag_ask(payload.question, payload.subject_code.strip().upper())
     except ValueError as error:
-        raise HTTPException(status_code=404, detail=str(error))
+        msg = str(error).lower()
+        if "not found" in msg or "not found:" in msg:
+            raise HTTPException(status_code=404, detail=str(error))
+        # Other validation errors should be mapped to 400 Bad Request so callers can correct input
+        raise HTTPException(status_code=400, detail=str(error))
     graph_context = result.get("graph_context_used", {})
     return {
         "answer": result.get("answer", ""),
@@ -168,4 +180,6 @@ def chat(payload: ChatRequest):
 # ── Dev runner ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+    module_name = "main" if __package__ in {None, ""} else f"{__package__}.main"
+    uvicorn.run(f"{module_name}:app", host="0.0.0.0", port=8000, reload=True)

@@ -5,11 +5,16 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 from typing import Any, Dict, List, Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from config import NEO4J_PASSWORD, NEO4J_URI, NEO4J_USER
+if __package__ in {None, ""}:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from config import NEO4J_PASSWORD, NEO4J_URI, NEO4J_USER
+else:
+    from .config import NEO4J_PASSWORD, NEO4J_URI, NEO4J_USER
 
 try:
     from neo4j import GraphDatabase
@@ -17,7 +22,10 @@ except ImportError:  # pragma: no cover - optional runtime dependency
     GraphDatabase = None
 
 try:
-    from vector_store import _embed_texts, get_collection
+    if __package__ in {None, ""}:
+        from vector_store import _embed_texts, get_collection
+    else:
+        from .vector_store import _embed_texts, get_collection
 except Exception:  # pragma: no cover - optional runtime dependency
     _embed_texts = None
     get_collection = None
@@ -57,6 +65,34 @@ def _get_driver():
 
 def _normalize_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", text or "").strip()
+
+
+def _format_history(history: Optional[List[Dict[str, Any]]], current_question: str, max_messages: int = 6) -> str:
+    if not history:
+        return ""
+
+    recent_messages = history[-max_messages:]
+    normalized_question = _normalize_whitespace(current_question)
+    if recent_messages:
+        last_message = recent_messages[-1]
+        last_role = _normalize_whitespace(str(last_message.get("role", ""))).lower()
+        last_content = _normalize_whitespace(str(last_message.get("content", "")))
+        if last_role == "user" and last_content == normalized_question:
+            recent_messages = recent_messages[:-1]
+
+    if not recent_messages:
+        return ""
+
+    lines = ["Conversation so far:"]
+    for message in recent_messages:
+        role = _normalize_whitespace(str(message.get("role", ""))).lower()
+        content = _normalize_whitespace(str(message.get("content", "")))
+        if not content:
+            continue
+        speaker = "Student" if role == "user" else "Assistant"
+        lines.append(f"{speaker}: {content}")
+
+    return "\n".join(lines) if len(lines) > 1 else ""
 
 
 def _extract_unit_label(topic_hint: Optional[str], page_or_slide: Optional[Any]) -> str:
@@ -237,10 +273,16 @@ def get_graph_context(subject_code: str, topic_name: Optional[str] = None) -> Di
     }
 
 
-def assemble_prompt(question: str, chunks: List[Dict[str, Any]], graph_context: Dict[str, Any]) -> str:
+def assemble_prompt(
+    question: str,
+    chunks: List[Dict[str, Any]],
+    graph_context: Dict[str, Any],
+    history: Optional[List[Dict[str, Any]]] = None,
+) -> str:
     """Build the final prompt for the OpenRouter model."""
     subject = graph_context.get("subject", {})
     subject_name = subject.get("name") or subject.get("code") or "the subject"
+    history_text = _format_history(history, question)
 
     structure_lines: List[str] = []
     for unit in graph_context.get("units", []):
@@ -278,17 +320,23 @@ def assemble_prompt(question: str, chunks: List[Dict[str, Any]], graph_context: 
     topic_focus = graph_context.get("topic_focus")
     topic_focus_line = f"\nFocus topic: {topic_focus}" if topic_focus else ""
 
-    return (
-        f"You are a curriculum assistant for {subject_name}.\n\n"
-        f"Curriculum structure:{topic_focus_line}\n"
-        + "\n".join(structure_lines)
-        + "\n\nPrerequisites covered:\n"
-        + "\n".join(prereq_lines)
-        + "\n\nRelevant content from course materials:\n"
-        + "\n\n".join(chunk_lines)
-        + f"\n\nStudent question: {question}\n\n"
-        "Answer based only on the provided content. If content is insufficient, say so."
+    prompt_parts = [f"You are a curriculum assistant for {subject_name}."]
+    if history_text:
+        prompt_parts.append(history_text)
+
+    prompt_parts.extend(
+        [
+            f"Curriculum structure:{topic_focus_line}",
+            "\n".join(structure_lines),
+            "Prerequisites covered:",
+            "\n".join(prereq_lines),
+            "Relevant content from course materials:",
+            "\n\n".join(chunk_lines),
+            f"Student question: {question}",
+            "Answer based only on the provided content. If content is insufficient, say so.",
+        ]
     )
+    return "\n\n".join(prompt_parts)
 
 
 def _call_openrouter(prompt: str, max_tokens: int = 900) -> str:
@@ -443,11 +491,16 @@ def _call_openrouter_with_key(prompt: str, api_key: str, model: str, max_tokens:
     return raw.strip()
 
 
-def ask(question: str, subject_code: str, top_k: int = 5) -> Dict[str, Any]:
+def ask(
+    question: str,
+    subject_code: str,
+    top_k: int = 5,
+    history: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
     """Run retrieval, graph lookup, prompt assembly, and OpenRouter generation."""
     chunks = retrieve_context(question, subject_code, top_k=top_k)
     graph_context = get_graph_context(subject_code)
-    prompt = assemble_prompt(question, chunks, graph_context)
+    prompt = assemble_prompt(question, chunks, graph_context, history=history)
     try:
         answer = _call_openrouter(prompt)
     except RuntimeError as error:

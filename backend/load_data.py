@@ -180,20 +180,41 @@ def load_subjects_from_csv(path):
     subjects = []
     with open(path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            prerequisites = parse_prerequisite_codes(row.get('prerequisites', ''))
-            subjects.append({
-                'code':         row['code'],
-                'name':         row['name'],
-                'semester':     int(row['semester']),
-                'lecture_hrs':  int(row['lecture_hrs'] or 0),
-                'tutorial_hrs': int(row['tutorial_hrs'] or 0),
-                'practical_hrs':int(row['practical_hrs'] or 0),
-                'credits':      int(row['credits'] or 0),
-                'category':     row['category'],
-                'type':         row['type'],
-                'prerequisites': prerequisites,
-            })
+        for row_index, row in enumerate(reader, start=2):
+            try:
+                prerequisites = parse_prerequisite_codes(row.get('prerequisites', ''))
+                subjects.append({
+                    'code':         row['code'],
+                    'name':         row['name'],
+                    'semester':     int(row['semester']),
+                    'lecture_hrs':  int(row['lecture_hrs'] or 0),
+                    'tutorial_hrs': int(row['tutorial_hrs'] or 0),
+                    'practical_hrs':int(row['practical_hrs'] or 0),
+                    'credits':      int(row['credits'] or 0),
+                    'category':     row['category'],
+                    'type':         row['type'],
+                    'prerequisites': prerequisites,
+                })
+            except KeyError as e:
+                col = e.args[0] if e.args else '<unknown>'
+                raise ValueError(f"Malformed CSV at row {row_index}: missing column {col!r}; row snippet: {row}") from e
+            except ValueError as e:
+                # Try to identify the offending numeric column for clearer errors
+                offending = None
+                for col in ('semester', 'lecture_hrs', 'tutorial_hrs', 'practical_hrs', 'credits'):
+                    val = row.get(col)
+                    try:
+                        if col == 'semester':
+                            int(val)
+                        else:
+                            int(val or 0)
+                    except Exception:
+                        offending = (col, val)
+                        break
+                if offending:
+                    col, val = offending
+                    raise ValueError(f"Malformed CSV at row {row_index}: invalid value for column {col!r}: {val!r}; row snippet: {row}") from e
+                raise ValueError(f"Malformed CSV at row {row_index}: {e}; row snippet: {row}") from e
     print(f"[CSV] Loaded {len(subjects)} subjects")
     return subjects
 
@@ -1651,174 +1672,179 @@ def load_into_neo4j(subjects, prerequisites, topic_graph):
         raise RuntimeError("Install the neo4j driver in this venv before loading data: c:/vscode/Yggdrasil/.venv/Scripts/python.exe -m pip install neo4j")
 
     driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
-    related_topics = infer_related_topics(subjects, prerequisites, topic_graph)
-    summary = {
-        "subjects_loaded": len(subjects),
-        "prerequisites_loaded": 0,
-        "prerequisites_skipped": 0,
-        "units_loaded": 0,
-        "topics_loaded": 0,
-        "related_loaded": 0,
-        "related_skipped": 0,
-    }
+    try:
+        related_topics = infer_related_topics(subjects, prerequisites, topic_graph)
+        summary = {
+            "subjects_loaded": len(subjects),
+            "prerequisites_loaded": 0,
+            "prerequisites_skipped": 0,
+            "units_loaded": 0,
+            "topics_loaded": 0,
+            "related_loaded": 0,
+            "related_skipped": 0,
+        }
 
-    with driver.session() as session:
+        with driver.session() as session:
 
-        # Constraints
-        print("[Neo4j] Creating constraints...")
-        session.run("CREATE CONSTRAINT subject_code IF NOT EXISTS FOR (s:Subject) REQUIRE s.code IS UNIQUE")
-        session.run("CREATE CONSTRAINT semester_num IF NOT EXISTS FOR (sem:Semester) REQUIRE sem.number IS UNIQUE")
-        session.run("CREATE CONSTRAINT unit_key IF NOT EXISTS FOR (u:Unit) REQUIRE u.key IS UNIQUE")
-        session.run("CREATE CONSTRAINT topic_key IF NOT EXISTS FOR (t:Topic) REQUIRE t.key IS UNIQUE")
-        session.run("CREATE INDEX topic_lookup IF NOT EXISTS FOR (t:Topic) ON (t.subject_code, t.name_normalized)")
+            # Constraints
+            print("[Neo4j] Creating constraints...")
+            session.run("CREATE CONSTRAINT subject_code IF NOT EXISTS FOR (s:Subject) REQUIRE s.code IS UNIQUE")
+            session.run("CREATE CONSTRAINT semester_num IF NOT EXISTS FOR (sem:Semester) REQUIRE sem.number IS UNIQUE")
+            session.run("CREATE CONSTRAINT unit_key IF NOT EXISTS FOR (u:Unit) REQUIRE u.key IS UNIQUE")
+            session.run("CREATE CONSTRAINT topic_key IF NOT EXISTS FOR (t:Topic) REQUIRE t.key IS UNIQUE")
+            session.run("CREATE INDEX topic_lookup IF NOT EXISTS FOR (t:Topic) ON (t.subject_code, t.name_normalized)")
 
-        # Semesters — infer range from actual subjects (supports 4-yr, 5-yr programs)
-        print("[Neo4j] Creating Semester nodes...")
-        max_sem = max((s["semester"] for s in subjects), default=8)
-        for n in range(1, max_sem + 1):
-            session.run("""
-                MERGE (sem:Semester {number: $n})
-            """, n=n)
+            # Semesters — infer range from actual subjects (supports 4-yr, 5-yr programs)
+            print("[Neo4j] Creating Semester nodes...")
+            max_sem = max((s["semester"] for s in subjects), default=8)
+            for n in range(1, max_sem + 1):
+                session.run("""
+                    MERGE (sem:Semester {number: $n})
+                """, n=n)
 
-        # Subjects
-        print(f"[Neo4j] Loading {len(subjects)} subjects...")
-        for s in subjects:
-            session.run("""
-                MERGE (sub:Subject {code: $code})
-                SET sub.name          = $name,
-                    sub.semester      = $semester,
-                    sub.lecture_hrs   = $lecture_hrs,
-                    sub.tutorial_hrs  = $tutorial_hrs,
-                    sub.practical_hrs = $practical_hrs,
-                    sub.credits       = $credits,
-                    sub.category      = $category,
-                    sub.type          = $type
-                WITH sub
-                MATCH (sem:Semester {number: $semester})
-                MERGE (sub)-[:BELONGS_TO]->(sem)
-            """, **s)
+            # Subjects
+            print(f"[Neo4j] Loading {len(subjects)} subjects...")
+            for s in subjects:
+                session.run("""
+                    MERGE (sub:Subject {code: $code})
+                    SET sub.name          = $name,
+                        sub.semester      = $semester,
+                        sub.lecture_hrs   = $lecture_hrs,
+                        sub.tutorial_hrs  = $tutorial_hrs,
+                        sub.practical_hrs = $practical_hrs,
+                        sub.credits       = $credits,
+                        sub.category      = $category,
+                        sub.type          = $type
+                    WITH sub
+                    MATCH (sem:Semester {number: $semester})
+                    MERGE (sub)-[:BELONGS_TO]->(sem)
+                """, **s)
 
-        # Prerequisites
-        print(f"[Neo4j] Loading {len(prerequisites)} prerequisite relationships...")
-        loaded = 0
-        skipped = 0
-        for pair in prerequisites:
-            pre_code = pair.get('prerequisite', '').strip()
-            dep_code = pair.get('dependent', '').strip()
+            # Prerequisites
+            print(f"[Neo4j] Loading {len(prerequisites)} prerequisite relationships...")
+            loaded = 0
+            skipped = 0
+            for pair in prerequisites:
+                pre_code = pair.get('prerequisite', '').strip()
+                dep_code = pair.get('dependent', '').strip()
 
-            if not pre_code or not dep_code:
-                skipped += 1
-                continue
+                if not pre_code or not dep_code:
+                    skipped += 1
+                    continue
 
-            result = session.run("""
-                MATCH (pre:Subject {code: $pre_code})
-                MATCH (dep:Subject {code: $dep_code})
-                MERGE (pre)-[r:PREREQUISITE_OF]->(dep)
-                RETURN r
-            """, pre_code=pre_code, dep_code=dep_code)
+                result = session.run("""
+                    MATCH (pre:Subject {code: $pre_code})
+                    MATCH (dep:Subject {code: $dep_code})
+                    MERGE (pre)-[r:PREREQUISITE_OF]->(dep)
+                    RETURN r
+                """, pre_code=pre_code, dep_code=dep_code)
 
-            if result.single():
-                loaded += 1
-            else:
-                print(f"  [WARN] Skipped ({pre_code} -> {dep_code}): one or both codes not found")
-                skipped += 1
+                if result.single():
+                    loaded += 1
+                else:
+                    print(f"  [WARN] Skipped ({pre_code} -> {dep_code}): one or both codes not found")
+                    skipped += 1
 
-        print(f"  Loaded: {loaded} | Skipped: {skipped}")
-        summary["prerequisites_loaded"] = loaded
-        summary["prerequisites_skipped"] = skipped
+            print(f"  Loaded: {loaded} | Skipped: {skipped}")
+            summary["prerequisites_loaded"] = loaded
+            summary["prerequisites_skipped"] = skipped
 
-        # Units and topics
-        print(f"[Neo4j] Loading topic graph for {len(topic_graph)} subjects...")
-        unit_count = 0
-        topic_count = 0
-        for subject_topics in topic_graph:
-            subject_code = subject_topics["code"]
-            for unit in subject_topics["units"]:
-                unit_key = f"{subject_code}:{unit['number']}"
-                unit_title = normalize_whitespace(unit["title"])
+            # Units and topics
+            print(f"[Neo4j] Loading topic graph for {len(topic_graph)} subjects...")
+            unit_count = 0
+            topic_count = 0
+            for subject_topics in topic_graph:
+                subject_code = subject_topics["code"]
+                for unit in subject_topics["units"]:
+                    unit_key = f"{subject_code}:{unit['number']}"
+                    unit_title = normalize_whitespace(unit["title"])
 
-                session.run(
-                    """
-                    MATCH (sub:Subject {code: $subject_code})
-                    MERGE (u:Unit {key: $unit_key})
-                    SET u.subject_code = $subject_code,
-                        u.number = $unit_number,
-                        u.title = $unit_title
-                    MERGE (sub)-[:HAS_UNIT]->(u)
-                    """,
-                    subject_code=subject_code,
-                    unit_key=unit_key,
-                    unit_number=unit["number"],
-                    unit_title=unit_title,
-                )
-                unit_count += 1
-
-                for topic_name in unit["topics"]:
-                    topic_key = f"{unit_key}:{slugify(topic_name)}"
-                    topic_name_normalized = normalize_whitespace(topic_name).lower()
                     session.run(
                         """
                         MATCH (sub:Subject {code: $subject_code})
-                        MATCH (u:Unit {key: $unit_key})
-                        MERGE (t:Topic {key: $topic_key})
-                        SET t.subject_code = $subject_code,
-                            t.unit_key = $unit_key,
-                            t.name = $topic_name,
-                            t.name_normalized = $topic_name_normalized
-                        MERGE (sub)-[:HAS_TOPIC]->(t)
-                        MERGE (t)-[:PART_OF_UNIT]->(u)
+                        MERGE (u:Unit {key: $unit_key})
+                        SET u.subject_code = $subject_code,
+                            u.number = $unit_number,
+                            u.title = $unit_title
+                        MERGE (sub)-[:HAS_UNIT]->(u)
                         """,
                         subject_code=subject_code,
                         unit_key=unit_key,
-                        topic_key=topic_key,
-                        topic_name=topic_name,
-                        topic_name_normalized=topic_name_normalized,
+                        unit_number=unit["number"],
+                        unit_title=unit_title,
                     )
-                    topic_count += 1
+                    unit_count += 1
 
-        print(f"  Loaded: {unit_count} units | {topic_count} topics")
-        summary["units_loaded"] = unit_count
-        summary["topics_loaded"] = topic_count
+                    for topic_name in unit["topics"]:
+                        topic_key = f"{unit_key}:{slugify(topic_name)}"
+                        topic_name_normalized = normalize_whitespace(topic_name).lower()
+                        session.run(
+                            """
+                            MATCH (sub:Subject {code: $subject_code})
+                            MATCH (u:Unit {key: $unit_key})
+                            MERGE (t:Topic {key: $topic_key})
+                            SET t.subject_code = $subject_code,
+                                t.unit_key = $unit_key,
+                                t.name = $topic_name,
+                                t.name_normalized = $topic_name_normalized
+                            MERGE (sub)-[:HAS_TOPIC]->(t)
+                            MERGE (t)-[:PART_OF_UNIT]->(u)
+                            """,
+                            subject_code=subject_code,
+                            unit_key=unit_key,
+                            topic_key=topic_key,
+                            topic_name=topic_name,
+                            topic_name_normalized=topic_name_normalized,
+                        )
+                        topic_count += 1
 
-        # Cross-subject topic relationships
-        print(f"[Neo4j] Loading {len(related_topics)} RELATED_TO relationships...")
-        related_loaded = 0
-        related_skipped = 0
-        for relation in related_topics:
-            source_subject = relation.get("source_subject", "").strip()
-            source_topic = relation.get("source_topic", "").strip()
-            target_subject = relation.get("target_subject", "").strip()
-            target_topic = relation.get("target_topic", "").strip()
-            source_topic_normalized = normalize_whitespace(source_topic).lower()
-            target_topic_normalized = normalize_whitespace(target_topic).lower()
+            print(f"  Loaded: {unit_count} units | {topic_count} topics")
+            summary["units_loaded"] = unit_count
+            summary["topics_loaded"] = topic_count
 
-            if not source_subject or not source_topic or not target_subject or not target_topic:
-                related_skipped += 1
-                continue
+            # Cross-subject topic relationships
+            print(f"[Neo4j] Loading {len(related_topics)} RELATED_TO relationships...")
+            related_loaded = 0
+            related_skipped = 0
+            for relation in related_topics:
+                source_subject = relation.get("source_subject", "").strip()
+                source_topic = relation.get("source_topic", "").strip()
+                target_subject = relation.get("target_subject", "").strip()
+                target_topic = relation.get("target_topic", "").strip()
+                source_topic_normalized = normalize_whitespace(source_topic).lower()
+                target_topic_normalized = normalize_whitespace(target_topic).lower()
 
-            result = session.run(
-                """
-                MATCH (source:Topic {subject_code: $source_subject, name_normalized: $source_topic_normalized})
-                MATCH (target:Topic {subject_code: $target_subject, name_normalized: $target_topic_normalized})
-                MERGE (source)-[r:RELATED_TO]->(target)
-                RETURN r
-                """,
-                source_subject=source_subject,
-                source_topic_normalized=source_topic_normalized,
-                target_subject=target_subject,
-                target_topic_normalized=target_topic_normalized,
-            )
+                if not source_subject or not source_topic or not target_subject or not target_topic:
+                    related_skipped += 1
+                    continue
 
-            if result.single():
-                related_loaded += 1
-            else:
-                related_skipped += 1
+                result = session.run(
+                    """
+                    MATCH (source:Topic {subject_code: $source_subject, name_normalized: $source_topic_normalized})
+                    MATCH (target:Topic {subject_code: $target_subject, name_normalized: $target_topic_normalized})
+                    MERGE (source)-[r:RELATED_TO]->(target)
+                    RETURN r
+                    """,
+                    source_subject=source_subject,
+                    source_topic_normalized=source_topic_normalized,
+                    target_subject=target_subject,
+                    target_topic_normalized=target_topic_normalized,
+                )
 
-        print(f"  Loaded: {related_loaded} | Skipped: {related_skipped}")
-        summary["related_loaded"] = related_loaded
-        summary["related_skipped"] = related_skipped
+                if result.single():
+                    related_loaded += 1
+                else:
+                    related_skipped += 1
 
-    driver.close()
+            print(f"  Loaded: {related_loaded} | Skipped: {related_skipped}")
+            summary["related_loaded"] = related_loaded
+            summary["related_skipped"] = related_skipped
+
+    finally:
+        try:
+            driver.close()
+        except Exception:
+            pass
     print("[Neo4j] Done.")
     return summary
 

@@ -21,7 +21,35 @@ CHALLENGES:
 ![Database schema](img/image.png)
 
 To execute:
-python main.py
-python api.py
+python backend/main.py
+python backend/api.py
 
-url: [127.0.0.1:57094](http://127.0.0.1:8000/app)
+url: [127.0.0.1:8000](http://127.0.0.1:8000/app)
+
+### Project layout
+
+The codebase is now split into focused folders:
+
+```text
+backend/   FastAPI apps, graph logic, loaders, RAG pipeline, and vector storage
+frontend/  Notebook, upload, and regulation HTML pages
+img/       Diagrams and screenshots
+chroma_store/  Local Chroma data for fallback mode
+```
+
+The implementation lives under `backend/`. Run the app with `python backend/main.py` or `python backend/api.py`.
+
+### Chroma storage
+
+By default, uploaded documents now go to Chroma Cloud instead of the local `chroma_store/` directory.
+
+Set these environment variables to connect the ingestion pipeline to your cloud collection:
+
+```env
+CHROMA_API_KEY=your_chroma_cloud_api_key
+CHROMA_TENANT=your_tenant
+CHROMA_DATABASE=your_database
+CHROMA_BACKEND=cloud
+```
+
+If you need the old on-disk behavior for local testing, set `CHROMA_BACKEND=local`.

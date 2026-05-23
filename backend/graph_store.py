@@ -1,8 +1,15 @@
 """Thin Neo4j client used by the ingestion API and subject queries."""
 
+import os
+import sys
 from typing import Optional, Dict, Any, List
 from neo4j import GraphDatabase
-from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+else:
+    from .config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 
 
 _driver = None
