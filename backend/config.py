@@ -26,6 +26,14 @@ NEO4J_USERNAME = _env("NEO4J_USERNAME", _env("NEO4J_USER", "neo4j"))
 NEO4J_USER = NEO4J_USERNAME
 NEO4J_PASSWORD = _env("NEO4J_PASSWORD", "password")
 
+# PostgreSQL
+POSTGRES_HOST = _env("POSTGRES_HOST", "localhost")
+POSTGRES_PORT = parse_int_env("POSTGRES_PORT", 5432)
+POSTGRES_DB = _env("POSTGRES_DB", "yggdrasil")
+POSTGRES_USER = _env("POSTGRES_USER", "postgres")
+POSTGRES_PASSWORD = _env("POSTGRES_PASSWORD", "")
+POSTGRES_SSLMODE = _env("POSTGRES_SSLMODE", "prefer")
+
 # ChromaDB
 CHROMA_BACKEND = _env("CHROMA_BACKEND", "cloud").strip().lower()
 CHROMA_PERSIST_DIR = _env("CHROMA_PERSIST_DIR", _env("CHROMA_DIR", "./chroma_store"))

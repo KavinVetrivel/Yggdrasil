@@ -17,14 +17,20 @@ from pydantic import BaseModel, Field
 if __package__ in {None, ""}:
 	sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 	from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
+	from auth_store import authenticate_user, get_user, register_user
 	from load_data import load_regulation_graph
+	from logging_utils import build_logger, install_request_logging
 	from parser import parse_file
+	from graph_store import get_student_profile, upsert_student_profile
 	from vector_store import upsert_chunks
 	from rag_pipeline import ask as rag_ask
 else:
 	from .config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
+	from .auth_store import authenticate_user, get_user, register_user
 	from .load_data import load_regulation_graph
+	from .logging_utils import build_logger, install_request_logging
 	from .parser import parse_file
+	from .graph_store import get_student_profile, upsert_student_profile
 	from .vector_store import upsert_chunks
 	from .rag_pipeline import ask as rag_ask
 
@@ -81,6 +87,8 @@ app.add_middleware(
 	allow_methods=["*"],
 	allow_headers=["*"],
 )
+logger = build_logger("yggdrasil.api", "api")
+install_request_logging(app, logger)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
@@ -105,6 +113,29 @@ class CreateSubjectRequest(BaseModel):
 	semester: int
 	credits: int
 	prerequisites: List[str] = []
+
+
+class RegisterUserRequest(BaseModel):
+	user_id: str
+	password: str
+	email: str | None = None
+
+
+class LoginUserRequest(BaseModel):
+	user_id: str
+	password: str
+
+
+class StudentProfileRequest(BaseModel):
+	user_id: str
+	college_id: str
+	regulation_id: str
+	program_id: str
+	semester_number: int
+	email: str | None = None
+	college_name: str | None = None
+	regulation_name: str | None = None
+	program_name: str | None = None
 
 
 @app.get("/")
@@ -620,6 +651,75 @@ def delete_subject(code: str):
 		"deleted_from_graph": deleted_from_graph,
 		"deleted_from_csv": deleted_from_csv,
 	}
+
+
+@app.post("/auth/register")
+def register_auth_user(payload: RegisterUserRequest):
+	try:
+		record = register_user(payload.user_id, payload.password, payload.email)
+	except ValueError as error:
+		message = str(error)
+		status_code = 409 if "exists" in message.lower() else 400
+		raise HTTPException(status_code=status_code, detail=message)
+
+	return {
+		"status": "success",
+		"user": {
+			"user_id": record.user_id,
+			"email": record.email,
+			"created_at": record.created_at,
+		},
+	}
+
+
+@app.post("/auth/login")
+def login_auth_user(payload: LoginUserRequest):
+	try:
+		record = authenticate_user(payload.user_id, payload.password)
+	except ValueError as error:
+		raise HTTPException(status_code=401, detail=str(error))
+
+	return {
+		"status": "success",
+		"user": {
+			"user_id": record.user_id,
+			"email": record.email,
+			"created_at": record.created_at,
+		},
+	}
+
+
+@app.post("/students")
+def upsert_student(payload: StudentProfileRequest):
+	user = get_user(payload.user_id)
+	if user is None:
+		raise HTTPException(status_code=404, detail=f"User '{payload.user_id}' was not found in PostgreSQL")
+
+	email = payload.email or user.email or ""
+	profile = upsert_student_profile(
+		student_id=payload.user_id,
+		email=email,
+		college_id=payload.college_id,
+		regulation_id=payload.regulation_id,
+		program_id=payload.program_id,
+		semester_number=payload.semester_number,
+		program_name=payload.program_name,
+		college_name=payload.college_name,
+		regulation_name=payload.regulation_name,
+	)
+
+	return {
+		"status": "success",
+		"student": profile,
+	}
+
+
+@app.get("/students/{student_id}")
+def get_student(student_id: str):
+	profile = get_student_profile(student_id)
+	if profile is None:
+		raise HTTPException(status_code=404, detail=f"Student '{student_id}' was not found")
+	return {"status": "success", "student": profile}
 
 
 @app.get("/subjects")

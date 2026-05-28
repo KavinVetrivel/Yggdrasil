@@ -53,3 +53,25 @@ CHROMA_BACKEND=cloud
 ```
 
 If you need the old on-disk behavior for local testing, set `CHROMA_BACKEND=local`.
+
+### PostgreSQL auth and student graph
+
+Authentication credentials now live in PostgreSQL, while student academic structure stays in Neo4j.
+
+Set these environment variables for the auth store:
+
+```env
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=yggdrasil
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password
+POSTGRES_SSLMODE=prefer
+```
+
+Available API routes:
+
+- `POST /auth/register` creates a PostgreSQL user with a hashed password.
+- `POST /auth/login` verifies the PostgreSQL user password.
+- `POST /students` upserts a Neo4j `Student` node and links it to `Program`, `College`, `Regulation`, and `Semester`.
+- `GET /students/{student_id}` fetches the Neo4j student profile.

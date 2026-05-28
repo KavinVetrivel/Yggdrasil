@@ -2,6 +2,7 @@
 
 import os
 import sys
+from datetime import datetime, timezone
 from typing import Optional, Dict, Any, List
 from neo4j import GraphDatabase
 
@@ -109,6 +110,114 @@ def attach_resource_node(
             source_type=source_type,
             chunk_count=chunk_count,
         )
+
+
+def upsert_student_profile(
+    student_id: str,
+    email: str,
+    college_id: str,
+    regulation_id: str,
+    program_id: str,
+    semester_number: int,
+    program_name: str | None = None,
+    college_name: str | None = None,
+    regulation_name: str | None = None,
+    created_at: datetime | None = None,
+) -> Dict[str, Any]:
+    """Create or update a student node and the academic context around it."""
+    driver = _get_driver()
+    created_at = created_at or datetime.now(timezone.utc)
+    with driver.session() as session:
+        session.run(
+            """
+            MERGE (st:Student {id: $student_id})
+            SET st.email = $email,
+                st.college_id = $college_id,
+                st.regulation_id = $regulation_id,
+                st.created_at = coalesce(st.created_at, $created_at)
+            MERGE (program:Program {id: $program_id})
+            SET program.name = coalesce($program_name, program.name),
+                program.updated_at = timestamp()
+            MERGE (college:College {id: $college_id})
+            SET college.name = coalesce($college_name, college.name),
+                college.updated_at = timestamp()
+            MERGE (regulation:Regulation {id: $regulation_id})
+            SET regulation.name = coalesce($regulation_name, regulation.name),
+                regulation.updated_at = timestamp()
+            MERGE (semester:Semester {number: $semester_number})
+            SET semester.updated_at = timestamp()
+            MERGE (st)-[:ENROLLED_IN]->(program)
+            MERGE (st)-[:BELONGS_TO]->(college)
+            MERGE (st)-[:HAS_REGULATION]->(regulation)
+            MERGE (st)-[:IN_SEMESTER]->(semester)
+            MERGE (program)-[:IN_COLLEGE]->(college)
+            MERGE (program)-[:USES_REGULATION]->(regulation)
+            MERGE (regulation)-[:HAS_SEMESTER]->(semester)
+            """,
+            student_id=student_id,
+            email=email,
+            college_id=college_id,
+            regulation_id=regulation_id,
+            program_id=program_id,
+            semester_number=int(semester_number),
+            program_name=program_name,
+            college_name=college_name,
+            regulation_name=regulation_name,
+            created_at=created_at,
+        )
+
+        row = session.run(
+            """
+            MATCH (st:Student {id: $student_id})
+            OPTIONAL MATCH (st)-[:ENROLLED_IN]->(program:Program)
+            OPTIONAL MATCH (st)-[:BELONGS_TO]->(college:College)
+            OPTIONAL MATCH (st)-[:HAS_REGULATION]->(regulation:Regulation)
+            OPTIONAL MATCH (st)-[:IN_SEMESTER]->(semester:Semester)
+            RETURN st.id AS id,
+                   st.email AS email,
+                   st.college_id AS college_id,
+                   st.regulation_id AS regulation_id,
+                   st.created_at AS created_at,
+                   program.id AS program_id,
+                   program.name AS program_name,
+                   college.id AS college_node_id,
+                   college.name AS college_name,
+                   regulation.id AS regulation_node_id,
+                   regulation.name AS regulation_name,
+                   semester.number AS semester_number
+            """,
+            student_id=student_id,
+        ).single()
+
+        return dict(row) if row else {}
+
+
+def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
+    driver = _get_driver()
+    with driver.session() as session:
+        row = session.run(
+            """
+            MATCH (st:Student {id: $student_id})
+            OPTIONAL MATCH (st)-[:ENROLLED_IN]->(program:Program)
+            OPTIONAL MATCH (st)-[:BELONGS_TO]->(college:College)
+            OPTIONAL MATCH (st)-[:HAS_REGULATION]->(regulation:Regulation)
+            OPTIONAL MATCH (st)-[:IN_SEMESTER]->(semester:Semester)
+            RETURN st.id AS id,
+                   st.email AS email,
+                   st.college_id AS college_id,
+                   st.regulation_id AS regulation_id,
+                   st.created_at AS created_at,
+                   program.id AS program_id,
+                   program.name AS program_name,
+                   college.id AS college_node_id,
+                   college.name AS college_name,
+                   regulation.id AS regulation_node_id,
+                   regulation.name AS regulation_name,
+                   semester.number AS semester_number
+            """,
+            student_id=student_id,
+        ).single()
+        return dict(row) if row else None
 
 
 def close():

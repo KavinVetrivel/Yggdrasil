@@ -20,12 +20,14 @@ from pydantic import BaseModel
 if __package__ in {None, ""}:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
+    from logging_utils import build_logger, install_request_logging
     from parser import parse_file, detect_source_type
     from vector_store import upsert_chunks
     from graph_store import get_subject, get_all_subjects, attach_resource_node
     from rag_pipeline import ask as rag_ask
 else:
     from .config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
+    from .logging_utils import build_logger, install_request_logging
     from .parser import parse_file, detect_source_type
     from .vector_store import upsert_chunks
     from .graph_store import get_subject, get_all_subjects, attach_resource_node
@@ -39,6 +41,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+logger = build_logger("yggdrasil.main", "ingest")
+install_request_logging(app, logger)
 
 ALLOWED_EXTENSIONS = {"pdf", "ppt", "pptx"}
 
