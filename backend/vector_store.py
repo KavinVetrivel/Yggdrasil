@@ -164,8 +164,11 @@ def _build_metadata(
     subject_name: str,
     semester: int,
     source_type: str,       # "ppt" | "syllabus" | "textbook"
+    college_id: str | None = None,
+    regulation_id: str | None = None,
+    student_id: str | None = None,
 ) -> Dict[str, Any]:
-    return {
+    metadata = {
         "subject_code": subject_code,
         "subject_name": subject_name,
         "semester": semester,
@@ -175,6 +178,13 @@ def _build_metadata(
         "topic_hint": chunk.topic_hint,
         "page_or_slide": chunk.page_or_slide,
     }
+    if college_id:
+        metadata["college_id"] = college_id
+    if regulation_id:
+        metadata["regulation_id"] = regulation_id
+    if student_id:
+        metadata["student_id"] = student_id
+    return metadata
 
 
 # ── Main upsert function ───────────────────────────────────────────────────────
@@ -185,6 +195,9 @@ def upsert_chunks(
     subject_name: str,
     semester: int,
     source_type: str,
+    college_id: str | None = None,
+    regulation_id: str | None = None,
+    student_id: str | None = None,
     batch_size: int = 64,
 ) -> Dict[str, int]:
     """
@@ -202,7 +215,16 @@ def upsert_chunks(
             continue
 
         chunk_id = _make_chunk_id(subject_code, chunk.source_file, chunk.chunk_index)
-        metadata = _build_metadata(chunk, subject_code, subject_name, semester, source_type)
+        metadata = _build_metadata(
+            chunk,
+            subject_code,
+            subject_name,
+            semester,
+            source_type,
+            college_id=college_id,
+            regulation_id=regulation_id,
+            student_id=student_id,
+        )
 
         ids.append(chunk_id)
         documents.append(chunk.text)
@@ -237,6 +259,8 @@ def upsert_chunks(
 def query_chunks(
     query_text: str,
     subject_codes: List[str],
+    college_id: str | None = None,
+    regulation_id: str | None = None,
     top_k: int = 5,
 ) -> List[Dict[str, Any]]:
     """
@@ -249,8 +273,18 @@ def query_chunks(
         "n_results": top_k,
         "include": ["documents", "metadatas", "distances"],
     }
+    where: Dict[str, Any] | None = None
+    clauses: List[Dict[str, Any]] = []
     if subject_codes:
-        query_kwargs["where"] = {"subject_code": {"$in": subject_codes}}
+        clauses.append({"subject_code": {"$in": subject_codes}})
+    if college_id:
+        clauses.append({"college_id": college_id})
+    if regulation_id:
+        clauses.append({"regulation_id": regulation_id})
+    if clauses:
+        where = clauses[0] if len(clauses) == 1 else {"$and": clauses}
+    if where:
+        query_kwargs["where"] = where
 
     results = collection.query(**query_kwargs)
 

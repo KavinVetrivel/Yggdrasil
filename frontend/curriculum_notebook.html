@@ -234,7 +234,7 @@ body{font-family:var(--sans);background:radial-gradient(circle at top, rgba(96,1
 
 <div class="app">
   <div class="top-bar">
-    <div class="logo">curriculum.kg</div>
+    <div class="logo">Yggdrasil</div>
     <div class="breadcrumb" id="breadcrumb">
       <span id="bc-sem" class="hidden"></span>
       <span class="sep hidden" id="bc-sep1">›</span>
@@ -245,7 +245,7 @@ body{font-family:var(--sans);background:radial-gradient(circle at top, rgba(96,1
       <span id="theme-toggle-label">Dark mode</span>
     </button>
     <button type="button" class="topbar-action hidden" id="add-subject-btn">Add subject</button>
-    <a class="topbar-action" href="/app/regulation/upload">Initialize regulation</a>
+    <a class="topbar-action" id="initialize-regulation-btn" href="/app/regulation/upload">Initialize regulation</a>
   </div>
 
   <!-- GATE: Semester selection -->
@@ -306,7 +306,7 @@ body{font-family:var(--sans);background:radial-gradient(circle at top, rgba(96,1
       <div class="chat-header">
         <div class="chat-header-text">
           <div class="chat-title" id="chat-title">Ask anything</div>
-          <div class="chat-sub" id="chat-sub">Responses are grounded in prerequisite concepts first</div>
+          <div class="chat-sub" id="chat-sub">Responses use the current subject materials first</div>
         </div>
         <div class="context-badge" id="context-badge">0 prereqs loaded</div>
       </div>
@@ -314,7 +314,7 @@ body{font-family:var(--sans);background:radial-gradient(circle at top, rgba(96,1
       <div class="messages" id="messages">
         <div class="empty-state" id="empty-state">
           <i class="ti ti-messages" aria-hidden="true"></i>
-          <p>Ask a question about this subject. The system will automatically pull prerequisite concepts to explain from the ground up.</p>
+          <p>Ask a question about this subject. The system answers from the uploaded material for this subject first and only uses prerequisite context when it is actually available.</p>
           <div class="suggestion-chips" id="suggestion-chips"></div>
         </div>
       </div>
@@ -396,7 +396,8 @@ const subjectSemesterNote = document.getElementById('subject-semester-note');
 const subjectCodeInput = document.getElementById('subject-code-input');
 const subjectNameInput = document.getElementById('subject-name-input');
 const subjectCreditsInput = document.getElementById('subject-credits-input');
-const subjectPrereqInput = document.getElementById('subject-prereq-input');
+  const subjectPrereqInput = document.getElementById('subject-prereq-input');
+  const initializeRegulationBtn = document.getElementById('initialize-regulation-btn');
 const subjectModalClose = document.getElementById('subject-modal-close');
 const subjectModalCancel = document.getElementById('subject-modal-cancel');
 const subjectModalSubmit = document.getElementById('subject-modal-submit');
@@ -405,6 +406,501 @@ const themeToggleBtn = document.getElementById('theme-toggle');
 const themeToggleLabel = document.getElementById('theme-toggle-label');
 const routeMode = location.protocol === 'file:' ? 'hash' : 'path';
 const notebookRoutePrefix = '/app';
+const AUTH_STORAGE_KEYS = {
+  accessToken: 'yggdrasil-access-token',
+  refreshToken: 'yggdrasil-refresh-token',
+  user: 'yggdrasil-auth-user',
+};
+
+const auth = createAuthController();
+
+function createAuthController() {
+  let shell = null;
+  let modal = null;
+  let modalTitle = null;
+  let modalMessage = null;
+  let loginForm = null;
+  let registerForm = null;
+  let signInButton = null;
+  let signOutButton = null;
+  let userBadge = null;
+  let activeTab = 'login';
+  let currentUser = readStoredJson(AUTH_STORAGE_KEYS.user);
+
+  function readStoredValue(key) {
+    try {
+      return window.localStorage.getItem(key) || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function writeStoredValue(key, value) {
+    try {
+      if (value) {
+        window.localStorage.setItem(key, value);
+      } else {
+        window.localStorage.removeItem(key);
+      }
+    } catch (error) {
+      // Ignore storage failures; session still works for the tab.
+    }
+  }
+
+  function readStoredJson(key) {
+    const rawValue = readStoredValue(key);
+    if (!rawValue) {
+      return null;
+    }
+    try {
+      return JSON.parse(rawValue);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeStoredJson(key, value) {
+    try {
+      if (value == null) {
+        window.localStorage.removeItem(key);
+        return;
+      }
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      // Ignore storage failures.
+    }
+  }
+
+  function getAccessToken() {
+    return readStoredValue(AUTH_STORAGE_KEYS.accessToken);
+  }
+
+  function getRefreshToken() {
+    return readStoredValue(AUTH_STORAGE_KEYS.refreshToken);
+  }
+
+  function hasSession() {
+    return Boolean(getAccessToken() || getRefreshToken());
+  }
+
+  function injectStyles() {
+    if (document.getElementById('yggdrasil-auth-styles')) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = 'yggdrasil-auth-styles';
+    style.textContent = `
+      .auth-shell{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+      .auth-badge{font-size:11px;border:0.5px solid var(--color-border-tertiary);border-radius:999px;padding:7px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:6px}
+      .auth-badge strong{color:var(--color-text-primary);font-weight:500}
+      .auth-button{font-size:12px;border:0.5px solid rgba(29,78,216,.25);border-radius:999px;padding:8px 12px;background:var(--color-background-info);color:var(--color-text-info);cursor:pointer;font-family:var(--sans)}
+      .auth-button.secondary{background:var(--color-background-secondary);color:var(--color-text-secondary);border-color:var(--color-border-secondary)}
+      .auth-button.danger{background:var(--color-accent-danger-soft);color:var(--color-accent-danger);border-color:var(--color-accent-danger-border)}
+      .auth-button:hover{filter:brightness(.98)}
+      .auth-overlay{position:fixed;inset:0;background:var(--color-overlay);display:flex;align-items:center;justify-content:center;padding:20px;z-index:30}
+      .auth-overlay.hidden{display:none!important}
+      .auth-card{width:min(100%,560px);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:22px;box-shadow:0 24px 80px rgba(15,23,42,.18);padding:18px 18px 16px}
+      .auth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+      .auth-title{font-size:16px;font-weight:500;line-height:1.35}
+      .auth-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.6;margin-top:3px}
+      .auth-close{border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);border-radius:10px;width:32px;height:32px;cursor:pointer;color:var(--color-text-secondary)}
+      .auth-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+      .auth-tab{border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);border-radius:999px;padding:7px 12px;font-size:12px;cursor:pointer}
+      .auth-tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+      .auth-form{display:none;flex-direction:column;gap:12px}
+      .auth-form.active{display:flex}
+      .auth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .auth-field{display:flex;flex-direction:column;gap:6px}
+      .auth-field label{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em}
+      .auth-field input{width:100%;font-family:var(--sans);font-size:13px;padding:10px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);outline:none}
+      .auth-field input:focus{border-color:var(--color-border-primary)}
+      .auth-field.full{grid-column:1 / -1}
+      .auth-note{font-size:11px;color:var(--color-text-tertiary);line-height:1.5}
+      .auth-status{font-size:12px;line-height:1.5;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+      .auth-status.ok{color:var(--color-text-success);border-color:rgba(29,158,117,.25);background:rgba(29,158,117,.08)}
+      .auth-status.bad{color:var(--color-accent-danger);border-color:var(--color-accent-danger-border);background:var(--color-accent-danger-soft)}
+      .auth-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:4px}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function buildModal() {
+    if (modal) {
+      return;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'auth-overlay hidden';
+    modal.innerHTML = `
+      <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="auth-head">
+          <div>
+            <div class="auth-title" id="auth-title">Sign in to continue</div>
+            <div class="auth-sub" id="auth-sub">Use your student account to unlock chat, uploads, and profile sync.</div>
+          </div>
+          <button type="button" class="auth-close" id="auth-close" aria-label="Close auth dialog">×</button>
+        </div>
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab active" data-auth-tab="login">Login</button>
+          <button type="button" class="auth-tab" data-auth-tab="register">Register</button>
+        </div>
+        <form class="auth-form active" id="auth-login-form">
+          <div class="auth-grid">
+            <div class="auth-field full">
+              <label for="auth-login-student-id">Student ID</label>
+              <input id="auth-login-student-id" name="student_id" type="text" placeholder="23N101" required>
+            </div>
+            <div class="auth-field full">
+              <label for="auth-login-password">Password</label>
+              <input id="auth-login-password" name="password" type="password" placeholder="Your password" required>
+            </div>
+          </div>
+          <div class="auth-status" id="auth-login-status">Enter your login details.</div>
+          <div class="auth-actions">
+            <button type="button" class="auth-button secondary" id="auth-cancel-btn">Close</button>
+            <button type="submit" class="auth-button">Login</button>
+          </div>
+        </form>
+        <form class="auth-form" id="auth-register-form">
+          <div class="auth-grid">
+            <div class="auth-field">
+              <label for="auth-register-student-id">Student ID</label>
+              <input id="auth-register-student-id" name="student_id" type="text" placeholder="23N101" required>
+            </div>
+            <div class="auth-field">
+              <label for="auth-register-email">Email</label>
+              <input id="auth-register-email" name="email" type="email" placeholder="student@college.edu" required>
+            </div>
+            <div class="auth-field">
+              <label for="auth-register-college-id">College ID</label>
+              <input id="auth-register-college-id" name="college_id" type="text" placeholder="COLL-001" required>
+            </div>
+            <div class="auth-field">
+              <label for="auth-register-regulation-id">Regulation ID</label>
+              <input id="auth-register-regulation-id" name="regulation_id" type="text" placeholder="2023" required>
+            </div>
+            <div class="auth-field full">
+              <label for="auth-register-password">Password</label>
+              <input id="auth-register-password" name="password" type="password" placeholder="Create a password" required>
+            </div>
+          </div>
+          <div class="auth-note">Registration stores the password hash in PostgreSQL and issues the first access + refresh token pair immediately after signup.</div>
+          <div class="auth-status" id="auth-register-status">Create your account to continue.</div>
+          <div class="auth-actions">
+            <button type="button" class="auth-button secondary" id="auth-register-cancel-btn">Close</button>
+            <button type="submit" class="auth-button">Create account</button>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    modalTitle = modal.querySelector('#auth-title');
+    modalMessage = modal.querySelector('#auth-sub');
+    loginForm = modal.querySelector('#auth-login-form');
+    registerForm = modal.querySelector('#auth-register-form');
+    signInButton = null;
+    signOutButton = null;
+    userBadge = null;
+
+    modal.querySelectorAll('[data-auth-tab]').forEach((button) => {
+      button.addEventListener('click', () => setTab(button.dataset.authTab || 'login'));
+    });
+
+    modal.querySelector('#auth-close').addEventListener('click', closeModal);
+    modal.querySelector('#auth-cancel-btn').addEventListener('click', closeModal);
+    modal.querySelector('#auth-register-cancel-btn').addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(loginForm);
+      setFormStatus('login', 'Signing in...');
+      try {
+        await login({
+          student_id: String(formData.get('student_id') || '').trim(),
+          password: String(formData.get('password') || ''),
+        });
+        setFormStatus('login', 'Signed in successfully.', 'ok');
+      } catch (error) {
+        setFormStatus('login', error.message || 'Unable to sign in.', 'bad');
+      }
+    });
+
+    registerForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(registerForm);
+      setFormStatus('register', 'Creating account...');
+      try {
+        await register({
+          student_id: String(formData.get('student_id') || '').trim(),
+          email: String(formData.get('email') || '').trim(),
+          password: String(formData.get('password') || ''),
+          college_id: String(formData.get('college_id') || '').trim(),
+          regulation_id: String(formData.get('regulation_id') || '').trim(),
+        });
+        setFormStatus('register', 'Account created successfully.', 'ok');
+      } catch (error) {
+        setFormStatus('register', error.message || 'Unable to create account.', 'bad');
+      }
+    });
+  }
+
+  function setTab(nextTab) {
+    activeTab = nextTab === 'register' ? 'register' : 'login';
+    if (!modal) {
+      return;
+    }
+    modal.querySelectorAll('[data-auth-tab]').forEach((button) => {
+      button.classList.toggle('active', button.dataset.authTab === activeTab);
+    });
+    loginForm.classList.toggle('active', activeTab === 'login');
+    registerForm.classList.toggle('active', activeTab === 'register');
+  }
+
+  function setFormStatus(formName, message, kind = '') {
+    const status = modal?.querySelector(formName === 'login' ? '#auth-login-status' : '#auth-register-status');
+    if (!status) {
+      return;
+    }
+    status.textContent = message;
+    status.className = `auth-status${kind ? ` ${kind}` : ''}`;
+  }
+
+  function renderWidget() {
+    const topBar = document.querySelector('.top-bar');
+    if (!topBar) {
+      return;
+    }
+
+    if (!shell) {
+      shell = document.createElement('div');
+      shell.className = 'auth-shell';
+      shell.innerHTML = `
+        <span class="auth-badge" id="auth-badge">Not signed in</span>
+        <button type="button" class="auth-button" id="auth-signin-btn">Sign in</button>
+        <button type="button" class="auth-button danger hidden" id="auth-signout-btn">Sign out</button>
+      `;
+      topBar.appendChild(shell);
+      signInButton = shell.querySelector('#auth-signin-btn');
+      signOutButton = shell.querySelector('#auth-signout-btn');
+      userBadge = shell.querySelector('#auth-badge');
+      signInButton.addEventListener('click', () => openModal('login'));
+      signOutButton.addEventListener('click', async () => {
+        try {
+          await logout();
+        } catch (error) {
+          setSession(null);
+        }
+      });
+    }
+
+    const label = currentUser?.student_id
+      ? `${currentUser.student_id}${currentUser.email ? ` · ${currentUser.email}` : ''}`
+      : 'Not signed in';
+    userBadge.textContent = label;
+    signInButton.classList.toggle('hidden', Boolean(currentUser?.student_id));
+    signOutButton.classList.toggle('hidden', !currentUser?.student_id);
+  }
+
+  function setSession(tokens, profile = null) {
+    if (!tokens) {
+      writeStoredValue(AUTH_STORAGE_KEYS.accessToken, '');
+      writeStoredValue(AUTH_STORAGE_KEYS.refreshToken, '');
+      writeStoredJson(AUTH_STORAGE_KEYS.user, null);
+      currentUser = null;
+      renderWidget();
+      return;
+    }
+
+    writeStoredValue(AUTH_STORAGE_KEYS.accessToken, tokens.access_token || '');
+    writeStoredValue(AUTH_STORAGE_KEYS.refreshToken, tokens.refresh_token || '');
+    const resolvedProfile = profile || tokens.user || null;
+    currentUser = resolvedProfile || null;
+    writeStoredJson(AUTH_STORAGE_KEYS.user, currentUser);
+    renderWidget();
+  }
+
+  function clearSession() {
+    setSession(null);
+  }
+
+  function openModal(tab = 'login', message = '') {
+    buildModal();
+    setTab(tab);
+    if (message) {
+      modalMessage.textContent = message;
+    }
+    modal.classList.remove('hidden');
+  }
+
+  function closeModal() {
+    modal?.classList.add('hidden');
+  }
+
+  async function request(path, init = {}, options = {}) {
+    const includeAuth = options.includeAuth !== false;
+    const allowRefresh = options.allowRefresh !== false;
+    const shouldSkipRefresh = ['/auth/login', '/auth/register', '/auth/logout', '/auth/refresh'].includes(path);
+    const headers = new Headers(init.headers || {});
+    if (includeAuth) {
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        headers.set('Authorization', `Bearer ${accessToken}`);
+      }
+    }
+    const shouldSetJson = init.body && !(init.body instanceof FormData) && !headers.has('Content-Type');
+    if (shouldSetJson) {
+      headers.set('Content-Type', 'application/json');
+    }
+
+    const response = await fetch(`${apiBase}${path}`, {
+      ...init,
+      headers,
+    });
+
+    if (response.status !== 401 || !includeAuth || !allowRefresh || shouldSkipRefresh) {
+      return response;
+    }
+
+    const refreshed = await refreshSession();
+    if (!refreshed) {
+      openModal('login', 'Your session expired. Please sign in again.');
+      return response;
+    }
+
+    const retryHeaders = new Headers(init.headers || {});
+    const nextToken = getAccessToken();
+    if (nextToken) {
+      retryHeaders.set('Authorization', `Bearer ${nextToken}`);
+    }
+    if (shouldSetJson) {
+      retryHeaders.set('Content-Type', 'application/json');
+    }
+
+    return fetch(`${apiBase}${path}`, {
+      ...init,
+      headers: retryHeaders,
+    });
+  }
+
+  async function refreshSession() {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+      return false;
+    }
+
+    const response = await request('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    }, { includeAuth: false, allowRefresh: false });
+
+    if (!response.ok) {
+      setSession(null);
+      return false;
+    }
+
+    const payload = await response.json();
+    const profile = payload.user || null;
+    setSession(payload, profile);
+    return true;
+  }
+
+  async function login(payload) {
+    const response = await request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }, { includeAuth: false, allowRefresh: false });
+
+    if (!response.ok) {
+      let message = 'Unable to sign in.';
+      try {
+        const errorPayload = await response.json();
+        message = errorPayload.detail || message;
+      } catch (error) {
+        const text = await response.text();
+        if (text) {
+          message = text;
+        }
+      }
+      throw new Error(message);
+    }
+
+    const data = await response.json();
+    setSession(data, data.user || null);
+    closeModal();
+    window.location.assign(data.has_regulation ? '/app' : '/app/regulation/upload');
+    return data;
+  }
+
+  async function register(payload) {
+    const response = await request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }, { includeAuth: false, allowRefresh: false });
+
+    if (!response.ok) {
+      let message = 'Unable to register.';
+      try {
+        const errorPayload = await response.json();
+        message = errorPayload.detail || message;
+      } catch (error) {
+        const text = await response.text();
+        if (text) {
+          message = text;
+        }
+      }
+      throw new Error(message);
+    }
+
+    await login({ student_id: payload.student_id, password: payload.password });
+  }
+
+  async function logout() {
+    const refreshToken = getRefreshToken();
+    if (refreshToken) {
+      await request('/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      }, { includeAuth: false, allowRefresh: false });
+    }
+    clearSession();
+    window.location.replace('/');
+  }
+
+  async function hydrateSession() {
+    injectStyles();
+    buildModal();
+    renderWidget();
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      return;
+    }
+    const response = await request('/auth/me', {}, { allowRefresh: true, includeAuth: true });
+    if (!response.ok) {
+      clearSession();
+      return;
+    }
+    const payload = await response.json();
+    setSession({ access_token: accessToken, refresh_token: getRefreshToken(), user: payload.student || payload.user || null }, payload.student || payload.user || null);
+  }
+
+  return {
+    request,
+    login,
+    register,
+    logout,
+    clearSession,
+    openModal,
+    hydrateSession,
+    hasSession,
+    getAccessToken,
+  };
+}
 
 function getCurrentRoute() {
   if (routeMode === 'hash') {
@@ -468,7 +964,15 @@ function parseNotebookRoute(path) {
 }
 
 function findSubjectInSemester(semester, code) {
-  return (state.subjectsBySemester[semester] || []).find((subject) => subject.code === code) || null;
+  const normalizedCode = String(code || '').toUpperCase();
+  return (state.subjectsBySemester[semester] || []).find((subject) => {
+    if (String(subject.code || '').toUpperCase() !== normalizedCode) {
+      return false;
+    }
+    const match = normalizedCode.match(/^[A-Z0-9]{2}[A-Z](\d)/);
+    const codeSemester = match ? Number(match[1]) : Number(subject.semester || semester);
+    return Number(codeSemester) === Number(semester);
+  }) || null;
 }
 
 function clearNotebookState() {
@@ -580,7 +1084,7 @@ function normalizeInput(value) {
 }
 
 async function fetchJson(path, init = {}) {
-  const response = await fetch(`${apiBase}${path}`, init);
+  const response = await auth.request(path, init);
   if (!response.ok) {
     let message = `Request failed: ${response.status}`;
     try {
@@ -759,7 +1263,13 @@ function refreshCurrentSemesterView() {
 }
 
 function getVisibleSubjects(maxSemester) {
-  return state.subjectsBySemester[maxSemester] || [];
+  const semesterSubjects = state.subjectsBySemester[maxSemester] || [];
+  return semesterSubjects.filter((subject) => {
+    const code = String(subject.code || '').toUpperCase();
+    const match = code.match(/^[A-Z0-9]{2}[A-Z](\d)/);
+    const codeSemester = match ? Number(match[1]) : Number(subject.semester || maxSemester);
+    return Number(codeSemester) === Number(maxSemester);
+  });
 }
 
 function selectSem(semester, options = {}) {
@@ -842,7 +1352,7 @@ function openNotebook(subject, options = {}) {
   document.getElementById('nb-name').textContent = subject.name;
   document.getElementById('nb-sem').textContent = `Semester ${subject.semester}`;
   document.getElementById('chat-title').textContent = subject.name;
-  document.getElementById('chat-sub').textContent = 'Responses are grounded in prerequisite concepts first';
+  document.getElementById('chat-sub').textContent = 'Responses use the current subject materials first';
   hideElement('gate-subj');
   showElement('notebook');
   document.getElementById('notebook').classList.add('fade-in');
@@ -869,7 +1379,7 @@ function buildEmptyState(code) {
       ];
   wrapper.innerHTML = `
     <i class="ti ti-messages" aria-hidden="true"></i>
-    <p>Ask a question about this subject. The system automatically pulls prerequisite concepts to explain from the ground up.</p>
+    <p>Ask a question about this subject. The system answers from the uploaded material for this subject first and only uses prerequisite context when it is actually available.</p>
     <div class="suggestion-chips" id="suggestion-chips">${suggestions.map((item) => `<button class="chip" type="button">${escapeHtml(item)}</button>`).join('')}</div>
   `;
   wrapper.querySelectorAll('.chip').forEach((button) => {
@@ -1052,7 +1562,7 @@ function appendMsg(role, text) {
   const msgs = document.getElementById('messages');
   const message = document.createElement('div');
   message.className = `msg ${role} fade-in`;
-  message.innerHTML = `<span class="msg-label">${role === 'user' ? 'You' : 'Curriculum AI'}</span><div class="msg-bubble">${text}</div>`;
+  message.innerHTML = `<span class="msg-label">${role === 'user' ? 'You' : 'Eik'}</span><div class="msg-bubble">${text}</div>`;
   msgs.appendChild(message);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1092,7 +1602,7 @@ function appendAssistantResponse(answer, sources, prereqsUsed) {
 
   const message = document.createElement('div');
   message.className = 'msg assistant fade-in';
-  message.innerHTML = `<span class="msg-label">Curriculum AI</span><div class="msg-bubble">${bubble}</div>`;
+  message.innerHTML = `<span class="msg-label">Eik</span><div class="msg-bubble">${bubble}</div>`;
   msgs.appendChild(message);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1104,7 +1614,7 @@ function appendAssistantError(messageText) {
 
   const message = document.createElement('div');
   message.className = 'msg assistant fade-in';
-  message.innerHTML = `<span class="msg-label">Curriculum AI</span><div class="msg-bubble error-bubble">${escapeHtml(messageText)}</div>`;
+  message.innerHTML = `<span class="msg-label">Eik</span><div class="msg-bubble error-bubble">${escapeHtml(messageText)}</div>`;
   msgs.appendChild(message);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1114,7 +1624,7 @@ function showTyping() {
   const typing = document.createElement('div');
   typing.className = 'msg assistant fade-in';
   typing.id = 'typing-indicator';
-  typing.innerHTML = '<span class="msg-label">Curriculum AI</span><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  typing.innerHTML = '<span class="msg-label">Eik</span><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   msgs.appendChild(typing);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1125,14 +1635,14 @@ async function simulateResponse(query) {
       throw new Error('No subject is selected. Please open a subject before asking a question.');
     }
 
-    const response = await fetch(`${apiBase}/chat`, {
+    const response = await auth.request('/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         query,
         subject_id: state.currentSubject.code,
         history: state.conversationHistory.slice(-6),
-      })
+      }),
     });
 
     if (!response.ok) {
@@ -1232,6 +1742,30 @@ async function submitSubjectForm(event) {
 
 async function bootstrap() {
   try {
+    await auth.hydrateSession();
+    if (!auth.getAccessToken()) {
+      auth.clearSession();
+      window.location.replace('/');
+      return;
+    }
+
+    const profileResponse = await auth.request('/auth/me', {}, { allowRefresh: true, includeAuth: true });
+    if (!profileResponse.ok) {
+      auth.clearSession();
+      window.location.replace('/');
+      return;
+    }
+
+    const profile = await profileResponse.json();
+    if (initializeRegulationBtn) {
+      initializeRegulationBtn.classList.toggle('hidden', Boolean(profile.has_regulation));
+    }
+
+    if (!profile.has_regulation) {
+      window.location.replace('/app/regulation/upload');
+      return;
+    }
+
     const [health, subjects] = await Promise.all([
       fetchJson('/health'),
       fetchJson('/subjects'),

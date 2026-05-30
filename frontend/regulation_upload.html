@@ -396,7 +396,7 @@
 <body>
   <div class="app">
     <div class="top-bar">
-      <div class="logo">curriculum.kg</div>
+      <div class="logo">Yggdrasil</div>
       <div class="breadcrumb">
         <span>Setup</span>
         <span class="sep">›</span>
@@ -485,6 +485,8 @@
     </section>
   </div>
 
+  <script src="/frontend/auth.js"></script>
+
   <script>
     const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
     const dropzone = document.getElementById('dropzone');
@@ -499,6 +501,7 @@
     const goHomeBtn = document.getElementById('go-home-btn');
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeToggleLabel = document.getElementById('theme-toggle-label');
+    const auth = window.YggdrasilAuth;
     let nextRoute = '/app';
 
     function getPreferredTheme() {
@@ -618,7 +621,7 @@
       setStatus(`Uploading ${file.name}...`);
 
       try {
-        const response = await fetch(`${apiBase}/ingest/regulation`, {
+        const response = await auth.request('/ingest/regulation', {
           method: 'POST',
           body: formData,
         });

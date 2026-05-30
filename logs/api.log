@@ -44,3 +44,2083 @@
 2026-05-29 00:08:50,988 | INFO | yggdrasil.api | request_completed request_id=9eb5900b method=GET path=/subject/23R403/prerequisites status=200 duration_ms=22.87
 2026-05-29 00:09:00,794 | INFO | yggdrasil.api | request_started request_id=d1576835 method=POST path=/chat query=- client=127.0.0.1
 2026-05-29 00:09:19,728 | INFO | yggdrasil.api | request_completed request_id=d1576835 method=POST path=/chat status=200 duration_ms=18934.08
+2026-05-29 06:08:33,992 | INFO | yggdrasil.api | request_started request_id=61030899 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 06:08:33,998 | INFO | yggdrasil.api | request_started request_id=6ccf8fd8 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 06:08:34,003 | INFO | yggdrasil.api | request_completed request_id=61030899 method=GET path=/health status=200 duration_ms=10.79
+2026-05-29 06:08:35,355 | INFO | yggdrasil.api | request_started request_id=92d249af method=GET path=/favicon.ico query=- client=127.0.0.1
+2026-05-29 06:08:35,358 | INFO | yggdrasil.api | request_completed request_id=92d249af method=GET path=/favicon.ico status=404 duration_ms=2.66
+2026-05-29 06:08:36,964 | INFO | yggdrasil.api | request_completed request_id=6ccf8fd8 method=GET path=/subjects status=200 duration_ms=2966.31
+2026-05-29 06:08:50,191 | INFO | yggdrasil.api | request_started request_id=c6b659ec method=GET path=/auth/register query=- client=127.0.0.1
+2026-05-29 06:08:50,192 | INFO | yggdrasil.api | request_completed request_id=c6b659ec method=GET path=/auth/register status=405 duration_ms=1.06
+2026-05-29 06:23:38,221 | INFO | yggdrasil.api | request_started request_id=48691616 method=GET path=/ query=- client=127.0.0.1
+2026-05-29 06:23:38,331 | INFO | yggdrasil.api | request_completed request_id=48691616 method=GET path=/ status=200 duration_ms=110.30
+2026-05-29 06:23:38,371 | INFO | yggdrasil.api | request_started request_id=ad78a4fd method=GET path=/health query=- client=127.0.0.1
+2026-05-29 06:23:38,373 | INFO | yggdrasil.api | request_started request_id=93d9cf70 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 06:23:38,376 | INFO | yggdrasil.api | request_completed request_id=ad78a4fd method=GET path=/health status=200 duration_ms=4.93
+2026-05-29 06:23:38,436 | INFO | yggdrasil.api | request_completed request_id=93d9cf70 method=GET path=/subjects status=200 duration_ms=63.63
+2026-05-29 06:24:18,577 | INFO | yggdrasil.api | request_started request_id=e3772971 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 06:24:18,616 | WARNING | yggdrasil.api | http_exception request_id=e3772971 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 06:24:18,617 | INFO | yggdrasil.api | request_completed request_id=e3772971 method=POST path=/auth/register status=400 duration_ms=39.58
+2026-05-29 06:24:33,488 | INFO | yggdrasil.api | request_started request_id=0b5dffc2 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 06:24:33,513 | WARNING | yggdrasil.api | http_exception request_id=0b5dffc2 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 06:24:33,514 | INFO | yggdrasil.api | request_completed request_id=0b5dffc2 method=POST path=/auth/register status=400 duration_ms=26.02
+2026-05-29 06:24:45,095 | INFO | yggdrasil.api | request_started request_id=5a216250 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 06:24:45,116 | WARNING | yggdrasil.api | http_exception request_id=5a216250 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 06:24:45,117 | INFO | yggdrasil.api | request_completed request_id=5a216250 method=POST path=/auth/register status=400 duration_ms=21.83
+2026-05-29 06:26:11,979 | INFO | yggdrasil.api | request_started request_id=e8a0d6d5 method=GET path=/ query=- client=127.0.0.1
+2026-05-29 06:26:11,997 | INFO | yggdrasil.api | request_completed request_id=e8a0d6d5 method=GET path=/ status=200 duration_ms=18.10
+2026-05-29 06:26:12,037 | INFO | yggdrasil.api | request_started request_id=84c237b7 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 06:26:12,039 | INFO | yggdrasil.api | request_started request_id=21a0db62 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 06:26:12,043 | INFO | yggdrasil.api | request_completed request_id=84c237b7 method=GET path=/health status=200 duration_ms=5.59
+2026-05-29 06:26:12,116 | INFO | yggdrasil.api | request_completed request_id=21a0db62 method=GET path=/subjects status=200 duration_ms=76.56
+2026-05-29 06:27:44,752 | INFO | yggdrasil.api | request_started request_id=730c22be method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 06:27:44,779 | WARNING | yggdrasil.api | http_exception request_id=730c22be method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 06:27:44,781 | INFO | yggdrasil.api | request_completed request_id=730c22be method=POST path=/auth/register status=400 duration_ms=28.38
+2026-05-29 06:36:27,167 | INFO | yggdrasil.api | request_started request_id=297265b9 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 06:36:27,170 | INFO | yggdrasil.api | request_started request_id=0b246963 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 06:36:27,174 | INFO | yggdrasil.api | request_completed request_id=297265b9 method=GET path=/health status=200 duration_ms=6.94
+2026-05-29 06:36:27,233 | INFO | yggdrasil.api | request_completed request_id=0b246963 method=GET path=/subjects status=200 duration_ms=62.66
+2026-05-29 06:36:31,112 | INFO | yggdrasil.api | request_started request_id=af0dbbf5 method=GET path=/ query=- client=127.0.0.1
+2026-05-29 06:36:31,128 | INFO | yggdrasil.api | request_completed request_id=af0dbbf5 method=GET path=/ status=200 duration_ms=16.18
+2026-05-29 06:36:31,182 | INFO | yggdrasil.api | request_started request_id=e8b96a0a method=GET path=/health query=- client=127.0.0.1
+2026-05-29 06:36:31,183 | INFO | yggdrasil.api | request_started request_id=602d4e08 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 06:36:31,187 | INFO | yggdrasil.api | request_completed request_id=e8b96a0a method=GET path=/health status=200 duration_ms=5.30
+2026-05-29 06:36:31,253 | INFO | yggdrasil.api | request_completed request_id=602d4e08 method=GET path=/subjects status=200 duration_ms=69.72
+2026-05-29 06:36:57,707 | INFO | yggdrasil.api | request_started request_id=0bd9280c method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 06:36:57,755 | WARNING | yggdrasil.api | http_exception request_id=0bd9280c method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 06:36:57,756 | INFO | yggdrasil.api | request_completed request_id=0bd9280c method=POST path=/auth/register status=400 duration_ms=49.27
+2026-05-29 06:37:00,273 | INFO | yggdrasil.api | request_started request_id=7c101c2c method=GET path=/.well-known/appspecific/com.chrome.devtools.json query=- client=127.0.0.1
+2026-05-29 06:37:00,274 | INFO | yggdrasil.api | request_completed request_id=7c101c2c method=GET path=/.well-known/appspecific/com.chrome.devtools.json status=404 duration_ms=1.38
+2026-05-29 07:01:12,658 | INFO | yggdrasil.api | request_started request_id=ebbee573 method=GET path=/ query=- client=127.0.0.1
+2026-05-29 07:01:12,675 | INFO | yggdrasil.api | request_completed request_id=ebbee573 method=GET path=/ status=200 duration_ms=17.56
+2026-05-29 07:01:12,730 | INFO | yggdrasil.api | request_started request_id=6b1e8f49 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 07:01:12,732 | INFO | yggdrasil.api | request_started request_id=79d64a67 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 07:01:12,747 | INFO | yggdrasil.api | request_started request_id=35dc147a method=GET path=/.well-known/appspecific/com.chrome.devtools.json query=- client=127.0.0.1
+2026-05-29 07:01:12,748 | INFO | yggdrasil.api | request_completed request_id=6b1e8f49 method=GET path=/health status=200 duration_ms=17.39
+2026-05-29 07:01:12,752 | INFO | yggdrasil.api | request_completed request_id=35dc147a method=GET path=/.well-known/appspecific/com.chrome.devtools.json status=404 duration_ms=5.09
+2026-05-29 07:01:12,851 | INFO | yggdrasil.api | request_completed request_id=79d64a67 method=GET path=/subjects status=200 duration_ms=118.72
+2026-05-29 07:01:54,938 | INFO | yggdrasil.api | request_started request_id=a32ff419 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:01:54,941 | ERROR | yggdrasil.api | request_failed request_id=a32ff419 method=POST path=/auth/register duration_ms=3.81
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 705, in register_auth_user
+    pw = truncate_for_bcrypt(payload.password or "")
+         ^^^^^^^^^^^^^^^^^^^
+NameError: name 'truncate_for_bcrypt' is not defined
+2026-05-29 07:01:54,956 | ERROR | yggdrasil.api | unhandled_error request_id=a32ff419 method=POST path=/auth/register
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 705, in register_auth_user
+    pw = truncate_for_bcrypt(payload.password or "")
+         ^^^^^^^^^^^^^^^^^^^
+NameError: name 'truncate_for_bcrypt' is not defined
+2026-05-29 07:01:57,621 | INFO | yggdrasil.api | request_started request_id=30ec3b50 method=GET path=/.well-known/appspecific/com.chrome.devtools.json query=- client=127.0.0.1
+2026-05-29 07:01:57,622 | INFO | yggdrasil.api | request_completed request_id=30ec3b50 method=GET path=/.well-known/appspecific/com.chrome.devtools.json status=404 duration_ms=1.06
+2026-05-29 07:02:37,173 | INFO | yggdrasil.api | request_started request_id=7c9be3aa method=GET path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:02:37,175 | INFO | yggdrasil.api | request_completed request_id=7c9be3aa method=GET path=/auth/register status=405 duration_ms=1.23
+2026-05-29 07:03:24,849 | INFO | yggdrasil.api | request_started request_id=9ebaf508 method=GET path=/auth/ query=- client=127.0.0.1
+2026-05-29 07:03:24,850 | INFO | yggdrasil.api | request_completed request_id=9ebaf508 method=GET path=/auth/ status=404 duration_ms=1.12
+2026-05-29 07:03:38,556 | INFO | yggdrasil.api | request_started request_id=e6bfd149 method=GET path=/auth/login query=- client=127.0.0.1
+2026-05-29 07:03:38,557 | INFO | yggdrasil.api | request_completed request_id=e6bfd149 method=GET path=/auth/login status=405 duration_ms=1.27
+2026-05-29 07:06:46,267 | INFO | yggdrasil.api | request_started request_id=404afe31 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 07:06:46,270 | INFO | yggdrasil.api | request_started request_id=4b5fcc47 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 07:06:46,274 | INFO | yggdrasil.api | request_completed request_id=404afe31 method=GET path=/health status=200 duration_ms=7.68
+2026-05-29 07:06:46,319 | INFO | yggdrasil.api | request_completed request_id=4b5fcc47 method=GET path=/subjects status=200 duration_ms=49.30
+2026-05-29 07:06:49,825 | INFO | yggdrasil.api | request_started request_id=996fc04d method=GET path=/ query=- client=127.0.0.1
+2026-05-29 07:06:49,846 | INFO | yggdrasil.api | request_completed request_id=996fc04d method=GET path=/ status=200 duration_ms=20.85
+2026-05-29 07:06:49,891 | INFO | yggdrasil.api | request_started request_id=9ee685a9 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 07:06:49,895 | INFO | yggdrasil.api | request_started request_id=5ba82db2 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 07:06:49,898 | INFO | yggdrasil.api | request_completed request_id=9ee685a9 method=GET path=/health status=200 duration_ms=7.31
+2026-05-29 07:06:49,955 | INFO | yggdrasil.api | request_completed request_id=5ba82db2 method=GET path=/subjects status=200 duration_ms=59.92
+2026-05-29 07:07:14,178 | INFO | yggdrasil.api | request_started request_id=a123d487 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:07:14,212 | WARNING | yggdrasil.api | auth register failed for 23n222: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 706, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 277, in register_user
+    hashed_password = _hash_password(password)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 170, in _hash_password
+    return pwd_context.hash(_bcrypt_password(password))
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:07:14,223 | WARNING | yggdrasil.api | http_exception request_id=a123d487 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:07:14,223 | INFO | yggdrasil.api | request_completed request_id=a123d487 method=POST path=/auth/register status=400 duration_ms=45.71
+2026-05-29 07:16:06,760 | INFO | yggdrasil.api | request_started request_id=fe2282ec method=GET path=/ query=- client=127.0.0.1
+2026-05-29 07:16:06,775 | INFO | yggdrasil.api | request_completed request_id=fe2282ec method=GET path=/ status=200 duration_ms=14.85
+2026-05-29 07:16:06,825 | INFO | yggdrasil.api | request_started request_id=87337e20 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 07:16:06,828 | INFO | yggdrasil.api | request_started request_id=4e1940e5 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 07:16:06,831 | INFO | yggdrasil.api | request_completed request_id=87337e20 method=GET path=/health status=200 duration_ms=6.17
+2026-05-29 07:16:06,880 | INFO | yggdrasil.api | request_completed request_id=4e1940e5 method=GET path=/subjects status=200 duration_ms=52.90
+2026-05-29 07:16:31,332 | INFO | yggdrasil.api | request_started request_id=3dc2424c method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:16:31,366 | WARNING | yggdrasil.api | auth register failed for 23n222: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 332, in register_user
+    hashed_password = _hash_password(password)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 225, in _hash_password
+    return pwd_context.hash(_bcrypt_password(password))
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:16:31,377 | WARNING | yggdrasil.api | http_exception request_id=3dc2424c method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:16:31,378 | INFO | yggdrasil.api | request_completed request_id=3dc2424c method=POST path=/auth/register status=400 duration_ms=46.36
+2026-05-29 07:19:42,622 | INFO | yggdrasil.api | request_started request_id=70648d60 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:19:42,645 | WARNING | yggdrasil.api | auth register failed for 23N101: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 332, in register_user
+    hashed_password = _hash_password(password)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 225, in _hash_password
+    return pwd_context.hash(_bcrypt_password(password))
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:19:42,654 | WARNING | yggdrasil.api | http_exception request_id=70648d60 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:19:42,655 | INFO | yggdrasil.api | request_completed request_id=70648d60 method=POST path=/auth/register status=400 duration_ms=32.61
+2026-05-29 07:21:48,426 | INFO | yggdrasil.api | request_started request_id=435a9f3f method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:21:48,449 | WARNING | yggdrasil.api | auth register failed for 23N101: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 332, in register_user
+    hashed_password = _hash_password(password)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 225, in _hash_password
+    return pwd_context.hash(_bcrypt_password(password))
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:21:48,460 | WARNING | yggdrasil.api | http_exception request_id=435a9f3f method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:21:48,461 | INFO | yggdrasil.api | request_completed request_id=435a9f3f method=POST path=/auth/register status=400 duration_ms=35.11
+2026-05-29 07:23:09,695 | INFO | yggdrasil.api | request_started request_id=c23e7093 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:23:09,722 | WARNING | yggdrasil.api | auth register failed for 23N101: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 332, in register_user
+    hashed_password = _hash_password(password)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 225, in _hash_password
+    return pwd_context.hash(_bcrypt_password(password))
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:23:09,733 | WARNING | yggdrasil.api | http_exception request_id=c23e7093 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:23:09,734 | INFO | yggdrasil.api | request_completed request_id=c23e7093 method=POST path=/auth/register status=400 duration_ms=39.50
+2026-05-29 07:31:24,431 | INFO | yggdrasil.api | request_started request_id=7fa0e357 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:31:24,474 | WARNING | yggdrasil.api | auth register failed for 23N101: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 333, in register_user
+    hashed_password = _hash_password(password)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 226, in _hash_password
+    return pwd_context.hash(_bcrypt_password(password))
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:31:24,485 | WARNING | yggdrasil.api | http_exception request_id=7fa0e357 method=POST path=/auth/register status=400 detail=password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+2026-05-29 07:31:24,486 | INFO | yggdrasil.api | request_completed request_id=7fa0e357 method=POST path=/auth/register status=400 duration_ms=55.12
+2026-05-29 07:48:11,107 | INFO | yggdrasil.api | request_started request_id=4ba19130 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:48:12,362 | ERROR | yggdrasil.api | request_failed request_id=4ba19130 method=POST path=/auth/register duration_ms=1255.71
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 365, in register_user
+    initialize_schema()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 133, in initialize_schema
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<7 lines>...
+    	"""
+     ^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" referenced in foreign key constraint does not exist
+2026-05-29 07:48:12,412 | ERROR | yggdrasil.api | unhandled_error request_id=4ba19130 method=POST path=/auth/register
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 365, in register_user
+    initialize_schema()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 133, in initialize_schema
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<7 lines>...
+    	"""
+     ^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" referenced in foreign key constraint does not exist
+2026-05-29 07:48:24,872 | INFO | yggdrasil.api | request_started request_id=0c30ad81 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:48:25,620 | ERROR | yggdrasil.api | request_failed request_id=0c30ad81 method=POST path=/auth/register duration_ms=748.14
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 365, in register_user
+    initialize_schema()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 133, in initialize_schema
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<7 lines>...
+    	"""
+     ^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" referenced in foreign key constraint does not exist
+2026-05-29 07:48:25,628 | ERROR | yggdrasil.api | unhandled_error request_id=0c30ad81 method=POST path=/auth/register
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 365, in register_user
+    initialize_schema()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 133, in initialize_schema
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<7 lines>...
+    	"""
+     ^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" referenced in foreign key constraint does not exist
+2026-05-29 07:49:58,632 | INFO | yggdrasil.api | request_started request_id=604bd3a0 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 07:49:59,383 | ERROR | yggdrasil.api | request_failed request_id=604bd3a0 method=POST path=/auth/register duration_ms=751.52
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 365, in register_user
+    initialize_schema()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 133, in initialize_schema
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<7 lines>...
+    	"""
+     ^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" referenced in foreign key constraint does not exist
+2026-05-29 07:49:59,401 | ERROR | yggdrasil.api | unhandled_error request_id=604bd3a0 method=POST path=/auth/register
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 365, in register_user
+    initialize_schema()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 133, in initialize_schema
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<7 lines>...
+    	"""
+     ^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" referenced in foreign key constraint does not exist
+2026-05-29 08:00:30,239 | INFO | yggdrasil.api | request_started request_id=9e98af44 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 08:00:31,384 | ERROR | yggdrasil.api | request_failed request_id=9e98af44 method=POST path=/auth/register duration_ms=1145.43
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 376, in register_user
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<4 lines>...
+    	(student_id, email, email),
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" does not exist
+LINE 4:     WHERE student_id = $1 OR ($2 IS NOT NULL AND email = $3)
+                  ^
+2026-05-29 08:00:31,404 | ERROR | yggdrasil.api | unhandled_error request_id=9e98af44 method=POST path=/auth/register
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 376, in register_user
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<4 lines>...
+    	(student_id, email, email),
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column "student_id" does not exist
+LINE 4:     WHERE student_id = $1 OR ($2 IS NOT NULL AND email = $3)
+                  ^
+2026-05-29 08:04:01,620 | INFO | yggdrasil.api | request_started request_id=de0fda5b method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 08:04:02,476 | ERROR | yggdrasil.api | request_failed request_id=de0fda5b method=POST path=/auth/register duration_ms=856.01
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 379, in register_user
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<4 lines>...
+    	(student_id, email, email),
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.IndeterminateDatatype: could not determine data type of parameter $2
+2026-05-29 08:04:02,492 | ERROR | yggdrasil.api | unhandled_error request_id=de0fda5b method=POST path=/auth/register
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 719, in register_auth_user
+    record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 379, in register_user
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+    	"""
+     ^^^
+    ...<4 lines>...
+    	(student_id, email, email),
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.IndeterminateDatatype: could not determine data type of parameter $2
+2026-05-29 08:17:59,019 | INFO | yggdrasil.api | request_started request_id=3b7030bd method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 08:18:00,260 | INFO | yggdrasil.api | request_completed request_id=3b7030bd method=POST path=/auth/register status=200 duration_ms=1240.80
+2026-05-29 08:18:10,948 | INFO | yggdrasil.api | request_started request_id=065f87fc method=GET path=/ query=- client=127.0.0.1
+2026-05-29 08:18:10,969 | INFO | yggdrasil.api | request_completed request_id=065f87fc method=GET path=/ status=200 duration_ms=20.97
+2026-05-29 08:18:10,997 | INFO | yggdrasil.api | request_started request_id=c8d1c980 method=GET path=/health query=- client=127.0.0.1
+2026-05-29 08:18:10,999 | INFO | yggdrasil.api | request_started request_id=16f641cd method=GET path=/subjects query=- client=127.0.0.1
+2026-05-29 08:18:11,003 | INFO | yggdrasil.api | request_completed request_id=c8d1c980 method=GET path=/health status=200 duration_ms=5.55
+2026-05-29 08:18:11,080 | INFO | yggdrasil.api | request_completed request_id=16f641cd method=GET path=/subjects status=200 duration_ms=80.43
+2026-05-29 08:18:30,057 | INFO | yggdrasil.api | request_started request_id=58311771 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-29 08:18:31,235 | INFO | yggdrasil.api | request_completed request_id=58311771 method=POST path=/auth/register status=200 duration_ms=1178.57
+2026-05-29 08:18:31,241 | INFO | yggdrasil.api | request_started request_id=c6bc936d method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-29 08:18:32,222 | INFO | yggdrasil.api | request_completed request_id=c6bc936d method=POST path=/auth/login status=200 duration_ms=981.53
+2026-05-30 11:17:43,069 | INFO | yggdrasil.api | request_started request_id=6f6c3093 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 11:17:43,171 | INFO | yggdrasil.api | request_completed request_id=6f6c3093 method=GET path=/app status=200 duration_ms=101.95
+2026-05-30 11:17:43,246 | INFO | yggdrasil.api | request_started request_id=f0c5a24c method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 11:17:43,251 | WARNING | yggdrasil.api | http_exception request_id=f0c5a24c method=GET path=/auth/me status=401 detail=Token has expired
+2026-05-30 11:17:43,252 | INFO | yggdrasil.api | request_completed request_id=f0c5a24c method=GET path=/auth/me status=401 duration_ms=6.48
+2026-05-30 11:17:43,293 | INFO | yggdrasil.api | request_started request_id=09666705 method=POST path=/auth/refresh query=- client=127.0.0.1
+2026-05-30 11:17:43,697 | INFO | yggdrasil.api | request_completed request_id=09666705 method=POST path=/auth/refresh status=200 duration_ms=403.80
+2026-05-30 11:17:43,705 | INFO | yggdrasil.api | request_started request_id=fd1370ff method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 11:17:43,770 | INFO | yggdrasil.api | request_started request_id=928fd852 method=GET path=/favicon.ico query=- client=127.0.0.1
+2026-05-30 11:17:43,771 | INFO | yggdrasil.api | request_completed request_id=928fd852 method=GET path=/favicon.ico status=404 duration_ms=1.60
+2026-05-30 11:17:44,537 | WARNING | yggdrasil.api | http_exception request_id=fd1370ff method=GET path=/auth/me status=404 detail=Student '23n222' was not found
+2026-05-30 11:17:44,539 | INFO | yggdrasil.api | request_completed request_id=fd1370ff method=GET path=/auth/me status=404 duration_ms=833.84
+2026-05-30 11:17:44,555 | INFO | yggdrasil.api | request_started request_id=85996001 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 11:17:44,558 | INFO | yggdrasil.api | request_started request_id=6d7df5f7 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 11:17:44,636 | INFO | yggdrasil.api | request_completed request_id=6d7df5f7 method=GET path=/health status=200 duration_ms=77.83
+2026-05-30 11:17:45,951 | INFO | yggdrasil.api | request_completed request_id=85996001 method=GET path=/subjects status=200 duration_ms=1396.32
+2026-05-30 11:18:59,188 | INFO | yggdrasil.api | request_started request_id=93c41cc1 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 11:19:00,235 | ERROR | yggdrasil.api | request_failed request_id=93c41cc1 method=POST path=/auth/login duration_ms=1046.47
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 766, in login_auth_user
+    "has_regulation": bool(record.regulation_id and regulation_exists(record.regulation_id)),
+                                                    ^^^^^^^^^^^^^^^^^
+NameError: name 'regulation_exists' is not defined
+2026-05-30 11:19:00,492 | ERROR | yggdrasil.api | unhandled_error request_id=93c41cc1 method=POST path=/auth/login
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\backend\logging_utils.py", line 78, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\vscode\Yggdrasil\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "C:\vscode\Yggdrasil\backend\api.py", line 766, in login_auth_user
+    "has_regulation": bool(record.regulation_id and regulation_exists(record.regulation_id)),
+                                                    ^^^^^^^^^^^^^^^^^
+NameError: name 'regulation_exists' is not defined
+2026-05-30 11:25:36,237 | INFO | yggdrasil.api | request_started request_id=c83f4fe5 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:25:36,241 | INFO | yggdrasil.api | request_completed request_id=c83f4fe5 method=GET path=/ status=200 duration_ms=3.44
+2026-05-30 11:27:18,301 | INFO | yggdrasil.api | request_started request_id=b1d6cf13 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:27:18,305 | INFO | yggdrasil.api | request_completed request_id=b1d6cf13 method=GET path=/ status=200 duration_ms=3.86
+2026-05-30 11:27:18,336 | INFO | yggdrasil.api | request_started request_id=b2a19c22 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:27:18,422 | INFO | yggdrasil.api | request_completed request_id=b2a19c22 method=GET path=/frontend/auth.js status=200 duration_ms=85.81
+2026-05-30 11:28:12,394 | INFO | yggdrasil.api | request_started request_id=e45baa48 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:28:12,401 | INFO | yggdrasil.api | request_completed request_id=e45baa48 method=GET path=/ status=200 duration_ms=6.33
+2026-05-30 11:28:12,430 | INFO | yggdrasil.api | request_started request_id=fc8835b0 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:28:12,435 | INFO | yggdrasil.api | request_completed request_id=fc8835b0 method=GET path=/frontend/auth.js status=200 duration_ms=4.72
+2026-05-30 11:29:08,645 | INFO | yggdrasil.api | request_started request_id=5144aead method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:29:08,648 | INFO | yggdrasil.api | request_completed request_id=5144aead method=GET path=/ status=200 duration_ms=3.62
+2026-05-30 11:29:08,694 | INFO | yggdrasil.api | request_started request_id=22920cca method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:29:08,751 | INFO | yggdrasil.api | request_completed request_id=22920cca method=GET path=/frontend/auth.js status=200 duration_ms=57.38
+2026-05-30 11:29:10,953 | INFO | yggdrasil.api | request_started request_id=18b19180 method=GET path=/favicon.ico query=- client=127.0.0.1
+2026-05-30 11:29:10,953 | INFO | yggdrasil.api | request_completed request_id=18b19180 method=GET path=/favicon.ico status=404 duration_ms=0.81
+2026-05-30 11:29:54,643 | INFO | yggdrasil.api | request_started request_id=61878473 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:29:54,645 | INFO | yggdrasil.api | request_completed request_id=61878473 method=GET path=/ status=200 duration_ms=1.87
+2026-05-30 11:29:54,663 | INFO | yggdrasil.api | request_started request_id=9ebcfa83 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:29:54,667 | INFO | yggdrasil.api | request_completed request_id=9ebcfa83 method=GET path=/frontend/auth.js status=200 duration_ms=3.45
+2026-05-30 11:31:06,721 | INFO | yggdrasil.api | request_started request_id=4a187112 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:31:06,727 | INFO | yggdrasil.api | request_completed request_id=4a187112 method=GET path=/ status=200 duration_ms=5.68
+2026-05-30 11:31:06,759 | INFO | yggdrasil.api | request_started request_id=867ab88b method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:31:06,762 | INFO | yggdrasil.api | request_completed request_id=867ab88b method=GET path=/frontend/auth.js status=200 duration_ms=3.16
+2026-05-30 11:34:15,313 | INFO | yggdrasil.api | request_started request_id=f12a7381 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:34:15,314 | INFO | yggdrasil.api | request_completed request_id=f12a7381 method=GET path=/ status=200 duration_ms=1.91
+2026-05-30 11:34:15,325 | INFO | yggdrasil.api | request_started request_id=670308cf method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:34:15,328 | INFO | yggdrasil.api | request_completed request_id=670308cf method=GET path=/frontend/auth.js status=200 duration_ms=2.65
+2026-05-30 11:34:30,560 | INFO | yggdrasil.api | request_started request_id=a36c4ec2 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:34:30,563 | INFO | yggdrasil.api | request_completed request_id=a36c4ec2 method=GET path=/ status=200 duration_ms=3.22
+2026-05-30 11:34:30,571 | INFO | yggdrasil.api | request_started request_id=4a570904 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:34:30,574 | INFO | yggdrasil.api | request_completed request_id=4a570904 method=GET path=/frontend/auth.js status=200 duration_ms=3.19
+2026-05-30 11:34:51,596 | INFO | yggdrasil.api | request_started request_id=1a22ff1f method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:34:51,599 | INFO | yggdrasil.api | request_completed request_id=1a22ff1f method=GET path=/ status=200 duration_ms=3.03
+2026-05-30 11:34:51,626 | INFO | yggdrasil.api | request_started request_id=7b195367 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:34:51,628 | INFO | yggdrasil.api | request_completed request_id=7b195367 method=GET path=/frontend/auth.js status=200 duration_ms=2.44
+2026-05-30 11:35:01,510 | INFO | yggdrasil.api | request_started request_id=ae7ecba1 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 11:35:02,766 | INFO | yggdrasil.api | request_completed request_id=ae7ecba1 method=POST path=/auth/login status=200 duration_ms=1256.36
+2026-05-30 11:35:02,838 | INFO | yggdrasil.api | request_started request_id=73f4cf05 method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 11:35:02,841 | INFO | yggdrasil.api | request_completed request_id=73f4cf05 method=GET path=/app/regulation/upload status=200 duration_ms=3.52
+2026-05-30 11:35:02,876 | INFO | yggdrasil.api | request_started request_id=681c12e0 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:35:02,878 | INFO | yggdrasil.api | request_completed request_id=681c12e0 method=GET path=/frontend/auth.js status=200 duration_ms=2.38
+2026-05-30 11:35:19,452 | INFO | yggdrasil.api | request_started request_id=4b46c551 method=POST path=/ingest/regulation query=- client=127.0.0.1
+2026-05-30 11:50:56,647 | INFO | yggdrasil.api | request_completed request_id=4b46c551 method=POST path=/ingest/regulation status=200 duration_ms=937194.62
+2026-05-30 11:51:03,663 | INFO | yggdrasil.api | request_started request_id=a871d7a0 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 11:51:03,897 | INFO | yggdrasil.api | request_completed request_id=a871d7a0 method=GET path=/auth/me status=200 duration_ms=234.15
+2026-05-30 11:51:03,911 | INFO | yggdrasil.api | request_started request_id=b5549087 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 11:51:03,913 | INFO | yggdrasil.api | request_started request_id=c69af0d6 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 11:51:03,919 | INFO | yggdrasil.api | request_completed request_id=b5549087 method=GET path=/health status=200 duration_ms=8.34
+2026-05-30 11:51:03,972 | INFO | yggdrasil.api | request_completed request_id=c69af0d6 method=GET path=/subjects status=200 duration_ms=58.79
+2026-05-30 11:51:25,381 | INFO | yggdrasil.api | request_started request_id=632f6851 method=GET path=/app/semester/6/subject/23N604/upload query=- client=127.0.0.1
+2026-05-30 11:51:25,389 | INFO | yggdrasil.api | request_completed request_id=632f6851 method=GET path=/app/semester/6/subject/23N604/upload status=200 duration_ms=12.83
+2026-05-30 11:51:25,419 | INFO | yggdrasil.api | request_started request_id=034766b8 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:51:25,422 | INFO | yggdrasil.api | request_completed request_id=034766b8 method=GET path=/frontend/auth.js status=200 duration_ms=3.43
+2026-05-30 11:51:25,435 | INFO | yggdrasil.api | request_started request_id=b4fb72f1 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 11:51:25,492 | INFO | yggdrasil.api | request_completed request_id=b4fb72f1 method=GET path=/subjects status=200 duration_ms=57.38
+2026-05-30 11:53:58,987 | INFO | yggdrasil.api | request_started request_id=e263e4ca method=GET path=/app/semester/1/subject/TEST/upload query=- client=127.0.0.1
+2026-05-30 11:53:58,993 | INFO | yggdrasil.api | request_completed request_id=e263e4ca method=GET path=/app/semester/1/subject/TEST/upload status=200 duration_ms=5.71
+2026-05-30 11:53:59,011 | INFO | yggdrasil.api | request_started request_id=8ef318fb method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:53:59,071 | INFO | yggdrasil.api | request_completed request_id=8ef318fb method=GET path=/frontend/auth.js status=200 duration_ms=59.65
+2026-05-30 11:54:00,239 | INFO | yggdrasil.api | request_started request_id=c2acd22b method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 11:54:00,276 | INFO | yggdrasil.api | request_completed request_id=c2acd22b method=GET path=/subjects status=200 duration_ms=37.37
+2026-05-30 11:54:59,005 | INFO | yggdrasil.api | request_started request_id=1f9a9250 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 11:54:59,046 | INFO | yggdrasil.api | request_completed request_id=1f9a9250 method=GET path=/subjects status=200 duration_ms=41.61
+2026-05-30 11:55:38,604 | INFO | yggdrasil.api | request_started request_id=cde9a76e method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:55:38,608 | INFO | yggdrasil.api | request_completed request_id=cde9a76e method=GET path=/ status=200 duration_ms=4.58
+2026-05-30 11:55:38,730 | INFO | yggdrasil.api | request_started request_id=21fd55b7 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:55:38,742 | INFO | yggdrasil.api | request_completed request_id=21fd55b7 method=GET path=/frontend/auth.js status=200 duration_ms=12.15
+2026-05-30 11:56:17,774 | INFO | yggdrasil.api | request_started request_id=94858e33 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-30 11:56:19,254 | INFO | yggdrasil.api | request_completed request_id=94858e33 method=POST path=/auth/register status=200 duration_ms=1479.79
+2026-05-30 11:56:19,263 | INFO | yggdrasil.api | request_started request_id=82bf1923 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 11:56:20,964 | INFO | yggdrasil.api | request_completed request_id=82bf1923 method=POST path=/auth/login status=200 duration_ms=1701.45
+2026-05-30 11:56:21,099 | INFO | yggdrasil.api | request_started request_id=128b8e3d method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 11:56:21,231 | INFO | yggdrasil.api | request_completed request_id=128b8e3d method=GET path=/app/regulation/upload status=200 duration_ms=131.98
+2026-05-30 11:56:21,433 | INFO | yggdrasil.api | request_started request_id=962745c4 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:56:21,616 | INFO | yggdrasil.api | request_completed request_id=962745c4 method=GET path=/frontend/auth.js status=200 duration_ms=182.37
+2026-05-30 11:56:38,711 | INFO | yggdrasil.api | request_started request_id=2c0de503 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 11:56:38,714 | INFO | yggdrasil.api | request_completed request_id=2c0de503 method=GET path=/ status=200 duration_ms=3.22
+2026-05-30 11:56:38,753 | INFO | yggdrasil.api | request_started request_id=327ffe44 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 11:56:38,955 | INFO | yggdrasil.api | request_started request_id=afe96eb5 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 11:56:40,732 | INFO | yggdrasil.api | request_completed request_id=327ffe44 method=GET path=/auth/me status=200 duration_ms=1979.54
+2026-05-30 11:56:43,811 | INFO | yggdrasil.api | request_completed request_id=afe96eb5 method=POST path=/auth/login status=200 duration_ms=4856.06
+2026-05-30 11:56:48,829 | INFO | yggdrasil.api | request_started request_id=b054ebb5 method=GET path=/app/semester/1/subject/23G105/upload query=- client=127.0.0.1
+2026-05-30 11:56:48,833 | INFO | yggdrasil.api | request_completed request_id=b054ebb5 method=GET path=/app/semester/1/subject/23G105/upload status=200 duration_ms=3.53
+2026-05-30 11:56:48,849 | INFO | yggdrasil.api | request_started request_id=9985781d method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 11:56:48,853 | INFO | yggdrasil.api | request_completed request_id=9985781d method=GET path=/frontend/auth.js status=200 duration_ms=3.35
+2026-05-30 11:56:48,877 | INFO | yggdrasil.api | request_started request_id=cac39dfd method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 11:56:48,923 | INFO | yggdrasil.api | request_completed request_id=cac39dfd method=GET path=/subjects status=200 duration_ms=45.92
+2026-05-30 11:56:49,118 | INFO | yggdrasil.api | request_started request_id=8f12733e method=POST path=/ingest query=- client=127.0.0.1
+2026-05-30 12:00:57,011 | INFO | yggdrasil.api | request_completed request_id=8f12733e method=POST path=/ingest status=200 duration_ms=247892.51
+2026-05-30 12:00:57,108 | INFO | yggdrasil.api | request_started request_id=be055f6d method=GET path=/app/semester/6/subject/23N604/upload query=- client=127.0.0.1
+2026-05-30 12:00:57,126 | INFO | yggdrasil.api | request_completed request_id=be055f6d method=GET path=/app/semester/6/subject/23N604/upload status=200 duration_ms=111.41
+2026-05-30 12:00:57,169 | INFO | yggdrasil.api | request_started request_id=d825ea28 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:00:57,262 | INFO | yggdrasil.api | request_completed request_id=d825ea28 method=GET path=/frontend/auth.js status=200 duration_ms=93.68
+2026-05-30 12:00:57,295 | INFO | yggdrasil.api | request_started request_id=37bfceb8 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:00:57,566 | INFO | yggdrasil.api | request_completed request_id=37bfceb8 method=GET path=/subjects status=200 duration_ms=271.08
+2026-05-30 12:02:05,830 | INFO | yggdrasil.api | request_started request_id=58ae0aaa method=POST path=/ingest query=- client=127.0.0.1
+2026-05-30 12:02:07,237 | WARNING | yggdrasil.api | http_exception request_id=58ae0aaa method=POST path=/ingest status=401 detail=Token has expired
+2026-05-30 12:02:07,245 | INFO | yggdrasil.api | request_completed request_id=58ae0aaa method=POST path=/ingest status=401 duration_ms=1414.70
+2026-05-30 12:02:07,268 | INFO | yggdrasil.api | request_started request_id=124f9581 method=POST path=/auth/refresh query=- client=127.0.0.1
+2026-05-30 12:02:08,095 | INFO | yggdrasil.api | request_completed request_id=124f9581 method=POST path=/auth/refresh status=200 duration_ms=826.57
+2026-05-30 12:02:08,211 | INFO | yggdrasil.api | request_started request_id=ee717c34 method=POST path=/ingest query=- client=127.0.0.1
+2026-05-30 12:03:05,174 | WARNING | yggdrasil.api | http_exception request_id=ee717c34 method=POST path=/ingest status=422 detail=No extractable content found in Building natural language generation systems.pdf.
+2026-05-30 12:03:05,175 | INFO | yggdrasil.api | request_completed request_id=ee717c34 method=POST path=/ingest status=422 duration_ms=56964.28
+2026-05-30 12:03:38,010 | INFO | yggdrasil.api | request_started request_id=d929ee58 method=POST path=/ingest query=- client=127.0.0.1
+2026-05-30 12:03:43,011 | INFO | yggdrasil.api | request_completed request_id=d929ee58 method=POST path=/ingest status=200 duration_ms=5001.22
+2026-05-30 12:03:50,778 | INFO | yggdrasil.api | request_started request_id=f009436e method=GET path=/app/semester/6/subject/23N604 query=- client=127.0.0.1
+2026-05-30 12:03:50,796 | INFO | yggdrasil.api | request_completed request_id=f009436e method=GET path=/app/semester/6/subject/23N604 status=200 duration_ms=17.74
+2026-05-30 12:03:50,829 | INFO | yggdrasil.api | request_started request_id=f9007c9b method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:03:51,023 | INFO | yggdrasil.api | request_completed request_id=f9007c9b method=GET path=/auth/me status=200 duration_ms=193.83
+2026-05-30 12:03:51,031 | INFO | yggdrasil.api | request_started request_id=830e7f80 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:03:51,033 | INFO | yggdrasil.api | request_started request_id=857a4e14 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:03:51,039 | INFO | yggdrasil.api | request_completed request_id=830e7f80 method=GET path=/health status=200 duration_ms=8.22
+2026-05-30 12:03:51,072 | INFO | yggdrasil.api | request_completed request_id=857a4e14 method=GET path=/subjects status=200 duration_ms=38.72
+2026-05-30 12:03:51,080 | INFO | yggdrasil.api | request_started request_id=f8d2f6fd method=GET path=/subject/23N604/topics query=- client=127.0.0.1
+2026-05-30 12:03:51,082 | INFO | yggdrasil.api | request_started request_id=72e164e9 method=GET path=/subject/23N604/prerequisites query=- client=127.0.0.1
+2026-05-30 12:03:51,089 | INFO | yggdrasil.api | request_started request_id=883c1766 method=GET path=/subject/23N604/resources query=- client=127.0.0.1
+2026-05-30 12:03:52,473 | INFO | yggdrasil.api | request_completed request_id=883c1766 method=GET path=/subject/23N604/resources status=200 duration_ms=1384.74
+2026-05-30 12:03:52,553 | INFO | yggdrasil.api | request_completed request_id=72e164e9 method=GET path=/subject/23N604/prerequisites status=200 duration_ms=1471.28
+2026-05-30 12:03:52,585 | INFO | yggdrasil.api | request_completed request_id=f8d2f6fd method=GET path=/subject/23N604/topics status=200 duration_ms=1505.70
+2026-05-30 12:03:53,586 | INFO | yggdrasil.api | request_started request_id=8e75c0f8 method=GET path=/subject/23N604/topics query=- client=127.0.0.1
+2026-05-30 12:03:53,593 | INFO | yggdrasil.api | request_started request_id=d83f8fff method=GET path=/subject/23N604/prerequisites query=- client=127.0.0.1
+2026-05-30 12:03:53,595 | INFO | yggdrasil.api | request_started request_id=c5b36855 method=GET path=/subject/23N604/resources query=- client=127.0.0.1
+2026-05-30 12:03:53,630 | INFO | yggdrasil.api | request_completed request_id=c5b36855 method=GET path=/subject/23N604/resources status=200 duration_ms=34.74
+2026-05-30 12:03:53,638 | INFO | yggdrasil.api | request_completed request_id=d83f8fff method=GET path=/subject/23N604/prerequisites status=200 duration_ms=44.27
+2026-05-30 12:03:53,641 | INFO | yggdrasil.api | request_completed request_id=8e75c0f8 method=GET path=/subject/23N604/topics status=200 duration_ms=55.27
+2026-05-30 12:04:19,964 | INFO | yggdrasil.api | request_started request_id=8b1b9e64 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:04:20,149 | WARNING | yggdrasil.api | http_exception request_id=8b1b9e64 method=POST path=/chat status=404 detail=Expected where to have exactly one operator, got {'subject_code': '23N604', 'college_id': 'coll-111', 'regulation_id': '2023'} in query.
+2026-05-30 12:04:20,150 | INFO | yggdrasil.api | request_completed request_id=8b1b9e64 method=POST path=/chat status=404 duration_ms=185.94
+2026-05-30 12:06:39,345 | INFO | yggdrasil.api | request_started request_id=27a11cb7 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:07:50,260 | INFO | yggdrasil.api | request_started request_id=c734013e method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:07:56,767 | INFO | yggdrasil.api | request_completed request_id=c734013e method=POST path=/chat status=200 duration_ms=6507.33
+2026-05-30 12:07:57,324 | INFO | yggdrasil.api | request_completed request_id=27a11cb7 method=POST path=/chat status=200 duration_ms=77979.73
+2026-05-30 12:08:37,886 | INFO | yggdrasil.api | request_started request_id=94c81297 method=GET path=/app/semester/6/subject/23N604 query=- client=127.0.0.1
+2026-05-30 12:08:37,901 | INFO | yggdrasil.api | request_completed request_id=94c81297 method=GET path=/app/semester/6/subject/23N604 status=200 duration_ms=15.09
+2026-05-30 12:08:37,948 | INFO | yggdrasil.api | request_started request_id=a27e4a18 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:08:38,163 | INFO | yggdrasil.api | request_completed request_id=a27e4a18 method=GET path=/auth/me status=200 duration_ms=214.83
+2026-05-30 12:08:38,170 | INFO | yggdrasil.api | request_started request_id=64672927 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:08:38,172 | INFO | yggdrasil.api | request_started request_id=fb25c473 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:08:38,176 | INFO | yggdrasil.api | request_completed request_id=64672927 method=GET path=/health status=200 duration_ms=6.65
+2026-05-30 12:08:38,214 | INFO | yggdrasil.api | request_completed request_id=fb25c473 method=GET path=/subjects status=200 duration_ms=42.68
+2026-05-30 12:08:38,222 | INFO | yggdrasil.api | request_started request_id=80b4b9e6 method=GET path=/subject/23N604/topics query=- client=127.0.0.1
+2026-05-30 12:08:38,227 | INFO | yggdrasil.api | request_started request_id=c08c5740 method=GET path=/subject/23N604/prerequisites query=- client=127.0.0.1
+2026-05-30 12:08:38,231 | INFO | yggdrasil.api | request_started request_id=a7786829 method=GET path=/subject/23N604/resources query=- client=127.0.0.1
+2026-05-30 12:08:38,243 | INFO | yggdrasil.api | request_completed request_id=80b4b9e6 method=GET path=/subject/23N604/topics status=200 duration_ms=20.58
+2026-05-30 12:08:38,250 | INFO | yggdrasil.api | request_completed request_id=c08c5740 method=GET path=/subject/23N604/prerequisites status=200 duration_ms=23.61
+2026-05-30 12:08:38,275 | INFO | yggdrasil.api | request_completed request_id=a7786829 method=GET path=/subject/23N604/resources status=200 duration_ms=43.74
+2026-05-30 12:08:42,304 | INFO | yggdrasil.api | request_started request_id=3d997de4 method=GET path=/subject/23N604/topics query=- client=127.0.0.1
+2026-05-30 12:08:42,306 | INFO | yggdrasil.api | request_started request_id=c50ec96f method=GET path=/subject/23N604/prerequisites query=- client=127.0.0.1
+2026-05-30 12:08:42,308 | INFO | yggdrasil.api | request_started request_id=0d00abac method=GET path=/subject/23N604/resources query=- client=127.0.0.1
+2026-05-30 12:08:42,338 | INFO | yggdrasil.api | request_completed request_id=3d997de4 method=GET path=/subject/23N604/topics status=200 duration_ms=33.23
+2026-05-30 12:08:42,344 | INFO | yggdrasil.api | request_completed request_id=c50ec96f method=GET path=/subject/23N604/prerequisites status=200 duration_ms=37.68
+2026-05-30 12:08:42,346 | INFO | yggdrasil.api | request_completed request_id=0d00abac method=GET path=/subject/23N604/resources status=200 duration_ms=38.84
+2026-05-30 12:08:58,032 | INFO | yggdrasil.api | request_started request_id=799a0599 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:09:07,104 | INFO | yggdrasil.api | request_completed request_id=799a0599 method=POST path=/chat status=200 duration_ms=9072.32
+2026-05-30 12:09:29,049 | INFO | yggdrasil.api | request_started request_id=537ab9c9 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:09:38,164 | INFO | yggdrasil.api | request_completed request_id=537ab9c9 method=POST path=/chat status=200 duration_ms=9115.33
+2026-05-30 12:10:30,982 | INFO | yggdrasil.api | request_started request_id=ee582e4c method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:10:40,167 | INFO | yggdrasil.api | request_completed request_id=ee582e4c method=POST path=/chat status=200 duration_ms=9184.53
+2026-05-30 12:11:07,680 | INFO | yggdrasil.api | request_started request_id=826f3ff2 method=GET path=/app/semester/6/subject/23N604/upload query=- client=127.0.0.1
+2026-05-30 12:11:07,684 | INFO | yggdrasil.api | request_completed request_id=826f3ff2 method=GET path=/app/semester/6/subject/23N604/upload status=200 duration_ms=4.59
+2026-05-30 12:11:07,715 | INFO | yggdrasil.api | request_started request_id=de3b5254 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:11:07,812 | INFO | yggdrasil.api | request_completed request_id=de3b5254 method=GET path=/frontend/auth.js status=200 duration_ms=96.73
+2026-05-30 12:11:07,826 | INFO | yggdrasil.api | request_started request_id=9448dfb0 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:11:07,872 | INFO | yggdrasil.api | request_completed request_id=9448dfb0 method=GET path=/subjects status=200 duration_ms=45.89
+2026-05-30 12:11:22,999 | INFO | yggdrasil.api | request_started request_id=3e9c42b1 method=POST path=/ingest query=- client=127.0.0.1
+2026-05-30 12:16:00,729 | INFO | yggdrasil.api | request_completed request_id=3e9c42b1 method=POST path=/ingest status=200 duration_ms=277730.28
+2026-05-30 12:16:45,734 | INFO | yggdrasil.api | request_started request_id=41751b01 method=GET path=/app/semester/6 query=- client=127.0.0.1
+2026-05-30 12:16:45,748 | INFO | yggdrasil.api | request_completed request_id=41751b01 method=GET path=/app/semester/6 status=200 duration_ms=14.22
+2026-05-30 12:16:45,802 | INFO | yggdrasil.api | request_started request_id=71ea6148 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:16:46,047 | INFO | yggdrasil.api | request_completed request_id=71ea6148 method=GET path=/auth/me status=200 duration_ms=244.62
+2026-05-30 12:16:46,053 | INFO | yggdrasil.api | request_started request_id=681e8c59 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:16:46,054 | INFO | yggdrasil.api | request_started request_id=40f4d70a method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:16:46,057 | INFO | yggdrasil.api | request_completed request_id=40f4d70a method=GET path=/health status=200 duration_ms=2.42
+2026-05-30 12:16:46,160 | INFO | yggdrasil.api | request_completed request_id=681e8c59 method=GET path=/subjects status=200 duration_ms=107.13
+2026-05-30 12:16:49,598 | INFO | yggdrasil.api | request_started request_id=078447f9 method=GET path=/subject/23N604/prerequisites query=- client=127.0.0.1
+2026-05-30 12:16:49,599 | INFO | yggdrasil.api | request_started request_id=0d8a9a10 method=GET path=/subject/23N604/topics query=- client=127.0.0.1
+2026-05-30 12:16:49,601 | INFO | yggdrasil.api | request_started request_id=84abedb9 method=GET path=/subject/23N604/resources query=- client=127.0.0.1
+2026-05-30 12:16:49,629 | INFO | yggdrasil.api | request_completed request_id=078447f9 method=GET path=/subject/23N604/prerequisites status=200 duration_ms=31.41
+2026-05-30 12:16:49,635 | INFO | yggdrasil.api | request_completed request_id=0d8a9a10 method=GET path=/subject/23N604/topics status=200 duration_ms=35.39
+2026-05-30 12:16:49,636 | INFO | yggdrasil.api | request_completed request_id=84abedb9 method=GET path=/subject/23N604/resources status=200 duration_ms=35.26
+2026-05-30 12:17:06,498 | INFO | yggdrasil.api | request_started request_id=fea6117b method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:17:20,713 | INFO | yggdrasil.api | request_completed request_id=fea6117b method=POST path=/chat status=200 duration_ms=14214.70
+2026-05-30 12:18:02,978 | INFO | yggdrasil.api | request_started request_id=c9ae34e7 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:18:21,484 | INFO | yggdrasil.api | request_completed request_id=c9ae34e7 method=POST path=/chat status=200 duration_ms=18506.37
+2026-05-30 12:20:13,321 | INFO | yggdrasil.api | request_started request_id=cae101c8 method=GET path=/app/semester/6/subject/23N601/upload query=- client=127.0.0.1
+2026-05-30 12:20:13,328 | INFO | yggdrasil.api | request_completed request_id=cae101c8 method=GET path=/app/semester/6/subject/23N601/upload status=200 duration_ms=8.41
+2026-05-30 12:20:13,360 | INFO | yggdrasil.api | request_started request_id=235a5d6d method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:20:13,491 | INFO | yggdrasil.api | request_completed request_id=235a5d6d method=GET path=/frontend/auth.js status=200 duration_ms=130.92
+2026-05-30 12:20:13,526 | INFO | yggdrasil.api | request_started request_id=a5614ada method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:20:14,346 | INFO | yggdrasil.api | request_completed request_id=a5614ada method=GET path=/subjects status=200 duration_ms=819.26
+2026-05-30 12:20:32,111 | INFO | yggdrasil.api | request_started request_id=cd466b61 method=POST path=/ingest query=- client=127.0.0.1
+2026-05-30 12:31:39,332 | INFO | yggdrasil.api | request_completed request_id=cd466b61 method=POST path=/ingest status=200 duration_ms=667220.46
+2026-05-30 12:32:29,230 | INFO | yggdrasil.api | request_started request_id=95cc6572 method=GET path=/app/semester/6/subject/23N601 query=- client=127.0.0.1
+2026-05-30 12:32:29,245 | INFO | yggdrasil.api | request_completed request_id=95cc6572 method=GET path=/app/semester/6/subject/23N601 status=200 duration_ms=15.66
+2026-05-30 12:32:29,291 | INFO | yggdrasil.api | request_started request_id=4833026c method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:32:29,293 | WARNING | yggdrasil.api | http_exception request_id=4833026c method=GET path=/auth/me status=401 detail=Token has expired
+2026-05-30 12:32:29,294 | INFO | yggdrasil.api | request_completed request_id=4833026c method=GET path=/auth/me status=401 duration_ms=2.52
+2026-05-30 12:32:29,301 | INFO | yggdrasil.api | request_started request_id=86090fdd method=POST path=/auth/refresh query=- client=127.0.0.1
+2026-05-30 12:32:29,650 | INFO | yggdrasil.api | request_completed request_id=86090fdd method=POST path=/auth/refresh status=200 duration_ms=349.36
+2026-05-30 12:32:29,664 | INFO | yggdrasil.api | request_started request_id=666e1fef method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:32:29,841 | INFO | yggdrasil.api | request_completed request_id=666e1fef method=GET path=/auth/me status=200 duration_ms=177.21
+2026-05-30 12:32:29,850 | INFO | yggdrasil.api | request_started request_id=50ef21f8 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:32:29,852 | INFO | yggdrasil.api | request_started request_id=2ca8a86c method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:32:29,857 | INFO | yggdrasil.api | request_completed request_id=50ef21f8 method=GET path=/health status=200 duration_ms=6.67
+2026-05-30 12:32:30,168 | INFO | yggdrasil.api | request_completed request_id=2ca8a86c method=GET path=/subjects status=200 duration_ms=315.48
+2026-05-30 12:32:30,181 | INFO | yggdrasil.api | request_started request_id=5ab2775d method=GET path=/subject/23N601/topics query=- client=127.0.0.1
+2026-05-30 12:32:30,185 | INFO | yggdrasil.api | request_started request_id=91952f3f method=GET path=/subject/23N601/prerequisites query=- client=127.0.0.1
+2026-05-30 12:32:30,187 | INFO | yggdrasil.api | request_started request_id=c81457e4 method=GET path=/subject/23N601/resources query=- client=127.0.0.1
+2026-05-30 12:32:30,204 | INFO | yggdrasil.api | request_completed request_id=c81457e4 method=GET path=/subject/23N601/resources status=200 duration_ms=16.71
+2026-05-30 12:32:30,207 | INFO | yggdrasil.api | request_completed request_id=91952f3f method=GET path=/subject/23N601/prerequisites status=200 duration_ms=22.02
+2026-05-30 12:32:30,210 | INFO | yggdrasil.api | request_completed request_id=5ab2775d method=GET path=/subject/23N601/topics status=200 duration_ms=29.44
+2026-05-30 12:32:35,339 | INFO | yggdrasil.api | request_started request_id=8b3b7614 method=GET path=/subject/23N601/topics query=- client=127.0.0.1
+2026-05-30 12:32:35,343 | INFO | yggdrasil.api | request_started request_id=489c9794 method=GET path=/subject/23N601/resources query=- client=127.0.0.1
+2026-05-30 12:32:35,344 | INFO | yggdrasil.api | request_started request_id=34349e4e method=GET path=/subject/23N601/prerequisites query=- client=127.0.0.1
+2026-05-30 12:32:35,382 | INFO | yggdrasil.api | request_completed request_id=34349e4e method=GET path=/subject/23N601/prerequisites status=200 duration_ms=37.38
+2026-05-30 12:32:35,386 | INFO | yggdrasil.api | request_completed request_id=489c9794 method=GET path=/subject/23N601/resources status=200 duration_ms=43.69
+2026-05-30 12:32:35,389 | INFO | yggdrasil.api | request_completed request_id=8b3b7614 method=GET path=/subject/23N601/topics status=200 duration_ms=50.01
+2026-05-30 12:33:17,805 | INFO | yggdrasil.api | request_started request_id=3541013a method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:33:17,808 | WARNING | yggdrasil.api | http_exception request_id=3541013a method=POST path=/chat status=401 detail=Token has expired
+2026-05-30 12:33:17,809 | INFO | yggdrasil.api | request_completed request_id=3541013a method=POST path=/chat status=401 duration_ms=4.34
+2026-05-30 12:33:17,821 | INFO | yggdrasil.api | request_started request_id=7a16a66d method=POST path=/auth/refresh query=- client=127.0.0.1
+2026-05-30 12:33:18,085 | INFO | yggdrasil.api | request_completed request_id=7a16a66d method=POST path=/auth/refresh status=200 duration_ms=264.33
+2026-05-30 12:33:18,096 | INFO | yggdrasil.api | request_started request_id=545653c0 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:33:31,821 | INFO | yggdrasil.api | request_completed request_id=545653c0 method=POST path=/chat status=200 duration_ms=13725.50
+2026-05-30 12:34:28,831 | INFO | yggdrasil.api | request_started request_id=5bccaad8 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:34:38,762 | INFO | yggdrasil.api | request_completed request_id=5bccaad8 method=POST path=/chat status=200 duration_ms=9930.59
+2026-05-30 12:39:21,672 | INFO | yggdrasil.api | request_started request_id=bc0d6adc method=GET path=/app/semester/1/subject/23G105 query=- client=127.0.0.1
+2026-05-30 12:39:21,682 | INFO | yggdrasil.api | request_completed request_id=bc0d6adc method=GET path=/app/semester/1/subject/23G105 status=200 duration_ms=9.92
+2026-05-30 12:39:21,725 | INFO | yggdrasil.api | request_started request_id=9cac849b method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:39:21,729 | WARNING | yggdrasil.api | http_exception request_id=9cac849b method=GET path=/auth/me status=401 detail=Token has expired
+2026-05-30 12:39:21,729 | INFO | yggdrasil.api | request_completed request_id=9cac849b method=GET path=/auth/me status=401 duration_ms=4.15
+2026-05-30 12:39:21,766 | INFO | yggdrasil.api | request_started request_id=eb287831 method=POST path=/auth/refresh query=- client=127.0.0.1
+2026-05-30 12:39:22,201 | INFO | yggdrasil.api | request_completed request_id=eb287831 method=POST path=/auth/refresh status=200 duration_ms=434.83
+2026-05-30 12:39:22,207 | INFO | yggdrasil.api | request_started request_id=e13383d2 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:39:22,387 | INFO | yggdrasil.api | request_completed request_id=e13383d2 method=GET path=/auth/me status=200 duration_ms=180.20
+2026-05-30 12:39:22,392 | INFO | yggdrasil.api | request_started request_id=8de077b4 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:39:22,394 | WARNING | yggdrasil.api | http_exception request_id=8de077b4 method=GET path=/auth/me status=401 detail=Token has expired
+2026-05-30 12:39:22,395 | INFO | yggdrasil.api | request_completed request_id=8de077b4 method=GET path=/auth/me status=401 duration_ms=2.31
+2026-05-30 12:39:22,398 | INFO | yggdrasil.api | request_started request_id=7d398588 method=POST path=/auth/refresh query=- client=127.0.0.1
+2026-05-30 12:39:22,601 | INFO | yggdrasil.api | request_completed request_id=7d398588 method=POST path=/auth/refresh status=200 duration_ms=203.44
+2026-05-30 12:39:22,607 | INFO | yggdrasil.api | request_started request_id=bb8f76fd method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:39:22,614 | INFO | yggdrasil.api | request_started request_id=3413e531 method=GET path=/app/semester/1/subject/23G105/upload query=- client=127.0.0.1
+2026-05-30 12:39:22,616 | INFO | yggdrasil.api | request_completed request_id=3413e531 method=GET path=/app/semester/1/subject/23G105/upload status=200 duration_ms=2.26
+2026-05-30 12:39:22,623 | INFO | yggdrasil.api | request_started request_id=a6f7fb11 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:39:22,626 | INFO | yggdrasil.api | request_completed request_id=a6f7fb11 method=GET path=/health status=200 duration_ms=2.65
+2026-05-30 12:39:22,628 | INFO | yggdrasil.api | request_started request_id=4f5fc16c method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:39:22,728 | INFO | yggdrasil.api | request_completed request_id=4f5fc16c method=GET path=/frontend/auth.js status=200 duration_ms=99.94
+2026-05-30 12:39:22,739 | INFO | yggdrasil.api | request_started request_id=68b8bd0c method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:39:22,767 | INFO | yggdrasil.api | request_completed request_id=68b8bd0c method=GET path=/subjects status=200 duration_ms=27.83
+2026-05-30 12:39:22,822 | INFO | yggdrasil.api | request_completed request_id=bb8f76fd method=GET path=/auth/me status=200 duration_ms=214.96
+2026-05-30 12:39:32,516 | INFO | yggdrasil.api | request_started request_id=8cf25f4a method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:39:33,511 | INFO | yggdrasil.api | request_completed request_id=8cf25f4a method=GET path=/auth/me status=200 duration_ms=994.63
+2026-05-30 12:41:22,542 | INFO | yggdrasil.api | request_started request_id=85fcf366 method=GET path=/app/semester/6/subject/23N601 query=- client=127.0.0.1
+2026-05-30 12:41:22,551 | INFO | yggdrasil.api | request_completed request_id=85fcf366 method=GET path=/app/semester/6/subject/23N601 status=200 duration_ms=9.55
+2026-05-30 12:41:22,593 | INFO | yggdrasil.api | request_started request_id=3fc718f1 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:41:22,775 | INFO | yggdrasil.api | request_completed request_id=3fc718f1 method=GET path=/auth/me status=200 duration_ms=181.66
+2026-05-30 12:41:22,780 | INFO | yggdrasil.api | request_started request_id=c6e27fbc method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:41:22,950 | INFO | yggdrasil.api | request_completed request_id=c6e27fbc method=GET path=/auth/me status=200 duration_ms=170.83
+2026-05-30 12:41:22,955 | INFO | yggdrasil.api | request_started request_id=77968c29 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:41:22,956 | INFO | yggdrasil.api | request_started request_id=def33118 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:41:22,959 | INFO | yggdrasil.api | request_completed request_id=77968c29 method=GET path=/health status=200 duration_ms=4.31
+2026-05-30 12:41:22,988 | INFO | yggdrasil.api | request_completed request_id=def33118 method=GET path=/subjects status=200 duration_ms=31.93
+2026-05-30 12:41:22,994 | INFO | yggdrasil.api | request_started request_id=c3c30b51 method=GET path=/subject/23N601/topics query=- client=127.0.0.1
+2026-05-30 12:41:22,996 | INFO | yggdrasil.api | request_started request_id=4552c704 method=GET path=/subject/23N601/prerequisites query=- client=127.0.0.1
+2026-05-30 12:41:23,002 | INFO | yggdrasil.api | request_started request_id=bc55d380 method=GET path=/subject/23N601/resources query=- client=127.0.0.1
+2026-05-30 12:41:23,024 | INFO | yggdrasil.api | request_completed request_id=4552c704 method=GET path=/subject/23N601/prerequisites status=200 duration_ms=27.91
+2026-05-30 12:41:23,026 | INFO | yggdrasil.api | request_completed request_id=c3c30b51 method=GET path=/subject/23N601/topics status=200 duration_ms=31.65
+2026-05-30 12:41:23,048 | INFO | yggdrasil.api | request_completed request_id=bc55d380 method=GET path=/subject/23N601/resources status=200 duration_ms=45.89
+2026-05-30 12:41:25,686 | INFO | yggdrasil.api | request_started request_id=806e5c80 method=GET path=/app/semester/6/subject/23N601 query=- client=127.0.0.1
+2026-05-30 12:41:25,695 | INFO | yggdrasil.api | request_completed request_id=806e5c80 method=GET path=/app/semester/6/subject/23N601 status=200 duration_ms=9.31
+2026-05-30 12:41:25,735 | INFO | yggdrasil.api | request_started request_id=ef21c780 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:41:25,916 | INFO | yggdrasil.api | request_completed request_id=ef21c780 method=GET path=/auth/me status=200 duration_ms=181.01
+2026-05-30 12:41:25,922 | INFO | yggdrasil.api | request_started request_id=78b93921 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:41:26,097 | INFO | yggdrasil.api | request_completed request_id=78b93921 method=GET path=/auth/me status=200 duration_ms=175.06
+2026-05-30 12:41:26,102 | INFO | yggdrasil.api | request_started request_id=0aa11121 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:41:26,103 | INFO | yggdrasil.api | request_started request_id=a450f2f8 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:41:26,106 | INFO | yggdrasil.api | request_completed request_id=0aa11121 method=GET path=/health status=200 duration_ms=4.34
+2026-05-30 12:41:26,134 | INFO | yggdrasil.api | request_completed request_id=a450f2f8 method=GET path=/subjects status=200 duration_ms=30.61
+2026-05-30 12:41:26,140 | INFO | yggdrasil.api | request_started request_id=04dd58e6 method=GET path=/subject/23N601/topics query=- client=127.0.0.1
+2026-05-30 12:41:26,144 | INFO | yggdrasil.api | request_started request_id=16eaf814 method=GET path=/subject/23N601/prerequisites query=- client=127.0.0.1
+2026-05-30 12:41:26,145 | INFO | yggdrasil.api | request_started request_id=55f1a6db method=GET path=/subject/23N601/resources query=- client=127.0.0.1
+2026-05-30 12:41:26,158 | INFO | yggdrasil.api | request_completed request_id=04dd58e6 method=GET path=/subject/23N601/topics status=200 duration_ms=18.01
+2026-05-30 12:41:26,161 | INFO | yggdrasil.api | request_completed request_id=55f1a6db method=GET path=/subject/23N601/resources status=200 duration_ms=16.21
+2026-05-30 12:41:26,165 | INFO | yggdrasil.api | request_completed request_id=16eaf814 method=GET path=/subject/23N601/prerequisites status=200 duration_ms=21.23
+2026-05-30 12:41:31,866 | INFO | yggdrasil.api | request_started request_id=982a13a2 method=GET path=/subject/23N601/topics query=- client=127.0.0.1
+2026-05-30 12:41:31,876 | INFO | yggdrasil.api | request_started request_id=b7d3bbf9 method=GET path=/subject/23N601/prerequisites query=- client=127.0.0.1
+2026-05-30 12:41:31,882 | INFO | yggdrasil.api | request_started request_id=bcb6a2d4 method=GET path=/subject/23N601/resources query=- client=127.0.0.1
+2026-05-30 12:41:31,910 | INFO | yggdrasil.api | request_completed request_id=982a13a2 method=GET path=/subject/23N601/topics status=200 duration_ms=44.23
+2026-05-30 12:41:31,916 | INFO | yggdrasil.api | request_completed request_id=bcb6a2d4 method=GET path=/subject/23N601/resources status=200 duration_ms=33.82
+2026-05-30 12:41:31,919 | INFO | yggdrasil.api | request_completed request_id=b7d3bbf9 method=GET path=/subject/23N601/prerequisites status=200 duration_ms=42.67
+2026-05-30 12:41:38,524 | INFO | yggdrasil.api | request_started request_id=f8c96565 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:41:38,832 | INFO | yggdrasil.api | request_completed request_id=f8c96565 method=GET path=/auth/me status=200 duration_ms=308.41
+2026-05-30 12:41:38,839 | INFO | yggdrasil.api | request_started request_id=73b21209 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:41:38,840 | INFO | yggdrasil.api | request_started request_id=4f7799fe method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:41:38,843 | INFO | yggdrasil.api | request_completed request_id=73b21209 method=GET path=/health status=200 duration_ms=4.10
+2026-05-30 12:41:38,881 | INFO | yggdrasil.api | request_completed request_id=4f7799fe method=GET path=/subjects status=200 duration_ms=40.63
+2026-05-30 12:41:46,553 | INFO | yggdrasil.api | request_started request_id=231f119c method=GET path=/subject/23N604/topics query=- client=127.0.0.1
+2026-05-30 12:41:46,557 | INFO | yggdrasil.api | request_started request_id=d8e63b30 method=GET path=/subject/23N604/resources query=- client=127.0.0.1
+2026-05-30 12:41:46,567 | INFO | yggdrasil.api | request_started request_id=0cde81ea method=GET path=/subject/23N604/prerequisites query=- client=127.0.0.1
+2026-05-30 12:41:46,670 | INFO | yggdrasil.api | request_completed request_id=d8e63b30 method=GET path=/subject/23N604/resources status=200 duration_ms=112.53
+2026-05-30 12:41:46,696 | INFO | yggdrasil.api | request_completed request_id=0cde81ea method=GET path=/subject/23N604/prerequisites status=200 duration_ms=128.67
+2026-05-30 12:41:46,716 | INFO | yggdrasil.api | request_completed request_id=231f119c method=GET path=/subject/23N604/topics status=200 duration_ms=163.51
+2026-05-30 12:42:04,805 | INFO | yggdrasil.api | request_started request_id=949deb7b method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:42:47,450 | INFO | yggdrasil.api | request_completed request_id=949deb7b method=POST path=/chat status=200 duration_ms=42644.80
+2026-05-30 12:43:36,672 | INFO | yggdrasil.api | request_started request_id=c94f8c2c method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:43:37,012 | INFO | yggdrasil.api | request_completed request_id=c94f8c2c method=GET path=/auth/me status=200 duration_ms=340.25
+2026-05-30 12:43:37,046 | INFO | yggdrasil.api | request_started request_id=dcff0357 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:43:37,050 | INFO | yggdrasil.api | request_started request_id=d42b2048 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:43:37,053 | INFO | yggdrasil.api | request_completed request_id=dcff0357 method=GET path=/health status=200 duration_ms=7.16
+2026-05-30 12:43:37,092 | INFO | yggdrasil.api | request_completed request_id=d42b2048 method=GET path=/subjects status=200 duration_ms=41.38
+2026-05-30 12:43:50,155 | INFO | yggdrasil.api | request_started request_id=597ae398 method=GET path=/subject/23N601/topics query=- client=127.0.0.1
+2026-05-30 12:43:50,169 | INFO | yggdrasil.api | request_started request_id=c7e47daa method=GET path=/subject/23N601/prerequisites query=- client=127.0.0.1
+2026-05-30 12:43:50,172 | INFO | yggdrasil.api | request_started request_id=3ff6fc85 method=GET path=/subject/23N601/resources query=- client=127.0.0.1
+2026-05-30 12:43:50,189 | INFO | yggdrasil.api | request_completed request_id=597ae398 method=GET path=/subject/23N601/topics status=200 duration_ms=33.93
+2026-05-30 12:43:50,207 | INFO | yggdrasil.api | request_completed request_id=c7e47daa method=GET path=/subject/23N601/prerequisites status=200 duration_ms=38.28
+2026-05-30 12:43:50,333 | INFO | yggdrasil.api | request_completed request_id=3ff6fc85 method=GET path=/subject/23N601/resources status=200 duration_ms=161.13
+2026-05-30 12:44:10,447 | INFO | yggdrasil.api | request_started request_id=d02c8846 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 12:45:01,806 | INFO | yggdrasil.api | request_started request_id=1f3bb049 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:45:01,819 | INFO | yggdrasil.api | request_completed request_id=1f3bb049 method=GET path=/app status=200 duration_ms=13.01
+2026-05-30 12:45:03,514 | INFO | yggdrasil.api | request_started request_id=6a4101ef method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:45:03,531 | WARNING | yggdrasil.api | http_exception request_id=6a4101ef method=GET path=/auth/me status=401 detail=Missing Authorization header
+2026-05-30 12:45:03,532 | INFO | yggdrasil.api | request_completed request_id=6a4101ef method=GET path=/auth/me status=401 duration_ms=17.96
+2026-05-30 12:45:03,852 | INFO | yggdrasil.api | request_started request_id=a337978e method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:45:03,870 | INFO | yggdrasil.api | request_completed request_id=a337978e method=GET path=/health status=200 duration_ms=17.69
+2026-05-30 12:45:04,111 | INFO | yggdrasil.api | request_started request_id=0cdabb85 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:45:04,369 | INFO | yggdrasil.api | request_completed request_id=0cdabb85 method=GET path=/subjects status=200 duration_ms=257.88
+2026-05-30 12:45:07,351 | INFO | yggdrasil.api | request_started request_id=3b8c4e44 method=GET path=/favicon.ico query=- client=127.0.0.1
+2026-05-30 12:45:07,355 | INFO | yggdrasil.api | request_completed request_id=3b8c4e44 method=GET path=/favicon.ico status=404 duration_ms=4.14
+2026-05-30 12:45:24,743 | INFO | yggdrasil.api | request_started request_id=cebd5bd5 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:45:24,810 | INFO | yggdrasil.api | request_completed request_id=cebd5bd5 method=GET path=/app status=200 duration_ms=67.02
+2026-05-30 12:45:24,969 | INFO | yggdrasil.api | request_started request_id=0159d847 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:45:25,093 | WARNING | yggdrasil.api | http_exception request_id=0159d847 method=GET path=/auth/me status=401 detail=Missing Authorization header
+2026-05-30 12:45:25,094 | INFO | yggdrasil.api | request_completed request_id=0159d847 method=GET path=/auth/me status=401 duration_ms=125.52
+2026-05-30 12:45:25,401 | INFO | yggdrasil.api | request_started request_id=167b29fe method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:45:25,415 | INFO | yggdrasil.api | request_started request_id=b83a076a method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:45:25,445 | INFO | yggdrasil.api | request_completed request_id=167b29fe method=GET path=/health status=200 duration_ms=44.10
+2026-05-30 12:45:25,855 | INFO | yggdrasil.api | request_completed request_id=b83a076a method=GET path=/subjects status=200 duration_ms=440.07
+2026-05-30 12:46:06,101 | INFO | yggdrasil.api | request_completed request_id=d02c8846 method=POST path=/chat status=200 duration_ms=115654.14
+2026-05-30 12:46:15,492 | INFO | yggdrasil.api | request_started request_id=9dd8e15f method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:46:15,570 | INFO | yggdrasil.api | request_completed request_id=9dd8e15f method=GET path=/app status=200 duration_ms=78.52
+2026-05-30 12:46:15,720 | INFO | yggdrasil.api | request_started request_id=779ec571 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:46:15,746 | WARNING | yggdrasil.api | http_exception request_id=779ec571 method=GET path=/auth/me status=401 detail=Missing Authorization header
+2026-05-30 12:46:15,762 | INFO | yggdrasil.api | request_completed request_id=779ec571 method=GET path=/auth/me status=401 duration_ms=33.52
+2026-05-30 12:46:16,095 | INFO | yggdrasil.api | request_started request_id=30d7a52f method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:46:16,099 | INFO | yggdrasil.api | request_completed request_id=30d7a52f method=GET path=/health status=200 duration_ms=4.37
+2026-05-30 12:46:16,101 | INFO | yggdrasil.api | request_started request_id=16f90e91 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:46:16,476 | INFO | yggdrasil.api | request_completed request_id=16f90e91 method=GET path=/subjects status=200 duration_ms=374.88
+2026-05-30 12:46:23,731 | INFO | yggdrasil.api | request_started request_id=0373ae39 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:46:23,732 | WARNING | yggdrasil.api | http_exception request_id=0373ae39 method=GET path=/auth/me status=401 detail=Missing Authorization header
+2026-05-30 12:46:23,733 | INFO | yggdrasil.api | request_completed request_id=0373ae39 method=GET path=/auth/me status=401 duration_ms=2.52
+2026-05-30 12:46:37,998 | INFO | yggdrasil.api | request_started request_id=2111b971 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:46:38,188 | INFO | yggdrasil.api | request_completed request_id=2111b971 method=GET path=/auth/me status=200 duration_ms=189.89
+2026-05-30 12:47:28,851 | INFO | yggdrasil.api | request_started request_id=63d98849 method=POST path=/auth/logout query=- client=127.0.0.1
+2026-05-30 12:47:29,022 | INFO | yggdrasil.api | request_completed request_id=63d98849 method=POST path=/auth/logout status=200 duration_ms=171.63
+2026-05-30 12:47:50,720 | INFO | yggdrasil.api | request_started request_id=d9f96e91 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 12:47:51,793 | INFO | yggdrasil.api | request_completed request_id=d9f96e91 method=POST path=/auth/login status=200 duration_ms=1072.74
+2026-05-30 12:48:31,564 | INFO | yggdrasil.api | request_started request_id=22eb4a8e method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:48:31,575 | INFO | yggdrasil.api | request_completed request_id=22eb4a8e method=GET path=/app status=200 duration_ms=11.38
+2026-05-30 12:48:31,870 | INFO | yggdrasil.api | request_started request_id=b9959b34 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 12:48:31,872 | WARNING | yggdrasil.api | http_exception request_id=b9959b34 method=GET path=/auth/me status=401 detail=Missing Authorization header
+2026-05-30 12:48:31,873 | INFO | yggdrasil.api | request_completed request_id=b9959b34 method=GET path=/auth/me status=401 duration_ms=2.47
+2026-05-30 12:48:32,044 | INFO | yggdrasil.api | request_started request_id=2596e3c6 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 12:48:32,046 | INFO | yggdrasil.api | request_completed request_id=2596e3c6 method=GET path=/health status=200 duration_ms=1.89
+2026-05-30 12:48:32,048 | INFO | yggdrasil.api | request_started request_id=c896c6fe method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 12:48:32,070 | INFO | yggdrasil.api | request_completed request_id=c896c6fe method=GET path=/subjects status=200 duration_ms=21.62
+2026-05-30 12:48:32,962 | INFO | yggdrasil.api | request_started request_id=dbe7463f method=GET path=/favicon.ico query=- client=127.0.0.1
+2026-05-30 12:48:32,964 | INFO | yggdrasil.api | request_completed request_id=dbe7463f method=GET path=/favicon.ico status=404 duration_ms=2.42
+2026-05-30 12:49:24,181 | INFO | yggdrasil.api | request_started request_id=ac290df0 method=POST path=/auth/register query=- client=127.0.0.1
+2026-05-30 12:49:25,378 | INFO | yggdrasil.api | request_completed request_id=ac290df0 method=POST path=/auth/register status=200 duration_ms=1196.33
+2026-05-30 12:49:25,384 | INFO | yggdrasil.api | request_started request_id=fbe2ca26 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 12:49:26,306 | INFO | yggdrasil.api | request_completed request_id=fbe2ca26 method=POST path=/auth/login status=200 duration_ms=922.89
+2026-05-30 12:56:49,723 | INFO | yggdrasil.api | request_started request_id=28d552ea method=GET path=/ query=- client=127.0.0.1
+2026-05-30 12:56:49,746 | INFO | yggdrasil.api | request_completed request_id=28d552ea method=GET path=/ status=200 duration_ms=23.21
+2026-05-30 12:56:49,773 | INFO | yggdrasil.api | request_started request_id=0061032e method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:56:50,657 | INFO | yggdrasil.api | request_completed request_id=0061032e method=GET path=/frontend/auth.js status=200 duration_ms=883.98
+2026-05-30 12:56:51,191 | INFO | yggdrasil.api | request_started request_id=0553b994 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:56:51,209 | INFO | yggdrasil.api | request_completed request_id=0553b994 method=GET path=/app status=200 duration_ms=17.55
+2026-05-30 12:57:23,056 | INFO | yggdrasil.api | request_started request_id=669a8153 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 12:57:23,059 | INFO | yggdrasil.api | request_completed request_id=669a8153 method=GET path=/ status=200 duration_ms=2.86
+2026-05-30 12:57:23,076 | INFO | yggdrasil.api | request_started request_id=3fbe0155 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:57:23,079 | INFO | yggdrasil.api | request_completed request_id=3fbe0155 method=GET path=/frontend/auth.js status=200 duration_ms=3.09
+2026-05-30 12:57:23,444 | INFO | yggdrasil.api | request_started request_id=cfb37ca2 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:57:23,452 | INFO | yggdrasil.api | request_completed request_id=cfb37ca2 method=GET path=/app status=200 duration_ms=7.80
+2026-05-30 12:58:18,262 | INFO | yggdrasil.api | request_started request_id=a74ced94 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 12:58:18,266 | INFO | yggdrasil.api | request_completed request_id=a74ced94 method=GET path=/ status=200 duration_ms=3.21
+2026-05-30 12:58:18,383 | INFO | yggdrasil.api | request_started request_id=7dabdc94 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 12:58:18,407 | INFO | yggdrasil.api | request_completed request_id=7dabdc94 method=GET path=/frontend/auth.js status=200 duration_ms=24.27
+2026-05-30 12:58:20,155 | INFO | yggdrasil.api | request_started request_id=83cbe3c5 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 12:58:20,259 | INFO | yggdrasil.api | request_completed request_id=83cbe3c5 method=GET path=/app status=200 duration_ms=103.19
+2026-05-30 13:01:31,735 | INFO | yggdrasil.api | request_started request_id=74e346a5 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:01:32,042 | INFO | yggdrasil.api | request_completed request_id=74e346a5 method=GET path=/auth/me status=200 duration_ms=306.67
+2026-05-30 13:01:32,054 | INFO | yggdrasil.api | request_started request_id=1419f30c method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:01:32,057 | INFO | yggdrasil.api | request_started request_id=32db6674 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:01:32,062 | INFO | yggdrasil.api | request_completed request_id=1419f30c method=GET path=/health status=200 duration_ms=8.10
+2026-05-30 13:01:32,092 | INFO | yggdrasil.api | request_completed request_id=32db6674 method=GET path=/subjects status=200 duration_ms=35.38
+2026-05-30 13:01:38,052 | INFO | yggdrasil.api | request_started request_id=f499b5d9 method=POST path=/auth/logout query=- client=127.0.0.1
+2026-05-30 13:01:38,191 | INFO | yggdrasil.api | request_completed request_id=f499b5d9 method=POST path=/auth/logout status=200 duration_ms=139.48
+2026-05-30 13:01:43,935 | INFO | yggdrasil.api | request_started request_id=fd2dea76 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:01:43,938 | INFO | yggdrasil.api | request_completed request_id=fd2dea76 method=GET path=/ status=200 duration_ms=3.20
+2026-05-30 13:01:43,964 | INFO | yggdrasil.api | request_started request_id=29b42cfa method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:01:44,047 | INFO | yggdrasil.api | request_completed request_id=29b42cfa method=GET path=/frontend/auth.js status=200 duration_ms=82.43
+2026-05-30 13:01:44,117 | INFO | yggdrasil.api | request_started request_id=c70d6ddc method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:01:44,120 | INFO | yggdrasil.api | request_completed request_id=c70d6ddc method=GET path=/ status=200 duration_ms=2.77
+2026-05-30 13:01:44,322 | INFO | yggdrasil.api | request_started request_id=846b034a method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:01:44,325 | INFO | yggdrasil.api | request_completed request_id=846b034a method=GET path=/ status=200 duration_ms=3.11
+2026-05-30 13:01:44,523 | INFO | yggdrasil.api | request_started request_id=16cf651d method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:01:44,526 | INFO | yggdrasil.api | request_completed request_id=16cf651d method=GET path=/ status=200 duration_ms=3.23
+2026-05-30 13:01:44,735 | INFO | yggdrasil.api | request_started request_id=61f40ab4 method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:01:44,737 | INFO | yggdrasil.api | request_completed request_id=61f40ab4 method=GET path=/ status=200 duration_ms=2.04
+2026-05-30 13:08:33,164 | INFO | yggdrasil.api | request_started request_id=ea7be052 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 13:08:34,093 | INFO | yggdrasil.api | request_completed request_id=ea7be052 method=POST path=/auth/login status=200 duration_ms=929.23
+2026-05-30 13:08:34,126 | INFO | yggdrasil.api | request_started request_id=e5dcb27d method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:08:34,132 | INFO | yggdrasil.api | request_completed request_id=e5dcb27d method=GET path=/app/regulation/upload status=200 duration_ms=6.33
+2026-05-30 13:08:34,153 | INFO | yggdrasil.api | request_started request_id=a347eff3 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:08:34,155 | INFO | yggdrasil.api | request_completed request_id=a347eff3 method=GET path=/frontend/auth.js status=200 duration_ms=2.12
+2026-05-30 13:08:39,743 | INFO | yggdrasil.api | request_started request_id=497f4e74 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:08:39,912 | INFO | yggdrasil.api | request_completed request_id=497f4e74 method=GET path=/auth/me status=200 duration_ms=169.55
+2026-05-30 13:08:39,917 | INFO | yggdrasil.api | request_started request_id=918d0ac0 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:08:39,918 | INFO | yggdrasil.api | request_started request_id=548734df method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:08:39,922 | INFO | yggdrasil.api | request_completed request_id=918d0ac0 method=GET path=/health status=200 duration_ms=4.51
+2026-05-30 13:08:39,949 | INFO | yggdrasil.api | request_completed request_id=548734df method=GET path=/subjects status=200 duration_ms=31.01
+2026-05-30 13:11:45,408 | INFO | yggdrasil.api | request_started request_id=69a2d141 method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:11:45,417 | INFO | yggdrasil.api | request_completed request_id=69a2d141 method=GET path=/app/regulation/upload status=200 duration_ms=9.07
+2026-05-30 13:11:45,442 | INFO | yggdrasil.api | request_started request_id=a6b1aae5 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:11:45,540 | INFO | yggdrasil.api | request_completed request_id=a6b1aae5 method=GET path=/frontend/auth.js status=200 duration_ms=98.07
+2026-05-30 13:11:54,379 | INFO | yggdrasil.api | request_started request_id=53f53868 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:11:54,588 | INFO | yggdrasil.api | request_completed request_id=53f53868 method=GET path=/auth/me status=200 duration_ms=209.71
+2026-05-30 13:11:54,593 | INFO | yggdrasil.api | request_started request_id=de223d07 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:11:54,595 | INFO | yggdrasil.api | request_started request_id=629f2205 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:11:54,604 | INFO | yggdrasil.api | request_completed request_id=de223d07 method=GET path=/health status=200 duration_ms=10.88
+2026-05-30 13:11:54,625 | INFO | yggdrasil.api | request_completed request_id=629f2205 method=GET path=/subjects status=200 duration_ms=30.20
+2026-05-30 13:12:11,025 | INFO | yggdrasil.api | request_started request_id=f4b5c7d2 method=POST path=/ingest/regulation query=- client=127.0.0.1
+2026-05-30 13:14:54,656 | INFO | yggdrasil.api | request_completed request_id=f4b5c7d2 method=POST path=/ingest/regulation status=200 duration_ms=163630.93
+2026-05-30 13:15:13,932 | INFO | yggdrasil.api | request_started request_id=1b13b866 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:15:14,157 | INFO | yggdrasil.api | request_completed request_id=1b13b866 method=GET path=/auth/me status=200 duration_ms=224.54
+2026-05-30 13:15:14,167 | INFO | yggdrasil.api | request_started request_id=da055650 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:15:14,168 | INFO | yggdrasil.api | request_started request_id=e3d74004 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:15:14,170 | INFO | yggdrasil.api | request_completed request_id=da055650 method=GET path=/health status=200 duration_ms=2.30
+2026-05-30 13:15:14,180 | INFO | yggdrasil.api | request_completed request_id=e3d74004 method=GET path=/subjects status=200 duration_ms=11.40
+2026-05-30 13:15:40,749 | INFO | yggdrasil.api | request_started request_id=97414c7f method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:15:40,751 | INFO | yggdrasil.api | request_completed request_id=97414c7f method=GET path=/app/regulation/upload status=200 duration_ms=1.56
+2026-05-30 13:15:40,771 | INFO | yggdrasil.api | request_started request_id=361b1994 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:15:40,773 | INFO | yggdrasil.api | request_completed request_id=361b1994 method=GET path=/frontend/auth.js status=200 duration_ms=1.82
+2026-05-30 13:15:41,774 | INFO | yggdrasil.api | request_started request_id=f7ab8fc8 method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:15:41,775 | INFO | yggdrasil.api | request_completed request_id=f7ab8fc8 method=GET path=/app/regulation/upload status=200 duration_ms=0.97
+2026-05-30 13:15:43,284 | INFO | yggdrasil.api | request_started request_id=8bbc7c02 method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:15:43,285 | INFO | yggdrasil.api | request_completed request_id=8bbc7c02 method=GET path=/app/regulation/upload status=200 duration_ms=1.26
+2026-05-30 13:15:49,553 | INFO | yggdrasil.api | request_started request_id=036d8cc1 method=POST path=/ingest/regulation query=- client=127.0.0.1
+2026-05-30 13:16:31,929 | INFO | yggdrasil.api | request_completed request_id=036d8cc1 method=POST path=/ingest/regulation status=200 duration_ms=42376.05
+2026-05-30 13:16:39,225 | INFO | yggdrasil.api | request_started request_id=da5f0eac method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:16:39,440 | INFO | yggdrasil.api | request_completed request_id=da5f0eac method=GET path=/auth/me status=200 duration_ms=214.95
+2026-05-30 13:16:39,449 | INFO | yggdrasil.api | request_started request_id=82cbcfa7 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:16:39,451 | INFO | yggdrasil.api | request_started request_id=0d36a94c method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:16:39,453 | INFO | yggdrasil.api | request_completed request_id=82cbcfa7 method=GET path=/health status=200 duration_ms=3.25
+2026-05-30 13:16:39,463 | INFO | yggdrasil.api | request_completed request_id=0d36a94c method=GET path=/subjects status=200 duration_ms=12.21
+2026-05-30 13:17:57,768 | INFO | yggdrasil.api | request_started request_id=a5b7a4de method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:17:57,771 | INFO | yggdrasil.api | request_completed request_id=a5b7a4de method=GET path=/ status=200 duration_ms=3.62
+2026-05-30 13:17:57,787 | INFO | yggdrasil.api | request_started request_id=9359807d method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:17:57,859 | INFO | yggdrasil.api | request_completed request_id=9359807d method=GET path=/frontend/auth.js status=200 duration_ms=72.42
+2026-05-30 13:17:57,865 | INFO | yggdrasil.api | request_started request_id=a75cbd2a method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:17:58,007 | INFO | yggdrasil.api | request_completed request_id=a75cbd2a method=GET path=/auth/me status=200 duration_ms=141.34
+2026-05-30 13:18:12,950 | INFO | yggdrasil.api | request_started request_id=c7fde86f method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 13:18:13,300 | WARNING | yggdrasil.api | auth login failed for 25R201: Invalid student ID or password
+Traceback (most recent call last):
+  File "C:\vscode\Yggdrasil\backend\api.py", line 747, in login_auth_user
+    record = authenticate_user(student_id, pw)
+  File "C:\vscode\Yggdrasil\backend\auth_store.py", line 532, in authenticate_user
+    raise ValueError("Invalid student ID or password")
+ValueError: Invalid student ID or password
+2026-05-30 13:18:13,302 | WARNING | yggdrasil.api | http_exception request_id=c7fde86f method=POST path=/auth/login status=401 detail=Invalid student ID or password
+2026-05-30 13:18:13,302 | INFO | yggdrasil.api | request_completed request_id=c7fde86f method=POST path=/auth/login status=401 duration_ms=352.13
+2026-05-30 13:18:17,123 | INFO | yggdrasil.api | request_started request_id=839c2ebf method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 13:18:17,663 | INFO | yggdrasil.api | request_completed request_id=839c2ebf method=POST path=/auth/login status=200 duration_ms=539.57
+2026-05-30 13:18:31,959 | INFO | yggdrasil.api | request_started request_id=8d919bff method=POST path=/ingest/regulation query=- client=127.0.0.1
+2026-05-30 13:20:16,588 | INFO | yggdrasil.api | request_completed request_id=8d919bff method=POST path=/ingest/regulation status=200 duration_ms=104629.64
+2026-05-30 13:21:03,381 | INFO | yggdrasil.api | request_started request_id=79faa9bd method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:21:03,685 | INFO | yggdrasil.api | request_completed request_id=79faa9bd method=GET path=/auth/me status=200 duration_ms=303.83
+2026-05-30 13:21:03,694 | INFO | yggdrasil.api | request_started request_id=813c84a5 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:21:03,696 | INFO | yggdrasil.api | request_started request_id=40cfd894 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:21:03,698 | INFO | yggdrasil.api | request_completed request_id=813c84a5 method=GET path=/health status=200 duration_ms=3.39
+2026-05-30 13:21:03,710 | INFO | yggdrasil.api | request_completed request_id=40cfd894 method=GET path=/subjects status=200 duration_ms=14.41
+2026-05-30 13:21:30,947 | INFO | yggdrasil.api | request_started request_id=ae517483 method=GET path=/app/semester/undefined/subject/23R403/upload query=- client=127.0.0.1
+2026-05-30 13:21:30,951 | WARNING | yggdrasil.api | validation_error request_id=ae517483 method=GET path=/app/semester/undefined/subject/23R403/upload errors=[{'type': 'int_parsing', 'loc': ('path', 'semester'), 'msg': 'Input should be a valid integer, unable to parse string as an integer', 'input': 'undefined'}]
+2026-05-30 13:21:30,952 | INFO | yggdrasil.api | request_completed request_id=ae517483 method=GET path=/app/semester/undefined/subject/23R403/upload status=422 duration_ms=4.72
+2026-05-30 13:21:45,308 | INFO | yggdrasil.api | request_started request_id=cc046b00 method=GET path=/app/semester/undefined/subject/23R403/upload query=- client=127.0.0.1
+2026-05-30 13:21:45,309 | WARNING | yggdrasil.api | validation_error request_id=cc046b00 method=GET path=/app/semester/undefined/subject/23R403/upload errors=[{'type': 'int_parsing', 'loc': ('path', 'semester'), 'msg': 'Input should be a valid integer, unable to parse string as an integer', 'input': 'undefined'}]
+2026-05-30 13:21:45,309 | INFO | yggdrasil.api | request_completed request_id=cc046b00 method=GET path=/app/semester/undefined/subject/23R403/upload status=422 duration_ms=1.41
+2026-05-30 13:21:46,947 | INFO | yggdrasil.api | request_started request_id=6d6b9322 method=GET path=/subject/23R403/topics query=- client=127.0.0.1
+2026-05-30 13:21:46,948 | INFO | yggdrasil.api | request_started request_id=1a0d2d86 method=GET path=/subject/23R403/prerequisites query=- client=127.0.0.1
+2026-05-30 13:21:46,950 | INFO | yggdrasil.api | request_started request_id=536c6877 method=GET path=/subject/23R403/resources query=- client=127.0.0.1
+2026-05-30 13:21:46,958 | INFO | yggdrasil.api | request_completed request_id=6d6b9322 method=GET path=/subject/23R403/topics status=200 duration_ms=11.78
+2026-05-30 13:21:46,963 | INFO | yggdrasil.api | request_completed request_id=536c6877 method=GET path=/subject/23R403/resources status=200 duration_ms=12.61
+2026-05-30 13:21:47,038 | INFO | yggdrasil.api | request_completed request_id=1a0d2d86 method=GET path=/subject/23R403/prerequisites status=200 duration_ms=89.96
+2026-05-30 13:21:55,477 | INFO | yggdrasil.api | request_started request_id=bffdea28 method=GET path=/subject/23R403/topics query=- client=127.0.0.1
+2026-05-30 13:21:55,478 | INFO | yggdrasil.api | request_started request_id=9c0aff23 method=GET path=/subject/23R403/prerequisites query=- client=127.0.0.1
+2026-05-30 13:21:55,480 | INFO | yggdrasil.api | request_started request_id=6e04624c method=GET path=/subject/23R403/resources query=- client=127.0.0.1
+2026-05-30 13:21:55,485 | INFO | yggdrasil.api | request_completed request_id=9c0aff23 method=GET path=/subject/23R403/prerequisites status=200 duration_ms=7.23
+2026-05-30 13:21:55,487 | INFO | yggdrasil.api | request_completed request_id=6e04624c method=GET path=/subject/23R403/resources status=200 duration_ms=6.14
+2026-05-30 13:21:55,489 | INFO | yggdrasil.api | request_completed request_id=bffdea28 method=GET path=/subject/23R403/topics status=200 duration_ms=12.05
+2026-05-30 13:22:08,886 | INFO | yggdrasil.api | request_started request_id=2994c662 method=POST path=/chat query=- client=127.0.0.1
+2026-05-30 13:22:43,078 | INFO | yggdrasil.api | request_completed request_id=2994c662 method=POST path=/chat status=200 duration_ms=34192.15
+2026-05-30 13:25:27,265 | INFO | yggdrasil.api | request_started request_id=e101bff6 method=GET path=/app query=- client=127.0.0.1
+2026-05-30 13:25:27,285 | INFO | yggdrasil.api | request_completed request_id=e101bff6 method=GET path=/app status=200 duration_ms=19.30
+2026-05-30 13:25:27,309 | INFO | yggdrasil.api | request_started request_id=20b0300f method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:25:27,311 | INFO | yggdrasil.api | request_completed request_id=20b0300f method=GET path=/ status=200 duration_ms=1.79
+2026-05-30 13:25:27,340 | INFO | yggdrasil.api | request_started request_id=8e1fe516 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:25:27,415 | INFO | yggdrasil.api | request_completed request_id=8e1fe516 method=GET path=/frontend/auth.js status=200 duration_ms=74.70
+2026-05-30 13:25:50,864 | INFO | yggdrasil.api | request_started request_id=1594840c method=POST path=/auth/logout query=- client=127.0.0.1
+2026-05-30 13:25:51,072 | INFO | yggdrasil.api | request_completed request_id=1594840c method=POST path=/auth/logout status=200 duration_ms=208.44
+2026-05-30 13:25:54,381 | INFO | yggdrasil.api | request_started request_id=6eaec0c3 method=GET path=/app/semester/4 query=- client=127.0.0.1
+2026-05-30 13:25:54,387 | INFO | yggdrasil.api | request_completed request_id=6eaec0c3 method=GET path=/app/semester/4 status=200 duration_ms=5.41
+2026-05-30 13:25:54,426 | INFO | yggdrasil.api | request_started request_id=d5a1b4fc method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:25:54,429 | INFO | yggdrasil.api | request_completed request_id=d5a1b4fc method=GET path=/ status=200 duration_ms=2.68
+2026-05-30 13:25:54,461 | INFO | yggdrasil.api | request_started request_id=90207fbc method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:25:54,464 | INFO | yggdrasil.api | request_completed request_id=90207fbc method=GET path=/frontend/auth.js status=200 duration_ms=2.83
+2026-05-30 13:26:00,731 | INFO | yggdrasil.api | request_started request_id=d6234ab7 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 13:26:01,410 | INFO | yggdrasil.api | request_completed request_id=d6234ab7 method=POST path=/auth/login status=200 duration_ms=678.83
+2026-05-30 13:26:01,446 | INFO | yggdrasil.api | request_started request_id=e1564054 method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:26:01,449 | INFO | yggdrasil.api | request_completed request_id=e1564054 method=GET path=/app/regulation/upload status=200 duration_ms=2.71
+2026-05-30 13:26:05,741 | INFO | yggdrasil.api | request_started request_id=6453fcd2 method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:26:05,883 | INFO | yggdrasil.api | request_completed request_id=6453fcd2 method=GET path=/auth/me status=200 duration_ms=141.55
+2026-05-30 13:26:05,889 | INFO | yggdrasil.api | request_started request_id=05f19a1a method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:26:05,892 | INFO | yggdrasil.api | request_started request_id=cee74ab1 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:26:05,895 | INFO | yggdrasil.api | request_completed request_id=05f19a1a method=GET path=/health status=200 duration_ms=5.92
+2026-05-30 13:26:05,908 | INFO | yggdrasil.api | request_completed request_id=cee74ab1 method=GET path=/subjects status=200 duration_ms=16.30
+2026-05-30 13:56:00,068 | INFO | yggdrasil.api | request_started request_id=0913a961 method=GET path=/app/regulation/upload query=- client=127.0.0.1
+2026-05-30 13:56:00,070 | INFO | yggdrasil.api | request_completed request_id=0913a961 method=GET path=/app/regulation/upload status=200 duration_ms=2.12
+2026-05-30 13:56:00,135 | INFO | yggdrasil.api | request_started request_id=4ac99e80 method=GET path=/frontend/auth.js query=- client=127.0.0.1
+2026-05-30 13:56:00,140 | INFO | yggdrasil.api | request_completed request_id=4ac99e80 method=GET path=/frontend/auth.js status=200 duration_ms=3.91
+2026-05-30 13:56:02,333 | INFO | yggdrasil.api | request_started request_id=a054a729 method=POST path=/auth/logout query=- client=127.0.0.1
+2026-05-30 13:56:02,443 | INFO | yggdrasil.api | request_completed request_id=a054a729 method=POST path=/auth/logout status=200 duration_ms=110.28
+2026-05-30 13:56:02,458 | INFO | yggdrasil.api | request_started request_id=29f5fb7c method=GET path=/ query=- client=127.0.0.1
+2026-05-30 13:56:02,461 | INFO | yggdrasil.api | request_completed request_id=29f5fb7c method=GET path=/ status=200 duration_ms=2.81
+2026-05-30 13:56:08,560 | INFO | yggdrasil.api | request_started request_id=8b2e9170 method=POST path=/auth/login query=- client=127.0.0.1
+2026-05-30 13:56:09,069 | INFO | yggdrasil.api | request_completed request_id=8b2e9170 method=POST path=/auth/login status=200 duration_ms=508.72
+2026-05-30 13:56:09,140 | INFO | yggdrasil.api | request_started request_id=a3ea3f4b method=GET path=/auth/me query=- client=127.0.0.1
+2026-05-30 13:56:09,308 | INFO | yggdrasil.api | request_completed request_id=a3ea3f4b method=GET path=/auth/me status=200 duration_ms=167.47
+2026-05-30 13:56:09,325 | INFO | yggdrasil.api | request_started request_id=62526620 method=GET path=/health query=- client=127.0.0.1
+2026-05-30 13:56:09,327 | INFO | yggdrasil.api | request_started request_id=ab1ce6b7 method=GET path=/subjects query=- client=127.0.0.1
+2026-05-30 13:56:09,331 | INFO | yggdrasil.api | request_completed request_id=62526620 method=GET path=/health status=200 duration_ms=5.62
+2026-05-30 13:56:09,357 | INFO | yggdrasil.api | request_completed request_id=ab1ce6b7 method=GET path=/subjects status=200 duration_ms=29.85
+2026-05-30 13:56:24,397 | INFO | yggdrasil.api | request_started request_id=55d98ffe method=GET path=/subject/23R403/prerequisites query=- client=127.0.0.1
+2026-05-30 13:56:24,398 | INFO | yggdrasil.api | request_started request_id=e5b6a432 method=GET path=/subject/23R403/topics query=- client=127.0.0.1
+2026-05-30 13:56:24,400 | INFO | yggdrasil.api | request_started request_id=58b08f1c method=GET path=/subject/23R403/resources query=- client=127.0.0.1
+2026-05-30 13:56:24,413 | INFO | yggdrasil.api | request_completed request_id=55d98ffe method=GET path=/subject/23R403/prerequisites status=200 duration_ms=15.74
+2026-05-30 13:56:24,420 | INFO | yggdrasil.api | request_completed request_id=58b08f1c method=GET path=/subject/23R403/resources status=200 duration_ms=20.85
+2026-05-30 13:56:24,423 | INFO | yggdrasil.api | request_completed request_id=e5b6a432 method=GET path=/subject/23R403/topics status=200 duration_ms=24.97
+2026-05-30 13:56:33,886 | INFO | yggdrasil.api | request_started request_id=ea0519a6 method=POST path=/chat query=- client=127.0.0.1

@@ -11,9 +11,10 @@ Endpoints:
 import os
 import sys
 import tempfile
-from typing import Dict
+from typing import Any, Dict
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -24,6 +25,7 @@ if __package__ in {None, ""}:
     from parser import parse_file, detect_source_type
     from vector_store import upsert_chunks
     from graph_store import get_subject, get_all_subjects, attach_resource_node
+    from auth_store import require_access_token_claims
     from rag_pipeline import ask as rag_ask
 else:
     from .config import CHUNK_SIZE_TOKENS, CHUNK_OVERLAP_TOKENS
@@ -31,6 +33,7 @@ else:
     from .parser import parse_file, detect_source_type
     from .vector_store import upsert_chunks
     from .graph_store import get_subject, get_all_subjects, attach_resource_node
+    from .auth_store import require_access_token_claims
     from .rag_pipeline import ask as rag_ask
 
 app = FastAPI(title="Curriculum Ingestion API", version="0.1.0")
@@ -43,6 +46,17 @@ app.add_middleware(
 )
 logger = build_logger("yggdrasil.main", "ingest")
 install_request_logging(app, logger)
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
+
+
+@app.get("/frontend/{file_path:path}")
+def frontend_asset(file_path: str):
+    asset_path = os.path.join(FRONTEND_DIR, file_path)
+    if not os.path.isfile(asset_path):
+        raise HTTPException(status_code=404, detail="Frontend asset not found")
+    return FileResponse(asset_path)
 
 ALLOWED_EXTENSIONS = {"pdf", "ppt", "pptx"}
 
@@ -60,6 +74,13 @@ def _detect_source_type(filepath: str, ext: str) -> str:
 class ChatRequest(BaseModel):
     question: str
     subject_code: str
+
+
+def current_access_claims(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+    try:
+        return require_access_token_claims(authorization)
+    except ValueError as error:
+        raise HTTPException(status_code=401, detail=str(error))
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -83,7 +104,9 @@ def list_subjects():
 async def ingest(
     file: UploadFile = File(...),
     subject_code: str = Form(...),
+    claims: dict[str, Any] = Depends(current_access_claims),
 ):
+    del claims
     """
     Main ingestion endpoint.
     1. Validate subject_code against Neo4j
@@ -164,7 +187,8 @@ async def ingest(
 
 
 @app.post("/chat")
-def chat(payload: ChatRequest):
+def chat(payload: ChatRequest, claims: dict[str, Any] = Depends(current_access_claims)):
+    del claims
     try:
         result = rag_ask(payload.question, payload.subject_code.strip().upper())
     except ValueError as error:

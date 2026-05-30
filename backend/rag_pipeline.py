@@ -126,7 +126,25 @@ def _normalize_similarity(distance: float) -> float:
     return round(max(0.0, min(1.0, similarity)), 4)
 
 
-def retrieve_context(question: str, subject_code: str, top_k: int = 5) -> List[Dict[str, Any]]:
+def _build_chroma_where(subject_code: str, college_id: Optional[str] = None, regulation_id: Optional[str] = None) -> Dict[str, Any]:
+    """Build a Chroma-compatible where clause using a single top-level operator."""
+    clauses: List[Dict[str, Any]] = [{"subject_code": subject_code}]
+    if college_id:
+        clauses.append({"college_id": college_id})
+    if regulation_id:
+        clauses.append({"regulation_id": regulation_id})
+    if len(clauses) == 1:
+        return clauses[0]
+    return {"$and": clauses}
+
+
+def retrieve_context(
+    question: str,
+    subject_code: str,
+    top_k: int = 5,
+    college_id: Optional[str] = None,
+    regulation_id: Optional[str] = None,
+) -> List[Dict[str, Any]]:
     """Query ChromaDB for the most relevant chunks within a subject."""
     if top_k <= 0:
         return []
@@ -136,10 +154,11 @@ def retrieve_context(question: str, subject_code: str, top_k: int = 5) -> List[D
 
     collection = get_collection()
     query_embeddings = _embed_texts([question])
+    where = _build_chroma_where(subject_code, college_id=college_id, regulation_id=regulation_id)
     results = collection.query(
         query_embeddings=query_embeddings,
         n_results=top_k,
-        where={"subject_code": subject_code},
+        where=where,
         include=["documents", "metadatas", "distances"],
     )
 
@@ -187,10 +206,37 @@ def _select_relevant_sources(hits: List[Dict[str, Any]], max_sources: int = 3, m
     return ordered_hits[:max_sources]
 
 
-def get_graph_context(subject_code: str, topic_name: Optional[str] = None) -> Dict[str, Any]:
+def get_graph_context(
+    subject_code: str,
+    topic_name: Optional[str] = None,
+    student_id: Optional[str] = None,
+) -> Dict[str, Any]:
     """Query Neo4j for the subject structure and prerequisite chain."""
     driver = _get_driver()
     with driver.session() as session:
+        student_scope = None
+        if student_id:
+            student_row = session.run(
+                """
+                MATCH (st:Student {id: $student_id})-[:ENROLLED_IN]->(p:Program)
+                OPTIONAL MATCH (st)-[:BELONGS_TO]->(c:College)
+                OPTIONAL MATCH (st)-[:HAS_REGULATION]->(r:Regulation)
+                OPTIONAL MATCH (st)-[:IN_SEMESTER]->(sem:Semester)
+                RETURN st.id AS student_id,
+                       st.email AS email,
+                       p.id AS program_id,
+                       p.name AS program_name,
+                       c.id AS college_id,
+                       c.name AS college_name,
+                       r.id AS regulation_id,
+                       r.name AS regulation_name,
+                       sem.number AS semester_number
+                """,
+                student_id=student_id,
+            ).single()
+            if student_row is not None:
+                student_scope = dict(student_row)
+
         subject_row = session.run(
             """
             MATCH (s:Subject {code: $subject_code})
@@ -270,6 +316,7 @@ def get_graph_context(subject_code: str, topic_name: Optional[str] = None) -> Di
         "units": units,
         "topics": sorted(dict.fromkeys(topic_names)),
         "prerequisites": prerequisites,
+        "student_scope": student_scope,
     }
 
 
@@ -304,6 +351,17 @@ def assemble_prompt(
     if not prereq_lines:
         prereq_lines.append("- None found")
 
+    student_scope = graph_context.get("student_scope") or {}
+    scope_lines = []
+    if student_scope:
+        scope_lines.append(
+            f"Student scope: student_id={student_scope.get('student_id', 'unknown')}, "
+            f"program={student_scope.get('program_id', 'unknown')}, "
+            f"college={student_scope.get('college_id', 'unknown')}, "
+            f"regulation={student_scope.get('regulation_id', 'unknown')}, "
+            f"semester={student_scope.get('semester_number', 'unknown')}"
+        )
+
     chunk_lines: List[str] = []
     for index, chunk in enumerate(chunks, start=1):
         metadata = chunk.get("metadata", {})
@@ -320,16 +378,18 @@ def assemble_prompt(
     topic_focus = graph_context.get("topic_focus")
     topic_focus_line = f"\nFocus topic: {topic_focus}" if topic_focus else ""
 
-    prompt_parts = [f"You are a curriculum assistant for {subject_name}."]
+    prompt_parts = [f"You are Eik, a curriculum assistant for {subject_name}."]
     if history_text:
         prompt_parts.append(history_text)
 
     prompt_parts.extend(
         [
             f"Curriculum structure:{topic_focus_line}",
+            *scope_lines,
             "\n".join(structure_lines),
             "Prerequisites covered:",
             "\n".join(prereq_lines),
+            "Prerequisites are structural context only. Do not require prerequisite materials to answer. If prerequisite materials are not present in the retrieved content, answer using the current subject content alone.",
             "Relevant content from course materials:",
             "\n\n".join(chunk_lines),
             f"Student question: {question}",
@@ -496,10 +556,19 @@ def ask(
     subject_code: str,
     top_k: int = 5,
     history: Optional[List[Dict[str, Any]]] = None,
+    student_id: Optional[str] = None,
+    college_id: Optional[str] = None,
+    regulation_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Run retrieval, graph lookup, prompt assembly, and OpenRouter generation."""
-    chunks = retrieve_context(question, subject_code, top_k=top_k)
-    graph_context = get_graph_context(subject_code)
+    chunks = retrieve_context(
+        question,
+        subject_code,
+        top_k=top_k,
+        college_id=college_id,
+        regulation_id=regulation_id,
+    )
+    graph_context = get_graph_context(subject_code, student_id=student_id)
     prompt = assemble_prompt(question, chunks, graph_context, history=history)
     try:
         answer = _call_openrouter(prompt)

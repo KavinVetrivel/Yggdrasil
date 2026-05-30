@@ -7,9 +7,9 @@ import os
 import re
 import sys
 import tempfile
-from typing import Dict, List
+from typing import Any, Dict, List
 
-from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -17,20 +17,42 @@ from pydantic import BaseModel, Field
 if __package__ in {None, ""}:
 	sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 	from config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
-	from auth_store import authenticate_user, get_user, register_user
+	from auth_store import (
+		authenticate_user,
+		append_chat_message,
+		get_chat_history,
+		get_user,
+		issue_token_pair,
+		refresh_token_pair,
+		register_user,
+		require_access_token_claims,
+		revoke_refresh_token,
+		truncate_for_bcrypt,
+	)
 	from load_data import load_regulation_graph
 	from logging_utils import build_logger, install_request_logging
 	from parser import parse_file
-	from graph_store import get_student_profile, upsert_student_profile
+	from graph_store import get_student_profile, upsert_student_profile, regulation_exists, get_regulation_semesters, upsert_regulation_scope
 	from vector_store import upsert_chunks
 	from rag_pipeline import ask as rag_ask
 else:
 	from .config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
-	from .auth_store import authenticate_user, get_user, register_user
+	from .auth_store import (
+		authenticate_user,
+		append_chat_message,
+		get_chat_history,
+		get_user,
+		issue_token_pair,
+		refresh_token_pair,
+		register_user,
+		require_access_token_claims,
+		revoke_refresh_token,
+		truncate_for_bcrypt,
+	)
 	from .load_data import load_regulation_graph
 	from .logging_utils import build_logger, install_request_logging
 	from .parser import parse_file
-	from .graph_store import get_student_profile, upsert_student_profile
+	from .graph_store import get_student_profile, upsert_student_profile, regulation_exists, get_regulation_semesters, upsert_regulation_scope
 	from .vector_store import upsert_chunks
 	from .rag_pipeline import ask as rag_ask
 
@@ -92,11 +114,20 @@ install_request_logging(app, logger)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
+AUTH_INDEX = os.path.join(FRONTEND_DIR, "auth_landing.html")
 NOTEBOOK_INDEX = os.path.join(FRONTEND_DIR, "curriculum_notebook.html")
 UPLOAD_INDEX = os.path.join(FRONTEND_DIR, "upload_resources.html")
 REGULATION_UPLOAD_INDEX = os.path.join(FRONTEND_DIR, "regulation_upload.html")
 _driver = None
 _subject_resource_index = None
+
+
+@app.get("/frontend/{file_path:path}")
+def frontend_asset(file_path: str):
+	asset_path = os.path.join(FRONTEND_DIR, file_path)
+	if not os.path.isfile(asset_path):
+		raise HTTPException(status_code=404, detail="Frontend asset not found")
+	return FileResponse(asset_path)
 
 
 class ChatRequest(BaseModel):
@@ -116,18 +147,31 @@ class CreateSubjectRequest(BaseModel):
 
 
 class RegisterUserRequest(BaseModel):
-	user_id: str
+	student_id: str | None = None
+	user_id: str | None = None
 	password: str
-	email: str | None = None
+	email: str
+	college_id: str
+	regulation_id: str
 
 
 class LoginUserRequest(BaseModel):
-	user_id: str
+	student_id: str | None = None
+	user_id: str | None = None
 	password: str
 
 
+class RefreshTokenRequest(BaseModel):
+	refresh_token: str
+
+
+class LogoutRequest(BaseModel):
+	refresh_token: str
+
+
 class StudentProfileRequest(BaseModel):
-	user_id: str
+	student_id: str | None = None
+	user_id: str | None = None
 	college_id: str
 	regulation_id: str
 	program_id: str
@@ -138,13 +182,27 @@ class StudentProfileRequest(BaseModel):
 	program_name: str | None = None
 
 
+def _resolve_student_id(student_id: str | None, user_id: str | None) -> str:
+	resolved = (student_id or user_id or "").strip()
+	if not resolved:
+		raise ValueError("Student ID is required")
+	return resolved
+
+
+def current_access_claims(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+	try:
+		return require_access_token_claims(authorization)
+	except ValueError as error:
+		raise HTTPException(status_code=401, detail=str(error))
+
+
 @app.get("/")
 def home_page():
-	if not graph_is_initialized() and os.path.exists(REGULATION_UPLOAD_INDEX):
-		return FileResponse(REGULATION_UPLOAD_INDEX, media_type="text/html")
+	if os.path.exists(AUTH_INDEX):
+		return FileResponse(AUTH_INDEX, media_type="text/html")
 	if os.path.exists(NOTEBOOK_INDEX):
 		return FileResponse(NOTEBOOK_INDEX, media_type="text/html")
-	raise HTTPException(status_code=404, detail="Notebook frontend not found")
+	raise HTTPException(status_code=404, detail="Auth frontend not found")
 
 
 @app.get("/app")
@@ -656,48 +714,128 @@ def delete_subject(code: str):
 @app.post("/auth/register")
 def register_auth_user(payload: RegisterUserRequest):
 	try:
-		record = register_user(payload.user_id, payload.password, payload.email)
+		student_id = _resolve_student_id(payload.student_id, payload.user_id)
+		# ensure password is within bcrypt's input limit to avoid passlib errors
+		pw = truncate_for_bcrypt(payload.password or "")
+		record = register_user(student_id, pw, payload.email, payload.college_id, payload.regulation_id)
 	except ValueError as error:
 		message = str(error)
 		status_code = 409 if "exists" in message.lower() else 400
+		logger.warning("auth register failed for %s: %s", payload.student_id or payload.user_id, message, exc_info=True)
 		raise HTTPException(status_code=status_code, detail=message)
 
 	return {
 		"status": "success",
 		"user": {
-			"user_id": record.user_id,
+			"student_id": record.student_id,
 			"email": record.email,
+			"college_id": record.college_id,
+			"regulation_id": record.regulation_id,
+			"is_active": record.is_active,
 			"created_at": record.created_at,
 		},
+		"has_regulation": bool(record.regulation_id and regulation_exists(record.regulation_id)),
+		"semesters": get_regulation_semesters(record.regulation_id) if (record.regulation_id and regulation_exists(record.regulation_id)) else {},
 	}
 
 
 @app.post("/auth/login")
 def login_auth_user(payload: LoginUserRequest):
 	try:
-		record = authenticate_user(payload.user_id, payload.password)
+		student_id = _resolve_student_id(payload.student_id, payload.user_id)
+		pw = truncate_for_bcrypt(payload.password or "")
+		record = authenticate_user(student_id, pw)
+		tokens = issue_token_pair(record)
+	except ValueError as error:
+		logger.warning("auth login failed for %s: %s", payload.student_id or payload.user_id, str(error), exc_info=True)
+		raise HTTPException(status_code=401, detail=str(error))
+
+	return {
+		"status": "success",
+		"token_type": tokens.token_type,
+		"access_token": tokens.access_token,
+		"refresh_token": tokens.refresh_token,
+		"user": {
+			"student_id": record.student_id,
+			"email": record.email,
+			"college_id": record.college_id,
+			"regulation_id": record.regulation_id,
+			"is_active": record.is_active,
+			"created_at": record.created_at,
+		},
+		"has_regulation": bool(record.regulation_id and regulation_exists(record.regulation_id)),
+		"semesters": get_regulation_semesters(record.regulation_id) if (record.regulation_id and regulation_exists(record.regulation_id)) else {},
+	}
+
+
+@app.post("/auth/refresh")
+def refresh_auth_tokens(payload: RefreshTokenRequest):
+	try:
+		tokens, record = refresh_token_pair(payload.refresh_token)
 	except ValueError as error:
 		raise HTTPException(status_code=401, detail=str(error))
 
 	return {
 		"status": "success",
+		"token_type": tokens.token_type,
+		"access_token": tokens.access_token,
+		"refresh_token": tokens.refresh_token,
 		"user": {
-			"user_id": record.user_id,
+			"student_id": record.student_id,
 			"email": record.email,
+			"college_id": record.college_id,
+			"regulation_id": record.regulation_id,
+			"is_active": record.is_active,
 			"created_at": record.created_at,
 		},
 	}
 
 
+@app.post("/auth/logout")
+def logout_auth_user(payload: LogoutRequest):
+	try:
+		revoke_refresh_token(payload.refresh_token)
+	except ValueError as error:
+		raise HTTPException(status_code=401, detail=str(error))
+	return {"status": "success"}
+
+
+@app.get("/auth/me")
+def auth_me(claims: dict[str, Any] = Depends(current_access_claims)):
+	auth_user = get_user(claims["student_id"])
+	if auth_user is None:
+		raise HTTPException(status_code=404, detail=f"User '{claims['student_id']}' was not found")
+	profile = get_student_profile(claims["student_id"])
+	reg_id = (profile or {}).get("regulation_id") or auth_user.regulation_id
+	has_regulation = bool(reg_id and regulation_exists(reg_id))
+	return {
+		"status": "success",
+		"user": {
+			"student_id": auth_user.student_id,
+			"email": auth_user.email,
+			"college_id": auth_user.college_id,
+			"regulation_id": auth_user.regulation_id,
+			"is_active": auth_user.is_active,
+			"created_at": auth_user.created_at,
+		},
+		"student": profile,
+		"has_regulation": has_regulation,
+		"semesters": get_regulation_semesters(reg_id) if has_regulation else {},
+	}
+
+
 @app.post("/students")
-def upsert_student(payload: StudentProfileRequest):
-	user = get_user(payload.user_id)
+def upsert_student(payload: StudentProfileRequest, claims: dict[str, Any] = Depends(current_access_claims)):
+	student_id = _resolve_student_id(payload.student_id, payload.user_id)
+	if claims["student_id"] != student_id:
+		raise HTTPException(status_code=403, detail="Access token does not match the requested student")
+	user = get_user(student_id)
 	if user is None:
-		raise HTTPException(status_code=404, detail=f"User '{payload.user_id}' was not found in PostgreSQL")
+		raise HTTPException(status_code=404, detail=f"User '{student_id}' was not found in PostgreSQL")
 
 	email = payload.email or user.email or ""
 	profile = upsert_student_profile(
-		student_id=payload.user_id,
+		student_id=student_id,
 		email=email,
 		college_id=payload.college_id,
 		regulation_id=payload.regulation_id,
@@ -715,7 +853,9 @@ def upsert_student(payload: StudentProfileRequest):
 
 
 @app.get("/students/{student_id}")
-def get_student(student_id: str):
+def get_student(student_id: str, claims: dict[str, Any] = Depends(current_access_claims)):
+	if claims["student_id"] != student_id:
+		raise HTTPException(status_code=403, detail="Access token does not match the requested student")
 	profile = get_student_profile(student_id)
 	if profile is None:
 		raise HTTPException(status_code=404, detail=f"Student '{student_id}' was not found")
@@ -723,30 +863,36 @@ def get_student(student_id: str):
 
 
 @app.get("/subjects")
-def list_subjects():
-	"""Return all subjects grouped by semester for upload and query UIs."""
-	subjects = get_all_subjects()
-	grouped: Dict[int, list] = {}
-	for subject in subjects:
-		semester = subject.get("semester")
-		if semester is None:
-			continue
-		grouped.setdefault(semester, []).append(subject)
-	return {"semesters": grouped}
+def list_subjects(claims: dict[str, Any] = Depends(current_access_claims)):
+	"""Return only the signed-in student's subjects grouped by semester."""
+	student_id = claims.get("student_id")
+	profile = get_student_profile(student_id) if student_id else None
+	regulation_id = (profile or {}).get("regulation_id") or claims.get("regulation_id")
+	if not regulation_id:
+		return {"semesters": {}}
+
+	semesters = get_regulation_semesters(regulation_id) if regulation_exists(regulation_id) else {}
+	return {
+		"status": "success",
+		"student_id": student_id,
+		"regulation_id": regulation_id,
+		"semesters": semesters,
+	}
 
 
 @app.post("/ingest")
 async def ingest(
-	file: UploadFile = File(...),
+	file: list[UploadFile] = File(...),
 	subject_code: str = Form(...),
+	claims: dict[str, Any] = Depends(current_access_claims),
 ):
 	"""Chunk an uploaded resource, store vectors in Chroma, and link metadata in Neo4j."""
-	ext = _ext(file.filename or "")
-	if ext not in ALLOWED_EXTENSIONS:
-		raise HTTPException(
-			status_code=400,
-			detail=f"Unsupported file type '.{ext}'. Allowed: {ALLOWED_EXTENSIONS}",
-		)
+	student_id = claims.get("student_id")
+	college_id = claims.get("college_id")
+	regulation_id = claims.get("regulation_id")
+	files = [uploaded for uploaded in (file or []) if uploaded and uploaded.filename]
+	if not files:
+		raise HTTPException(status_code=400, detail="At least one file is required.")
 
 	subject = get_subject(subject_code.strip().upper())
 	if subject is None:
@@ -754,53 +900,74 @@ async def ingest(
 			status_code=404,
 			detail=f"Subject code '{subject_code}' not found in the knowledge graph.",
 		)
+	processed_files: list[dict[str, Any]] = []
+	total_chunks = 0
+	total_upserted = 0
+	for uploaded_file in files:
+		ext = _ext(uploaded_file.filename or "")
+		if ext not in ALLOWED_EXTENSIONS:
+			raise HTTPException(
+				status_code=400,
+				detail=f"Unsupported file type '.{ext}' in {uploaded_file.filename}. Allowed: {ALLOWED_EXTENSIONS}",
+			)
 
-	suffix = f".{ext}"
-	with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-		content = await file.read()
-		tmp.write(content)
-		tmp_path = tmp.name
+		suffix = f".{ext}"
+		with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+			content = await uploaded_file.read()
+			tmp.write(content)
+			tmp_path = tmp.name
 
-	try:
-		file_size_bytes = os.path.getsize(tmp_path)
-		chunk_size, overlap = derive_chunk_profile(file_size_bytes, ext)
-		chunks = parse_file(tmp_path, chunk_size=chunk_size, overlap=overlap)
-		if not chunks:
-			raise HTTPException(status_code=422, detail="No extractable content found in the uploaded file.")
+		try:
+			file_size_bytes = os.path.getsize(tmp_path)
+			chunk_size, overlap = derive_chunk_profile(file_size_bytes, ext)
+			chunks = parse_file(tmp_path, chunk_size=chunk_size, overlap=overlap)
+			if not chunks:
+				raise HTTPException(status_code=422, detail=f"No extractable content found in {uploaded_file.filename}.")
 
-		source_type = _detect_source_type(tmp_path, ext)
-		original_filename = file.filename or f"upload.{ext}"
-		for chunk in chunks:
-			chunk.source_file = original_filename
+			source_type = _detect_source_type(tmp_path, ext)
+			original_filename = uploaded_file.filename or f"upload.{ext}"
+			for chunk in chunks:
+				chunk.source_file = original_filename
 
-		summary = upsert_chunks(
-			chunks=chunks,
-			subject_code=subject["code"],
-			subject_name=subject["name"],
-			semester=subject["semester"],
-			source_type=source_type,
-		)
+			summary = upsert_chunks(
+				chunks=chunks,
+				subject_code=subject["code"],
+				subject_name=subject["name"],
+				semester=subject["semester"],
+				source_type=source_type,
+				college_id=college_id,
+				regulation_id=regulation_id,
+				student_id=student_id,
+			)
 
-		attach_resource_node(
-			subject_code=subject["code"],
-			source_file=original_filename,
-			source_type=source_type,
-			chunk_count=summary["upserted"],
-		)
-	finally:
-		os.unlink(tmp_path)
+			attach_resource_node(
+				subject_code=subject["code"],
+				source_file=original_filename,
+				source_type=source_type,
+				chunk_count=summary["upserted"],
+			)
+			processed_files.append(
+				{
+					"file": original_filename,
+					"source_type": source_type,
+					"chunks": summary,
+				}
+			)
+			total_chunks += len(chunks)
+			total_upserted += int(summary.get("upserted", 0))
+		finally:
+			os.unlink(tmp_path)
 
 	return {
-		"status": "success",
 		"subject": subject,
-		"source_type": source_type,
-		"file": original_filename,
-		"chunks": summary,
+		"file_count": len(processed_files),
+		"files": processed_files,
+		"chunks": {"upserted": total_upserted, "chunk_count": total_chunks},
 	}
 
 
 @app.post("/ingest/regulation")
-async def ingest_regulation(file: UploadFile = File(...)):
+async def ingest_regulation(file: UploadFile = File(...), claims: dict[str, Any] = Depends(current_access_claims)):
 	ext = _ext(file.filename or "")
 	if ext != "pdf":
 		raise HTTPException(
@@ -816,6 +983,7 @@ async def ingest_regulation(file: UploadFile = File(...)):
 
 	try:
 		summary = load_regulation_graph(tmp_path, csv_path=CSV_PATH, verify_graph=False)
+		upsert_regulation_scope(claims.get("regulation_id"), claims.get("regulation_name"))
 	finally:
 		os.unlink(tmp_path)
 
@@ -1175,7 +1343,10 @@ def get_subject_prerequisites(code: str):
 
 
 @app.post("/chat")
-def chat(payload: ChatRequest):
+def chat(payload: ChatRequest, claims: dict[str, Any] = Depends(current_access_claims)):
+	student_id = claims.get("student_id")
+	college_id = claims.get("college_id")
+	regulation_id = claims.get("regulation_id")
 	question = normalize_whitespace(payload.query or payload.question)
 	subject_code = normalize_whitespace(payload.subject_id or payload.subject_code).upper()
 	if not question:
@@ -1183,12 +1354,26 @@ def chat(payload: ChatRequest):
 	if not subject_code:
 		raise HTTPException(status_code=400, detail="Missing subject identifier.")
 
+	history = get_chat_history(student_id) if student_id else []
+	if not history and payload.history:
+		history = payload.history
+
 	try:
-		result = rag_ask(question, subject_code, history=payload.history)
+		result = rag_ask(
+			question,
+			subject_code,
+			history=history,
+			student_id=student_id,
+			college_id=college_id,
+			regulation_id=regulation_id,
+		)
 	except ValueError as error:
 		raise HTTPException(status_code=404, detail=str(error))
 
 	graph_context = result.get("graph_context_used", {})
+	if student_id:
+		append_chat_message(student_id, "user", question)
+		append_chat_message(student_id, "assistant", result.get("answer", ""))
 	return {
 		"answer": result.get("answer", ""),
 		"sources": result.get("sources", []),

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yggdrasil - Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --sans:'DM Sans',sans-serif;
+      --mono:'JetBrains Mono',monospace;
+      --overlay:rgba(15,23,42,.42);
+      --bg:#eef2f7;
+      --panel:#ffffff;
+      --panel-soft:#f8fafc;
+      --panel-strong:#edf2f7;
+      --text:#0f172a;
+      --muted:#64748b;
+      --muted-2:#94a3b8;
+      --line:#e2e8f0;
+      --line-strong:#cbd5e1;
+      --brand:#1d4ed8;
+      --brand-soft:#dbeafe;
+      --success:#0f766e;
+      --success-soft:rgba(29,158,117,.10);
+      --radius-lg:22px;
+      --radius-md:12px;
+      --shadow:0 24px 60px rgba(15,23,42,.08);
+      --color-overlay:var(--overlay);
+      --color-background-primary:var(--panel);
+      --color-background-secondary:var(--panel-soft);
+      --color-background-tertiary:var(--panel-strong);
+      --color-background-info:var(--brand-soft);
+      --color-text-primary:var(--text);
+      --color-text-secondary:var(--muted);
+      --color-text-tertiary:var(--muted-2);
+      --color-text-success:var(--success);
+      --color-text-info:var(--brand);
+      --color-border-secondary:var(--line-strong);
+      --color-border-tertiary:var(--line);
+      --color-border-info:rgba(29,78,216,.20);
+      --color-accent-danger:#b91c1c;
+      --color-accent-danger-soft:#fff1f2;
+      --color-accent-danger-border:rgba(185,28,28,.2);
+    }
+    html{color-scheme:light}
+    html[data-theme="dark"]{
+      color-scheme:dark;
+      --overlay:rgba(2,6,23,.72);
+      --bg:#0b1120;
+      --panel:#0f172a;
+      --panel-soft:#111827;
+      --panel-strong:#162235;
+      --text:#e5eef8;
+      --muted:#c1c9d6;
+      --muted-2:#93a4b8;
+      --line:#1f2a3a;
+      --line-strong:#334155;
+      --brand:#93c5fd;
+      --brand-soft:#0f1a33;
+      --success:#6ee7b7;
+      --success-soft:rgba(52,211,153,.12);
+      --shadow:0 24px 60px rgba(2,6,23,.36);
+      --color-overlay:var(--overlay);
+      --color-background-primary:var(--panel);
+      --color-background-secondary:var(--panel-soft);
+      --color-background-tertiary:var(--panel-strong);
+      --color-background-info:var(--brand-soft);
+      --color-text-primary:var(--text);
+      --color-text-secondary:var(--muted);
+      --color-text-tertiary:var(--muted-2);
+      --color-text-success:var(--success);
+      --color-text-info:var(--brand);
+      --color-border-secondary:var(--line-strong);
+      --color-border-tertiary:var(--line);
+      --color-border-info:rgba(147,197,253,.28);
+      --color-accent-danger:#f87171;
+      --color-accent-danger-soft:#2a1218;
+      --color-accent-danger-border:rgba(248,113,113,.25);
+    }
+    body{
+      font-family:var(--sans);
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--brand) 18%, transparent), transparent 34%),
+        radial-gradient(circle at top right, color-mix(in srgb, var(--success) 16%, transparent), transparent 28%),
+        linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, var(--bg)) 0%, var(--bg) 100%);
+    }
+    .app{min-height:100vh;max-width:1180px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+    .top-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .logo{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-strong);background:var(--panel);padding:7px 12px;border-radius:999px;box-shadow:0 8px 22px rgba(15,23,42,.06)}
+    .topbar-action{margin-left:auto;font-size:12px;border:1px solid var(--line-strong);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 12px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--sans);box-shadow:0 8px 22px rgba(15,23,42,.06)}
+    .topbar-action:hover{filter:brightness(.98)}
+    .theme-toggle{margin-left:0}
+    .theme-toggle i{font-size:14px;margin-right:6px}
+    .hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:16px;align-items:stretch;flex:1}
+    .card{background:var(--panel);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+    .hero-card{padding:28px;position:relative;overflow:hidden}
+    .hero-card::after{content:'';position:absolute;inset:auto -60px -80px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle, rgba(29,78,216,.16), transparent 68%);pointer-events:none}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:6px 10px;margin-bottom:16px}
+    h1{font-size:clamp(28px,4vw,46px);line-height:1.02;letter-spacing:-.03em;max-width:12ch}
+    .hero-copy{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);max-width:64ch}
+    .hero-points{margin-top:20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:720px}
+    .point{background:var(--panel-soft);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.5}
+    .point strong{color:var(--text);font-weight:500}
+    .status-card{padding:20px;display:flex;flex-direction:column;gap:14px}
+    .status-title{font-size:13px;font-weight:500;color:var(--text)}
+    .status-sub{font-size:12px;line-height:1.6;color:var(--muted)}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .stat{padding:12px;border-radius:var(--radius-md);background:var(--panel-soft);border:1px solid var(--line)}
+    .stat-value{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text)}
+    .stat-label{margin-top:4px;font-size:11px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.06em}
+    .action-row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:0.5px solid var(--line-strong);border-radius:999px;padding:10px 14px;font-size:12px;cursor:pointer;font-family:var(--sans);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;background:var(--panel-soft);color:var(--text);box-shadow:0 8px 22px rgba(15,23,42,.06)}
+    .btn.primary{border-color:rgba(29,78,216,.25);background:var(--brand-soft);color:var(--brand)}
+    .btn.secondary{background:var(--panel-strong);color:var(--text)}
+    .btn:hover{filter:brightness(.98)}
+    .panel-note{font-size:12px;color:var(--muted);line-height:1.6}
+    .footer{font-size:11px;color:var(--muted-2);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase}
+    @media (max-width: 900px){.hero{grid-template-columns:1fr}.hero-points{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top-bar">
+      <div class="logo">yggdrasil</div>
+      <button type="button" class="topbar-action theme-toggle" id="theme-toggle" aria-pressed="false">
+        <i class="ti ti-moon-stars" aria-hidden="true"></i>
+        <span id="theme-toggle-label">Dark mode</span>
+      </button>
+    </div>
+
+    <div class="hero">
+      <section class="card hero-card">
+        <div class="eyebrow"><i class="ti ti-school" aria-hidden="true"></i> Curriculum workspace</div>
+        <h1>Start with your account, then your regulation, then your semesters.</h1>
+        <p class="hero-copy">Sign in to continue. If your regulation is already uploaded, you will go straight to the semester dashboard. If not, you will be guided to upload the regulation PDF first, then the dashboard will populate.</p>
+        <div class="hero-points">
+          <div class="point"><strong>Login first.</strong> Returning users authenticate with student ID and password.</div>
+          <div class="point"><strong>Register new users.</strong> Create an account, then upload the regulation if it has not been loaded yet.</div>
+          <div class="point"><strong>Semester dashboard.</strong> Once the regulation exists, you can browse semesters and subjects.</div>
+          <div class="point"><strong>Resume anytime.</strong> Existing tokens are restored automatically when available.</div>
+        </div>
+      </section>
+
+      <aside class="card status-card">
+        <div class="status-title">Session status</div>
+        <div class="status-sub" id="session-text">Checking for an active session…</div>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-value" id="session-mode">Auth</div>
+            <div class="stat-label">Entry mode</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="regulation-state">Pending</div>
+            <div class="stat-label">Regulation</div>
+          </div>
+        </div>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="cta-login">Login</button>
+          <button type="button" class="btn secondary" id="cta-register">Register</button>
+        </div>
+        <p class="panel-note">If you already signed in before, the page will still check your session so you can continue with the right account.</p>
+        <div class="footer">/auth → /app/regulation/upload → /app</div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    window.YGGDRASIL_AUTH_HIDE_SHELL = true;
+  </script>
+  <script src="/frontend/auth.js"></script>
+  <script>
+    const auth = window.YggdrasilAuth;
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleLabel = document.getElementById('theme-toggle-label');
+    const sessionText = document.getElementById('session-text');
+    const sessionMode = document.getElementById('session-mode');
+    const regulationState = document.getElementById('regulation-state');
+    const ctaLogin = document.getElementById('cta-login');
+    const ctaRegister = document.getElementById('cta-register');
+
+    function getPreferredTheme() {
+      try {
+        const storedTheme = window.localStorage.getItem('yggdrasil-theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+          return storedTheme;
+        }
+      } catch (error) {
+        // Ignore storage failures.
+      }
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme, persist = false) {
+      const nextTheme = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.dataset.theme = nextTheme;
+      const isDark = nextTheme === 'dark';
+      themeToggle.setAttribute('aria-pressed', String(isDark));
+      const icon = themeToggle.querySelector('i');
+      if (icon) {
+        icon.className = isDark ? 'ti ti-sun-high' : 'ti ti-moon-stars';
+      }
+      themeToggleLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+      if (persist) {
+        try {
+          window.localStorage.setItem('yggdrasil-theme', nextTheme);
+        } catch (error) {
+          // Ignore storage failures.
+        }
+      }
+    }
+
+    function openLogin() {
+      auth.openModal('login', 'Sign in to continue to your curriculum dashboard.');
+    }
+
+    function openRegister() {
+      auth.openModal('register', 'Create your student account to continue.');
+    }
+
+    async function bootstrap() {
+      applyTheme(getPreferredTheme(), false);
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true));
+      }
+      ctaLogin.addEventListener('click', openLogin);
+      ctaRegister.addEventListener('click', openRegister);
+
+      if (!auth.getAccessToken()) {
+        sessionText.textContent = 'No active session found. Sign in or register to continue.';
+        sessionMode.textContent = 'Auth';
+        regulationState.textContent = 'Pending';
+        return;
+      }
+
+      try {
+        const response = await auth.request('/auth/me', {}, { allowRefresh: true, includeAuth: true });
+        if (!response.ok) {
+          auth.clearSession();
+          sessionText.textContent = 'Session expired. Please sign in again.';
+          sessionMode.textContent = 'Auth';
+          regulationState.textContent = 'Pending';
+          auth.openModal('login', 'Your session expired. Please sign in again.');
+          return;
+        }
+        const payload = await response.json();
+        const hasRegulation = Boolean(payload.has_regulation);
+        sessionText.textContent = hasRegulation
+          ? 'You are signed in and your regulation is ready.'
+          : 'You are signed in, but the regulation still needs to be uploaded.';
+        sessionMode.textContent = 'Ready';
+        regulationState.textContent = hasRegulation ? 'Loaded' : 'Upload';
+      } catch (error) {
+        auth.clearSession();
+        sessionText.textContent = 'Unable to validate your session. Please sign in again.';
+        sessionMode.textContent = 'Auth';
+        regulationState.textContent = 'Pending';
+        auth.openModal('login', 'Unable to validate your session. Please sign in again.');
+      }
+    }
+
+    bootstrap();
+  </script>
+</body>
+</html>

@@ -111,7 +111,7 @@
 <body>
   <div class="app">
     <div class="top-bar">
-      <div class="logo">curriculum.kg</div>
+      <div class="logo">Yggdrasil</div>
       <div class="breadcrumb" id="breadcrumb">
         <span id="bc-sem">Semester</span>
         <span class="sep">›</span>
@@ -123,7 +123,7 @@
         <i class="ti ti-moon-stars" aria-hidden="true"></i>
         <span id="theme-toggle-label">Dark mode</span>
       </button>
-      <a class="topbar-action" href="/app">Open notebook</a>
+      <a class="topbar-action" id="open-subject-notebook-link" href="/app">Open notebook</a>
     </div>
 
     <div class="upload-shell">
@@ -138,17 +138,17 @@
       <div class="panel upload-card">
         <div class="upload-head">
           <div class="panel-title">Upload subject resources</div>
-          <div class="panel-sub">Choose a file and upload it for the selected subject. When upload finishes, open the notebook for that subject immediately.</div>
+          <div class="panel-sub">Choose one or more files and upload them for the selected subject. When upload finishes, open the notebook for that subject immediately.</div>
         </div>
 
         <div class="upload-grid">
           <div class="upload-row">
-            <button type="button" class="upload-file-btn" id="upload-file-btn">Choose file</button>
-            <input id="upload-file-input" class="hidden" type="file" accept=".pdf,.ppt,.pptx">
-            <div class="upload-file-name" id="upload-file-name">No file chosen</div>
+            <button type="button" class="upload-file-btn" id="upload-file-btn">Choose files</button>
+            <input id="upload-file-input" class="hidden" type="file" accept=".pdf,.ppt,.pptx" multiple>
+            <div class="upload-file-name" id="upload-file-name">No files chosen</div>
           </div>
 
-          <div class="upload-status" id="upload-status">Select a file to begin.</div>
+          <div class="upload-status" id="upload-status">Select one or more files to begin.</div>
 
           <div class="success-box" id="success-box">
             <div class="success-title">Upload complete</div>
@@ -168,6 +168,8 @@
     </div>
   </div>
 
+  <script src="/frontend/auth.js"></script>
+
   <script>
     const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
     const fileInput = document.getElementById('upload-file-input');
@@ -180,6 +182,7 @@
     const openNotebookBtn = document.getElementById('open-notebook-btn');
     const backSemBtn = document.getElementById('back-sem-btn');
     const resetBtn = document.getElementById('reset-btn');
+    const openSubjectNotebookLink = document.getElementById('open-subject-notebook-link');
     const subjectCodeEl = document.getElementById('subject-code');
     const subjectNameEl = document.getElementById('subject-name');
     const subjectMetaEl = document.getElementById('subject-meta');
@@ -188,6 +191,7 @@
     const bcSubj = document.getElementById('bc-subj');
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeToggleLabel = document.getElementById('theme-toggle-label');
+    const auth = window.YggdrasilAuth;
 
     function getPreferredTheme() {
       try {
@@ -277,11 +281,14 @@
       const loaded = Number(subject.resource_count || 0);
       resourcePillText.textContent = loaded > 0 ? `${loaded} resource${loaded !== 1 ? 's' : ''} already loaded` : 'No resources yet';
       backSemBtn.href = semesterUrl(semester);
+      if (openSubjectNotebookLink) {
+        openSubjectNotebookLink.href = subjectNotebookUrl(semester, subject.code);
+      }
       openNotebookBtn.href = subjectNotebookUrl(semester, subject.code);
     }
 
     async function fetchJson(path) {
-      const response = await fetch(`${apiBase}${path}`);
+      const response = await auth.request(path);
       if (!response.ok) {
         let message = `Request failed: ${response.status}`;
         try {
@@ -321,28 +328,28 @@
 
     async function uploadResource() {
       const route = getRouteInfo();
-      const file = fileInput.files && fileInput.files[0];
+      const files = Array.from(fileInput.files || []);
       if (!route) {
         setStatus('Invalid upload route.', 'bad');
         return;
       }
-      if (!file) {
-        setStatus('Choose a PDF, PPT, or PPTX file before uploading.', 'bad');
+      if (!files.length) {
+        setStatus('Choose one or more PDF, PPT, or PPTX files before uploading.', 'bad');
         return;
       }
 
       const formData = new FormData();
-      formData.append('file', file);
+      files.forEach((selectedFile) => formData.append('file', selectedFile));
       formData.append('subject_code', route.code);
 
       uploadBtn.disabled = true;
       fileBtn.disabled = true;
       resetBtn.disabled = true;
       setSuccessVisible(false);
-      setStatus(`Uploading ${escapeHtml(file.name)}...`);
+      setStatus(`Uploading ${files.length} file${files.length !== 1 ? 's' : ''}...`);
 
       try {
-        const response = await fetch(`${apiBase}/ingest`, {
+        const response = await auth.request('/ingest', {
           method: 'POST',
           body: formData,
         });
@@ -363,7 +370,8 @@
         const notebookUrl = subjectNotebookUrl(route.semester, route.code);
         openNotebookBtn.href = notebookUrl;
         openNotebookBtn.classList.remove('hidden');
-        successText.textContent = `Stored ${payload.file} for ${payload.subject.code}. Chunks stored: ${payload.chunks?.upserted ?? 0}.`;
+        const uploadedNames = (payload.files || []).map((item) => item.file).filter(Boolean).join(', ');
+        successText.textContent = `Stored ${payload.file_count ?? files.length} file${(payload.file_count ?? files.length) !== 1 ? 's' : ''} for ${payload.subject.code}. ${uploadedNames ? `Files: ${uploadedNames}. ` : ''}Chunks stored: ${payload.chunks?.upserted ?? 0}.`;
         setSuccessVisible(true);
         setStatus('Upload complete. Open the notebook to continue.', 'ok');
       } catch (error) {
@@ -377,18 +385,20 @@
 
     function resetFile() {
       fileInput.value = '';
-      fileName.textContent = 'No file chosen';
+      fileName.textContent = 'No files chosen';
       setSuccessVisible(false);
-      setStatus('Select a file to begin.');
+      setStatus('Select one or more files to begin.');
     }
 
     fileBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => {
-      const file = fileInput.files && fileInput.files[0];
-      fileName.textContent = file ? file.name : 'No file chosen';
-      if (file) {
-        setStatus(`Ready to upload ${file.name}.`);
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) {
+        fileName.textContent = 'No files chosen';
+        return;
       }
+      fileName.textContent = files.length === 1 ? files[0].name : `${files.length} files selected`;
+      setStatus(`Ready to upload ${files.length} file${files.length !== 1 ? 's' : ''}.`);
     });
     uploadBtn.addEventListener('click', uploadResource);
     resetBtn.addEventListener('click', resetFile);

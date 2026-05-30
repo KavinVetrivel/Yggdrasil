@@ -67,11 +67,26 @@ POSTGRES_DB=yggdrasil
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_password
 POSTGRES_SSLMODE=prefer
+JWT_SECRET_KEY=change-this-to-a-long-random-secret
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=20
+REFRESH_TOKEN_EXPIRE_DAYS=7
 ```
 
 Available API routes:
 
-- `POST /auth/register` creates a PostgreSQL user with a hashed password.
-- `POST /auth/login` verifies the PostgreSQL user password.
-- `POST /students` upserts a Neo4j `Student` node and links it to `Program`, `College`, `Regulation`, and `Semester`.
-- `GET /students/{student_id}` fetches the Neo4j student profile.
+- `POST /auth/register` creates a PostgreSQL user with a bcrypt-hashed password.
+- `POST /auth/login` returns a short-lived access token plus a rotating refresh token.
+- `POST /auth/refresh` validates the refresh token against PostgreSQL, revokes it, and issues a new pair.
+- `POST /auth/logout` revokes the refresh token in PostgreSQL.
+- `GET /auth/me` returns the current student's profile from Neo4j using the access token.
+- `POST /students` and `GET /students/{student_id}` require a valid access token and keep the Neo4j `Student` profile in sync with PostgreSQL.
+- `POST /chat` and `POST /ingest` require a valid access token only.
+- `POST /chat` now loads history from PostgreSQL by `student_id` and scopes retrieval with the JWT's `college_id` and `regulation_id`.
+- Uploaded chunks are tagged with `student_id`, `college_id`, and `regulation_id` so Chroma queries can stay within the student's program context.
+
+Install the auth dependencies if they are not already present in your environment:
+
+```bash
+pip install PyJWT passlib[bcrypt]
+```

@@ -225,3 +225,67 @@ def close():
     if _driver:
         _driver.close()
         _driver = None
+
+
+def regulation_exists(regulation_id: str) -> bool:
+    """Return True if a Regulation node with the given id exists in the graph."""
+    if not regulation_id:
+        return False
+    driver = _get_driver()
+    query = """
+    MATCH (r:Regulation {id: $regulation_id})
+    RETURN r.id IS NOT NULL AS exists
+    """
+    with driver.session() as session:
+        row = session.run(query, regulation_id=regulation_id).single()
+        return bool(row and row["exists"])
+
+
+def get_regulation_semesters(regulation_id: str) -> dict[int, list[dict[str, str]]]:
+    """Return a dict mapping semester number -> list of subjects for a regulation.
+
+    Each subject is a dict with keys `code`, `name`, and `credits` where available.
+    """
+    result: dict[int, list[dict[str, str]]] = {}
+    if not regulation_id:
+        return result
+    driver = _get_driver()
+    query = """
+    MATCH (r:Regulation {id: $regulation_id})-[:HAS_SEMESTER]->(sem:Semester)<-[:BELONGS_TO]-(s:Subject)
+    RETURN sem.number AS semester, s.code AS code, s.name AS name, s.credits AS credits
+    ORDER BY sem.number, s.code
+    """
+    with driver.session() as session:
+        rows = session.run(query, regulation_id=regulation_id)
+        for row in rows:
+            sem = row["semester"]
+            if sem is None:
+                continue
+            entry = {
+                "semester": int(sem),
+                "code": row.get("code"),
+                "name": row.get("name"),
+                "credits": row.get("credits"),
+            }
+            result.setdefault(int(sem), []).append(entry)
+    return result
+
+
+def upsert_regulation_scope(regulation_id: str, regulation_name: str | None = None) -> None:
+    """Create the Regulation node and attach every loaded Semester to it."""
+    if not regulation_id:
+        return
+    driver = _get_driver()
+    with driver.session() as session:
+        session.run(
+            """
+            MERGE (r:Regulation {id: $regulation_id})
+            SET r.name = coalesce($regulation_name, r.name),
+                r.updated_at = timestamp()
+            WITH r
+            MATCH (sem:Semester)
+            MERGE (r)-[:HAS_SEMESTER]->(sem)
+            """,
+            regulation_id=regulation_id,
+            regulation_name=regulation_name,
+        )

@@ -34,6 +34,12 @@ POSTGRES_USER = _env("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = _env("POSTGRES_PASSWORD", "")
 POSTGRES_SSLMODE = _env("POSTGRES_SSLMODE", "prefer")
 
+# Auth
+JWT_SECRET_KEY = _env("JWT_SECRET_KEY", _env("SECRET_KEY", "change-me-in-production"))
+JWT_ALGORITHM = _env("JWT_ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = parse_int_env("ACCESS_TOKEN_EXPIRE_MINUTES", 20)
+REFRESH_TOKEN_EXPIRE_DAYS = parse_int_env("REFRESH_TOKEN_EXPIRE_DAYS", 7)
+
 # ChromaDB
 CHROMA_BACKEND = _env("CHROMA_BACKEND", "cloud").strip().lower()
 CHROMA_PERSIST_DIR = _env("CHROMA_PERSIST_DIR", _env("CHROMA_DIR", "./chroma_store"))
